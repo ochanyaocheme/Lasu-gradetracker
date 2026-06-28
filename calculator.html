@@ -262,22 +262,22 @@
         </div>
 
         <div class="tool-selector">
-            <div class="tool-card active" onclick="showTool('gpa')">
+            <div class="tool-card active" onclick="showTool('gpa', this)">
                 <div class="icon">🧮</div>
                 <div class="label">GPA Calculator</div>
                 <div class="sublabel">One semester</div>
             </div>
-            <div class="tool-card" onclick="showTool('cgpa')">
+            <div class="tool-card" onclick="showTool('cgpa', this)">
                 <div class="icon">📈</div>
                 <div class="label">CGPA Calculator</div>
                 <div class="sublabel">Cumulative</div>
             </div>
-            <div class="tool-card" onclick="showTool('target')">
+            <div class="tool-card" onclick="showTool('target', this)">
                 <div class="icon">🎯</div>
                 <div class="label">Target Predictor</div>
                 <div class="sublabel">What you need</div>
             </div>
-            <div class="tool-card" onclick="showTool('planner')">
+            <div class="tool-card" onclick="showTool('planner', this)">
                 <div class="icon">📅</div>
                 <div class="label">Semester Planner</div>
                 <div class="sublabel">Plan ahead</div>
@@ -317,6 +317,196 @@
                 <h3>LASU Grading System</h3>
                 <div class="grade-legend">
                     <div class="grade-item"><span class="grade">A</span><span class="points">70-100 = 5.0</span></div>
+                    <div class="grade-item"><span class="grade">B</span><span class="points">60-69 = 4.0</span></div>
+                    <div class="grade-item"><span class="grade">C</span><span class="points">50-59 = 3.0</span></div>
+                    <div class="grade-item"><span class="grade">D</span><span class="points">45-49 = 2.0</span></div>
+                    <div class="grade-item"><span class="grade">E</span><span class="points">40-44 = 1.0</span></div>
+                    <div class="grade-item"><span class="grade">F</span><span class="points">0-39 = 0.0</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CGPA Calculator -->
+        <div id="cgpa" class="tool-section">
+            <div class="card">
+                <h3>Calculate Your CGPA</h3>
+                <p>Add all your past semesters to get your cumulative GPA</p>
+                <div id="semesters">
+                    <div class="input-group">
+                        <label>Semester 1 GPA</label>
+                        <input type="number" step="0.01" min="0" max="5" class="sem-gpa" placeholder="e.g. 4.25">
+                    </div>
+                    <div class="input-group">
+                        <label>Semester 1 Total Units</label>
+                        <input type="number" class="sem-units" placeholder="e.g. 24">
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="addSemester()">+ Add Another Semester</button>
+                <button class="btn btn-primary" onclick="calculateCGPA()">Calculate CGPA</button>
+                <div id="cgpa-result" class="result-box hidden">
+                    <h4>Your CGPA</h4>
+                    <div class="value" id="cgpa-value">0.00</div>
+                    <div class="label">Cumulative Grade Point Average</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Target Grade Predictor -->
+        <div id="target" class="tool-section">
+            <div class="card">
+                <h3>Target Grade Predictor</h3>
+                <p>"What grades do I need to reach my target CGPA?"</p>
+                <div class="input-group">
+                    <label>Current CGPA</label>
+                    <input type="number" step="0.01" min="0" max="5" id="current-cgpa" placeholder="e.g. 3.50">
+                </div>
+                <div class="input-group">
+                    <label>Total Units Completed</label>
+                    <input type="number" id="completed-units" placeholder="e.g. 60">
+                </div>
+                <div class="input-group">
+                    <label>Target CGPA</label>
+                    <input type="number" step="0.01" min="0" max="5" id="target-cgpa" placeholder="e.g. 4.00">
+                </div>
+                <div class="input-group">
+                    <label>Remaining Units This Semester</label>
+                    <input type="number" id="remaining-units" placeholder="e.g. 24">
+                </div>
+                <button class="btn btn-primary" onclick="predictTarget()">Calculate Required GPA</button>
+                <div id="target-result" class="result-box hidden">
+                    <h4>Required GPA This Semester</h4>
+                    <div class="value" id="target-value">0.00</div>
+                    <div class="label message" id="target-message"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Semester Planner -->
+        <div id="planner" class="tool-section">
+            <div class="card">
+                <h3>Semester Planner</h3>
+                <p>Plan your courses and see your projected CGPA</p>
+                <div class="input-group">
+                    <label>Current CGPA (optional)</label>
+                    <input type="number" step="0.01" min="0" max="5" id="planner-current-cgpa" placeholder="Leave blank if first semester">
+                </div>
+                <div class="input-group">
+                    <label>Current Total Units (optional)</label>
+                    <input type="number" id="planner-current-units" placeholder="Leave blank if first semester">
+                </div>
+                <div id="planner-courses">
+                    <div class="course-row">
+                        <input type="text" placeholder="Course code" class="plan-code">
+                        <select class="plan-grade">
+                            <option value="">Points</option>
+                            <option value="5">5 Points (70-100)</option>
+                            <option value="4">4 Points (60-69)</option>
+                            <option value="3">3 Points (50-59)</option>
+                            <option value="2">2 Points (45-49)</option>
+                            <option value="1">1 Point (40-44)</option>
+                            <option value="0">0 Points (0-39)</option>
+                        </select>
+                        <input type="number" placeholder="Units" class="plan-units" min="1" max="6">
+                        <button class="remove-btn" onclick="removeCourse(this)">×</button>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="addCourse('planner-courses')">+ Add Course</button>
+                <button class="btn btn-primary" onclick="calculatePlanner()">Project My CGPA</button>
+                <div id="planner-result" class="result-box hidden">
+                    <h4>Projected CGPA</h4>
+                    <div class="value" id="planner-value">0.00</div>
+                    <div class="label message" id="planner-message"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTool(toolId, cardElement) {
+            document.querySelectorAll('.tool-section').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tool-card').forEach(t => t.classList.remove('active'));
+            document.getElementById(toolId).classList.add('active');
+            cardElement.classList.add('active');
+        }
+
+        function addCourse(containerId) {
+            const container = document.getElementById(containerId);
+            const newRow = document.createElement('div');
+            newRow.className = 'course-row';
+            newRow.innerHTML = containerId === 'planner-courses' 
+                ? `<input type="text" placeholder="Course code" class="plan-code">
+                   <select class="plan-grade">
+                       <option value="">Points</option>
+                       <option value="5">5 Points (70-100)</option>
+                       <option value="4">4 Points (60-69)</option>
+                       <option value="3">3 Points (50-59)</option>
+                       <option value="2">2 Points (45-49)</option>
+                       <option value="1">1 Point (40-44)</option>
+                       <option value="0">0 Points (0-39)</option>
+                   </select>
+                   <input type="number" placeholder="Units" class="plan-units" min="1" max="6">
+                   <button class="remove-btn" onclick="removeCourse(this)">×</button>`
+                : `<input type="text" placeholder="Course (e.g. CHM 101)" class="course-code">
+                   <select class="course-grade">
+                       <option value="">Points</option>
+                       <option value="5">5 Points (70-100)</option>
+                       <option value="4">4 Points (60-69)</option>
+                       <option value="3">3 Points (50-59)</option>
+                       <option value="2">2 Points (45-49)</option>
+                       <option value="1">1 Point (40-44)</option>
+                       <option value="0">0 Points (0-39)</option>
+                   </select>
+                   <input type="number" placeholder="Units" class="course-units" min="1" max="6">
+                   <button class="remove-btn" onclick="removeCourse(this)">×</button>`;
+            container.appendChild(newRow);
+        }
+
+        function removeCourse(btn) {
+            btn.parentElement.remove();
+        }
+
+        function calculateGPA() {
+            const rows = document.querySelectorAll('#gpa-courses .course-row');
+            let totalPoints = 0, totalUnits = 0;
+
+            rows.forEach(row => {
+                const grade = parseFloat(row.querySelector('.course-grade').value);
+                const units = parseFloat(row.querySelector('.course-units').value);
+                if (grade && units) {
+                    totalPoints += grade * units;
+                    totalUnits += units;
+                }
+            });
+
+            const gpa = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : '0.00';
+            document.getElementById('gpa-value').textContent = gpa;
+            document.getElementById('gpa-result').classList.remove('hidden');
+        }
+
+        let semesterCount = 1;
+        function addSemester() {
+            semesterCount++;
+            const container = document.getElementById('semesters');
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <div class="input-group">
+                    <label>Semester ${semesterCount} GPA</label>
+                    <input type="number" step="0.01" min="0" max="5" class="sem-gpa" placeholder="e.g. 4.25">
+                </div>
+                <div class="input-group">
+                    <label>Semester ${semesterCount} Total Units</label>
+                    <input type="number" class="sem-units" placeholder="e.g. 24">
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function calculateCGPA() {
+            const gpas = document.querySelectorAll('.sem-gpa');
+            const units = document.querySelectorAll('.sem-units');
+            let totalPoints = 0, totalUnits = 0;
+
+            for (let i = 0; i < gpan class="points">70-100 = 5.0</span></div>
                     <div class="grade-item"><span class="grade">B</span><span class="points">60-69 = 4.0</span></div>
                     <div class="grade-item"><span class="grade">C</span><span class="points">50-59 = 3.0</span></div>
                     <div class="grade-item"><span class="grade">D</span><span class="points">45-49 = 2.0</span></div>
