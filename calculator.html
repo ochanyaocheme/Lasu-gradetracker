@@ -52,36 +52,40 @@
         .tool-item {
             display: flex;
             align-items: center;
-            padding: 20px;
-            border-radius: 16px;
+            padding: 22px 20px;
+            border-radius: 20px;
             text-decoration: none;
             color: #ffffff;
-            transition: transform 0.2s;
+            transition: all 0.2s;
         }
         .tool-item:hover {
             transform: translateY(-2px);
+            opacity: 0.95;
         }
         .tool-item .icon {
-            font-size: 2rem;
+            font-size: 2.2rem;
             margin-right: 18px;
-            width: 45px;
+            width: 50px;
             text-align: center;
+            flex-shrink: 0;
         }
         .tool-item .info {
             flex: 1;
         }
         .tool-item .label {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
         }
         .tool-item .sublabel {
-            font-size: 0.8rem;
-            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+            opacity: 0.85;
         }
         .tool-item .arrow {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             margin-left: 10px;
+            opacity: 0.7;
+            flex-shrink: 0;
         }
         .tool-gpa {
             background-color: #1b998b;
@@ -91,7 +95,10 @@
             color: #0d1b2a;
         }
         .tool-cgpa .sublabel {
-            color: rgba(13, 27, 42, 0.7);
+            opacity: 0.75;
+        }
+        .tool-cgpa .arrow {
+            color: #0d1b2a;
         }
         .tool-target {
             background-color: #e85d4e;
@@ -118,7 +125,7 @@
                 </div>
                 <span class="arrow">›</span>
             </a>
-            <a href="cgpa-calculator.html" class="tool-item tool-cgpa">
+            <a href="cgpa-calc.html" class="tool-item tool-cgpa">
                 <span class="icon">📈</span>
                 <div class="info">
                     <div class="label">CGPA Calculator</div>
@@ -145,120 +152,8 @@
         </div>
     </div>
 </body>
-</html>"planner-value">0.00</div>
-                    <div class="label message" id="planner-message"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Setup click handlers for tool cards
-        document.getElementById('card-gpa').addEventListener('click', function() {
-            switchTool('gpa', this);
-        });
-        document.getElementById('card-cgpa').addEventListener('click', function() {
-            switchTool('cgpa', this);
-        });
-        document.getElementById('card-target').addEventListener('click', function() {
-            switchTool('target', this);
-        });
-        document.getElementById('card-planner').addEventListener('click', function() {
-            switchTool('planner', this);
-        });
-
-        function switchTool(toolId, cardElement) {
-            // Hide all tool sections
-            document.querySelectorAll('.tool-section').forEach(function(section) {
-                section.classList.remove('active');
-            });
-            // Remove active from all cards
-            document.querySelectorAll('.tool-card').forEach(function(card) {
-                card.classList.remove('active');
-            });
-            // Show selected section
-            document.getElementById(toolId).classList.add('active');
-            // Activate selected card
-            cardElement.classList.add('active');
-        }
-
-        function addCourse(containerId) {
-            const container = document.getElementById(containerId);
-            const newRow = document.createElement('div');
-            newRow.className = 'course-row';
-            newRow.innerHTML = containerId === 'planner-courses' 
-                ? '<input type="text" placeholder="Course code" class="plan-code">'
-                  + '<select class="plan-grade">'
-                  + '<option value="">Points</option>'
-                  + '<option value="5">5 Points (70-100)</option>'
-                  + '<option value="4">4 Points (60-69)</option>'
-                  + '<option value="3">3 Points (50-59)</option>'
-                  + '<option value="2">2 Points (45-49)</option>'
-                  + '<option value="1">1 Point (40-44)</option>'
-                  + '<option value="0">0 Points (0-39)</option>'
-                  + '</select>'
-                  + '<input type="number" placeholder="Units" class="plan-units" min="1" max="6">'
-                  + '<button class="remove-btn" onclick="removeCourse(this)">×</button>'
-                : '<input type="text" placeholder="Course (e.g. CHM 101)" class="course-code">'
-                  + '<select class="course-grade">'
-                  + '<option value="">Points</option>'
-                  + '<option value="5">5 Points (70-100)</option>'
-                  + '<option value="4">4 Points (60-69)</option>'
-                  + '<option value="3">3 Points (50-59)</option>'
-                  + '<option value="2">2 Points (45-49)</option>'
-                  + '<option value="1">1 Point (40-44)</option>'
-                  + '<option value="0">0 Points (0-39)</option>'
-                  + '</select>'
-                  + '<input type="number" placeholder="Units" class="course-units" min="1" max="6">'
-                  + '<button class="remove-btn" onclick="removeCourse(this)">×</button>';
-            container.appendChild(newRow);
-        }
-
-        function removeCourse(btn) {
-            btn.parentElement.remove();
-        }
-
-        function calculateGPA() {
-            const rows = document.querySelectorAll('#gpa-courses .course-row');
-            let totalPoints = 0, totalUnits = 0;
-
-            rows.forEach(function(row) {
-                const grade = parseFloat(row.querySelector('.course-grade').value);
-                const units = parseFloat(row.querySelector('.course-units').value);
-                if (grade && units) {
-                    totalPoints += grade * units;
-                    totalUnits += units;
-                }
-            });
-
-            const gpa = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : '0.00';
-            document.getElementById('gpa-value').textContent = gpa;
-            document.getElementById('gpa-result').classList.remove('hidden');
-        }
-
-        let semesterCount = 1;
-        function addSemester() {
-            semesterCount++;
-            const container = document.getElementById('semesters');
-            const div = document.createElement('div');
-            d"grade-item"><span class="grade">B</span><span class="points">60-69 = 4.0</span></div>
-                    <div class="grade-item"><span class="grade">C</span><span class="points">50-59 = 3.0</span></div>
-                    <div class="grade-item"><span class="grade">D</span><span class="points">45-49 = 2.0</span></div>
-                    <div class="grade-item"><span class="grade">E</span><span class="points">40-44 = 1.0</span></div>
-                    <div class="grade-item"><span class="grade">F</span><span class="points">0-39 = 0.0</span></div>
-                </div>
-            </div>
-        </div>
-
-        <div id="cgpa" class="tool-section">
-            <div class="card">
-                <h3>Calculate Your CGPA</h3>
-                <p>Add all your past semesters to get your cumulative GPA</p>
-                <div id="semesters">
-                    <div class="input-group">
-                        <label>Semester 1 GPA</label>
-                        <input type="number" step="0.01" min="0" max="5" class="sem-gpa" placeholder="e.g. 4.25">
-                    </div>
+</html>
+              </div>
                     <div class="input-group">
                         <label>Semester 1 Total Units</label>
                         <input type="number" class="sem-units" placeholder="e.g. 24">
