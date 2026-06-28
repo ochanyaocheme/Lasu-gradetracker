@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Target Predictor - LASU GradeTracker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0d1b2a;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 40px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-top: 10px;
+        }
+        .back-btn {
+            display: inline-block;
+            color: #e9a319;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .header h1 {
+            color: #e9a319;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        .header p {
+            color: #8899b0;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        .card {
+            background-color: #162236;
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 15px;
+        }
+        .card h3 {
+            color: #e9a319;
+            margin-bottom: 18px;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .card p {
+            color: #8899b0;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .input-group {
+            margin-bottom: 14px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: #8899b0;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #233554;
+            border-radius: 10px;
+            background-color: #0d1b2a;
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: #e9a319;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        .btn-primary {
+            background-color: #e85d4e;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .result-box {
+            background-color: #0d1b2a;
+            border: 2px solid #e85d4e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 18px;
+            text-align: center;
+        }
+        .result-box h4 {
+            color: #e9a319;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        .result-box .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #e85d4e;
+        }
+        .result-box .label {
+            font-size: 0.85rem;
+            color: #8899b0;
+            margin-top: 5px;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .message {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+        .error { color: #e85d4e; }
+        .success { color: #1b998b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="cgpa-calculator.html" class="back-btn">← Back</a>
+            <h1>🎯 Target Grade Predictor</h1>
+            <p>What GPA do you need to reach your target CGPA?</p>
+        </div>
+
+        <div class="card">
+            <h3>Calculate Required GPA</h3>
+            <p>Enter your current stats and target to see what you need this semester</p>
+            <div class="input-group">
+                <label>Current CGPA</label>
+                <input type="number" step="0.01" min="0" max="5" id="current-cgpa" placeholder="e.g. 3.50">
+            </div>
+            <div class="input-group">
+                <label>Total Units Completed</label>
+                <input type="number" id="completed-units" placeholder="e.g. 60">
+            </div>
+            <div class="input-group">
+                <label>Target CGPA</label>
+                <input type="number" step="0.01" min="0" max="5" id="target-cgpa" placeholder="e.g. 4.00">
+            </div>
+            <div class="input-group">
+                <label>Remaining Units This Semester</label>
+                <input type="number" id="remaining-units" placeholder="e.g. 24">
+            </div>
+            <button class="btn btn-primary" onclick="predictTarget()">Calculate Required GPA</button>
+            <div id="target-result" class="result-box hidden">
+                <h4>Required GPA This Semester</h4>
+                <div class="value" id="target-value">0.00</div>
+                <div class="label message" id="target-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function predictTarget() {
+            const currentCGPA = parseFloat(document.getElementById('current-cgpa').value);
+            const completedUnits = parseFloat(document.getElementById('completed-units').value);
+            const targetCGPA = parseFloat(document.getElementById('target-cgpa').value);
+            const remainingUnits = parseFloat(document.getElementById('remaining-units').value);
+
+            const resultBox = document.getElementById('target-result');
+            const valueEl = document.getElementById('target-value');
+            const messageEl = document.getElementById('target-message');
+
+            if (isNaN(currentCGPA) || isNaN(completedUnits) || isNaN(targetCGPA) || isNaN(remainingUnits)) {
+                messageEl.textContent = 'Please fill in all fields.';
+                messageEl.className = 'message error';
+                resultBox.classList.remove('hidden');
+                valueEl.textContent = '0.00';
+                return;
+            }
+
+            if (remainingUnits <= 0) {
+                messageEl.textContent = 'Remaining units must be greater than 0.';
+                messageEl.className = 'message error';
+                resultBox.classList.remove('hidden');
+                valueEl.textContent = '0.00';
+                return;
+            }
+
+            const requiredGPA = ((targetCGPA * (completedUnits + remainingUnits)) - (currentCGPA * completedUnits)) / remainingUnits;
+            
+            valueEl.textContent = requiredGPA.toFixed(2);
+
+            if (requiredGPA > 5.0) {
+                messageEl.innerHTML = `<span class="error">This target is impossible!</span> You need a GPA higher than 5.0. Try a lower target.`;
+            } else if (requiredGPA < 0) {
+                messageEl.innerHTML = `<span class="success">Easily achievable!</span> Even with a low GPA this semester.`;
+            } else if (requiredGPA >= 4.5) {
+                messageEl.innerHTML = `<span class="error">First Class level</span> grades needed. It will be tough!`;
+            } else if (requiredGPA >= 3.5) {
+                messageEl.innerHTML = `<span class="success">2:1 level</span> grades needed. Very achievable!`;
+            } else if (requiredGPA >= 2.4) {
+                messageEl.innerHTML = `<span class="success">2:2 level</span> grades needed. You've got this!`;
+            } else {
+                messageEl.innerHTML = `<span class="success">Pass level</span> grades needed. Very easy to achieve!`;
+            }
+            messageEl.className = 'message';
+            resultBox.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
