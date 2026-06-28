@@ -176,12 +176,12 @@
             font-size: 0.8rem;
             align-items: center;
         }
-        .grade-item .grade {
+        .grade-item .points {
             font-weight: 700;
             color: #e9a319;
             font-size: 0.9rem;
         }
-        .grade-item .points {
+        .grade-item .range {
             color: #8899b0;
         }
         .hidden {
@@ -211,13 +211,13 @@
                 <div class="course-row">
                     <input type="text" placeholder="Course (e.g. CHM 101)" class="course-code">
                     <select class="course-grade">
-                        <option value="">Grade</option>
-                        <option value="5">A (70-100)</option>
-                        <option value="4">B (60-69)</option>
-                        <option value="3">C (50-59)</option>
-                        <option value="2">D (45-49)</option>
-                        <option value="1">E (40-44)</option>
-                        <option value="0">F (0-39)</option>
+                        <option value="">Points</option>
+                        <option value="5">5 (70-100)</option>
+                        <option value="4">4 (60-69)</option>
+                        <option value="3">3 (50-59)</option>
+                        <option value="2">2 (45-49)</option>
+                        <option value="1">1 (40-44)</option>
+                        <option value="0">0 (0-39)</option>
                     </select>
                     <input type="number" placeholder="Units" class="course-units" min="1" max="6">
                     <button class="remove-btn" onclick="removeCourse(this)">×</button>
@@ -236,12 +236,12 @@
         <div class="card">
             <h3>LASU Grading System</h3>
             <div class="grade-legend">
-                <div class="grade-item"><span class="grade">A</span><span class="points">70-100 = 5.0</span></div>
-                <div class="grade-item"><span class="grade">B</span><span class="points">60-69 = 4.0</span></div>
-                <div class="grade-item"><span class="grade">C</span><span class="points">50-59 = 3.0</span></div>
-                <div class="grade-item"><span class="grade">D</span><span class="points">45-49 = 2.0</span></div>
-                <div class="grade-item"><span class="grade">E</span><span class="points">40-44 = 1.0</span></div>
-                <div class="grade-item"><span class="grade">F</span><span class="points">0-39 = 0.0</span></div>
+                <div class="grade-item"><span class="points">5</span><span class="range">70-100</span></div>
+                <div class="grade-item"><span class="points">4</span><span class="range">60-69</span></div>
+                <div class="grade-item"><span class="points">3</span><span class="range">50-59</span></div>
+                <div class="grade-item"><span class="points">2</span><span class="range">45-49</span></div>
+                <div class="grade-item"><span class="points">1</span><span class="range">40-44</span></div>
+                <div class="grade-item"><span class="points">0</span><span class="range">0-39</span></div>
             </div>
         </div>
     </div>
@@ -254,13 +254,13 @@
             newRow.innerHTML = `
                 <input type="text" placeholder="Course (e.g. CHM 101)" class="course-code">
                 <select class="course-grade">
-                    <option value="">Grade</option>
-                    <option value="5">A (70-100)</option>
-                    <option value="4">B (60-69)</option>
-                    <option value="3">C (50-59)</option>
-                    <option value="2">D (45-49)</option>
-                    <option value="1">E (40-44)</option>
-                    <option value="0">F (0-39)</option>
+                    <option value="">Points</option>
+                    <option value="5">5 (70-100)</option>
+                    <option value="4">4 (60-69)</option>
+                    <option value="3">3 (50-59)</option>
+                    <option value="2">2 (45-49)</option>
+                    <option value="1">1 (40-44)</option>
+                    <option value="0">0 (0-39)</option>
                 </select>
                 <input type="number" placeholder="Units" class="course-units" min="1" max="6">
                 <button class="remove-btn" onclick="removeCourse(this)">×</button>`;
@@ -279,7 +279,7 @@
             const rows = document.querySelectorAll('#gpa-courses .course-row');
             let totalPoints = 0, totalUnits = 0;
             let validEntries = 0;
-            
+
             rows.forEach(row => {
                 const grade = parseFloat(row.querySelector('.course-grade').value);
                 const units = parseFloat(row.querySelector('.course-units').value);
@@ -304,14 +304,14 @@
 
             const gpa = totalUnits > 0 ? (totalPoints / totalUnits) : 0;
             valueEl.textContent = gpa.toFixed(2);
-            
+
             let classification = '';
             if (gpa >= 4.50) classification = 'First Class Honours 🏆';
             else if (gpa >= 3.50) classification = 'Second Class Upper 🥇';
             else if (gpa >= 2.40) classification = 'Second Class Lower';
             else if (gpa >= 1.50) classification = 'Third Class';
             else classification = 'Pass';
-            
+
             messageEl.innerHTML = `Total Units: ${totalUnits} | ${classification}`;
             messageEl.className = 'message success';
             resultBox.classList.remove('hidden');
