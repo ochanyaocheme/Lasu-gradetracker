@@ -11,43 +11,45 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0a192f;
-            color: #e6f1ff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0d1b2a;
+            color: #ffffff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding: 20px;
         }
-        /* Logo Section */
-        .logo-container {
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px 20px 20px;
+            width: 100%;
+            flex: 1;
+        }
+        .logo-section {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
-        .logo-container img {
-            width: 150px;
-            height: auto;
+        .logo {
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
-            border: 3px solid #f4a261;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 3px solid #e6a17c;
         }
-        /* Title Section */
-        .title-section {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .title-section h1 {
-            font-size: 42px;
+        .title {
+            font-size: 2.8rem;
             font-weight: 700;
-            color: #f4a261;
-            margin-bottom: 5px;
+            color: #e6a17c;
+            margin-bottom: 8px;
+            line-height: 1.1;
         }
-        .title-section h1 span {
-            color: #e6f1ff;
+        .title .white {
+            color: #ffffff;
         }
         .tagline {
-            font-size: 18px;
-            color: #8892b0;
+            font-size: 1rem;
+            color: #e6a17c;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -57,177 +59,168 @@
         .tagline::before,
         .tagline::after {
             content: '';
-            width: 40px;
+            width: 60px;
             height: 1px;
-            background-color: #f4a261;
+            background-color: #e6a17c;
         }
-        /* Buttons */
-        .button-container {
-            width: 100%;
-            max-width: 400px;
+        .menu-grid {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin-bottom: 30px;
+            gap: 16px;
+            margin: 35px 0;
         }
-        .btn {
+        .menu-btn {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 18px 25px;
-            border-radius: 16px;
+            padding: 22px 24px;
+            border-radius: 18px;
             text-decoration: none;
-            color: #0a192f;
-            font-size: 18px;
+            color: #ffffff;
             font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
+            font-size: 1.15rem;
+            transition: transform 0.2s;
         }
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(244, 162, 97, 0.3);
+        .menu-btn:active {
+            transform: scale(0.98);
         }
-        .btn-green {
-            background-color: #2a9d8f;
-            color: white;
+        .menu-btn .icon {
+            font-size: 1.8rem;
+            margin-right: 18px;
+            width: 40px;
+            text-align: center;
         }
-        .btn-gold {
-            background-color: #f4a261;
-            color: #0a192f;
-        }
-        .btn-coral {
-            background-color: #e07a5f;
-            color: white;
-        }
-        .btn-icon {
-            font-size: 24px;
-        }
-        .btn-text {
-            flex-grow: 1;
-            text-align: left;
-            margin-left: 15px;
-        }
-        .btn-arrow {
-            font-size: 20px;
-        }
-        /* Stats Card */
-        .stats-card {
-            background-color: #112240;
-            border-radius: 16px;
-            padding: 20px 30px;
+        .menu-btn .arrow-circle {
+            margin-left: auto;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 40px;
-            width: 100%;
-            max-width: 400px;
+            justify-content: center;
+            font-size: 1.2rem;
         }
-        .stats-icon {
-            font-size: 30px;
+        .btn-cgpa {
+            background-color: #1b998b;
         }
-        .stats-number {
-            font-size: 36px;
-            font-weight: 700;
-            color: #f4a261;
+        .btn-lounge {
+            background-color: #e9a319;
+            color: #0d1b2a;
         }
-        .stats-label {
-            font-size: 14px;
-            color: #8892b0;
+        .btn-lounge .arrow-circle {
+            background-color: rgba(0,0,0,0.15);
+            color: #0d1b2a;
         }
-        /* Footer */
-        .footer {
-            text-align: center;
-            margin-top: auto;
-            padding-bottom: 30px;
+        .btn-corner {
+            background-color: #e85d4e;
         }
-        .gate-watermark {
-            width: 100%;
-            max-width: 500px;
-            opacity: 0.08;
+        .community-section {
+            background-color: #162236;
+            border-radius: 18px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
             margin-bottom: 20px;
         }
-        .footer-text {
-            font-size: 14px;
-            color: #8892b0;
-            line-height: 2;
+        .community-icon {
+            font-size: 2rem;
         }
-        .footer-text .founder {
-            color: #e6f1ff;
+        .community-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #e6a17c;
         }
-        .footer-text .heart {
-            color: #e63946;
+        .footer {
+            text-align: center;
+            padding: 30px 15px 25px;
+            background-color: #0d1b2a;
+            position: relative;
+            overflow: hidden;
         }
-        .footer-text .mission {
-            color: #f4a261;
+        .gate-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 85%;
+            object-fit: cover;
+            object-position: center bottom;
+            opacity: 0.08;
+            z-index: 0;
+        }
+        .footer-content {
+            position: relative;
+            z-index: 1;
+        }
+        .founder {
+            font-size: 0.8rem;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+        .built-with {
+            font-size: 0.75rem;
+            color: #8899b0;
+            margin-bottom: 8px;
+        }
+        .built-with span {
+            color: #e85d4e;
+        }
+        .mission {
+            font-size: 0.8rem;
+            color: #e6a17c;
+            letter-spacing: 3px;
             font-weight: 600;
-            letter-spacing: 2px;
-            margin-top: 10px;
+            margin-bottom: 8px;
         }
-        /* Responsive */
-        @media (max-width: 480px) {
-            .title-section h1 {
-                font-size: 32px;
-            }
-            
-            .btn {
-                padding: 16px 20px;
-                font-size: 16px;
-            }
+        .est {
+            font-size: 0.7rem;
+            color: #8899b0;
+            letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
-    <!-- Logo -->
-    <div class="logo-container">
-        <img src="your-logo.png" alt="LASU GradeTracker Logo">
-    </div>
-    <!-- Title -->
-    <div class="title-section">
-        <h1>LASU <span>GradeTracker</span></h1>
-        <div class="tagline">Your Campus, Online</div>
-    </div>
-    <!-- Buttons -->
-    <div class="button-container">
-        <a href="cgpa-calculator.html" class="btn btn-green">
-            <span class="btn-icon">📊</span>
-            <span class="btn-text">Calculate My CGPA</span>
-            <span class="btn-arrow">›</span>
-        </a>
-        <a href="lounge.html" class="btn btn-gold">
-            <span class="btn-icon">🚪</span>
-            <span class="btn-text">Enter Lounge</span>
-            <span class="btn-arrow">›</span>
-        </a>
-        <a href="ochanya-corner.html" class="btn btn-coral">
-            <span class="btn-icon">💬</span>
-            <span class="btn-text">Ochanya's Corner</span>
-            <span class="btn-arrow">›</span>
-        </a>
-    </div>
-    <!-- Stats -->
-    <div class="stats-card">
-        <span class="stats-icon">👥</span>
-        <div>
-            <div class="stats-number">247</div>
-            <div class="stats-label">LASUites here now</div>
+    <div class="container">
+        <div class="logo-section">
+            <img src="your-logo.png" alt="LASU GradeTracker Logo" class="logo">
+            <h1 class="title">LASU<br><span class="white">GradeTracker</span></h1>
+            <p class="tagline">Your Campus, Online</p>
+        </div>
+
+        <div class="menu-grid">
+            <a href="calculator.html" class="menu-btn btn-cgpa">
+                <span class="icon">📊</span>
+                <span>Calculate My CGPA</span>
+                <span class="arrow-circle">›</span>
+            </a>
+            <a href="lounge.html" class="menu-btn btn-lounge">
+                <span class="icon">🚪</span>
+                <span>Enter Lounge</span>
+                <span class="arrow-circle">›</span>
+            </a>
+            <a href="ochanyas-corner.html" class="menu-btn btn-corner">
+                <span class="icon">💬</span>
+                <span>Ochanya's Corner</span>
+                <span class="arrow-circle">›</span>
+            </a>
+        </div>
+
+        <div class="community-section">
+            <span class="community-icon">👥</span>
+            <span class="community-text">Join the community</span>
         </div>
     </div>
-    <!-- Footer -->
+
     <div class="footer">
-        <img src="lasu-gate.png" alt="LASU Gate" class="gate-watermark">
-        
-        <div class="footer-text">
-            <div class="founder">
-                Founded by Ocheme Faith Ochanya • Chemistry • LASU
-            </div>
-            <div>
-                Built with <span class="heart">♥️</span> by a LASUite, for LASUites
-            </div>
-            <div class="mission">
-                CONNECT • LEARN • SUCCEED
-            </div>
+        <img src="lasu-gate.png" alt="LASU Gate" class="gate-bg">
+        <div class="footer-content">
+            <div class="founder">Founded by Ocheme Faith Ochanya • Chemistry • LASU</div>
+            <div class="built-with">Built with <span>♥️</span> by a LASUite, for LASUites</div>
+            <div class="mission">CONNECT • LEARN • SUCCEED</div>
+            <div class="est">Est. 2026</div>
         </div>
     </div>
 </body>
-  </html> 
+</html>
