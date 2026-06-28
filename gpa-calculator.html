@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPA Calculator - LASU GradeTracker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0d1b2a;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 40px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-top: 10px;
+        }
+        .back-btn {
+            display: inline-block;
+            color: #e9a319;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .header h1 {
+            color: #e9a319;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        .header p {
+            color: #8899b0;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        .card {
+            background-color: #162236;
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 15px;
+        }
+        .card h3 {
+            color: #e9a319;
+            margin-bottom: 18px;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .card p {
+            color: #8899b0;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .input-group {
+            margin-bottom: 14px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: #8899b0;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #233554;
+            border-radius: 10px;
+            background-color: #0d1b2a;
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .input-group input:focus, .input-group select:focus {
+            border-color: #e9a319;
+        }
+        .course-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .course-row input, .course-row select {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #233554;
+            border-radius: 8px;
+            background-color: #0d1b2a;
+            color: #ffffff;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .course-row input:focus, .course-row select:focus {
+            border-color: #e9a319;
+        }
+        .course-row input.course-code {
+            flex: 1.5;
+        }
+        .course-row .remove-btn {
+            background-color: #e85d4e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        .btn-primary {
+            background-color: #1b998b;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #e9a319;
+            color: #0d1b2a;
+        }
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .result-box {
+            background-color: #0d1b2a;
+            border: 2px solid #1b998b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 18px;
+            text-align: center;
+        }
+        .result-box h4 {
+            color: #e9a319;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        .result-box .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1b998b;
+        }
+        .result-box .label {
+            font-size: 0.85rem;
+            color: #8899b0;
+            margin-top: 5px;
+        }
+        .grade-legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .grade-item {
+            background-color: #0d1b2a;
+            padding: 10px 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            align-items: center;
+        }
+        .grade-item .grade {
+            font-weight: 700;
+            color: #e9a319;
+            font-size: 0.9rem;
+        }
+        .grade-item .points {
+            color: #8899b0;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .message {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+        .error { color: #e85d4e; }
+        .success { color: #1b998b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="cgpa-calculator.html" class="back-btn">← Back</a>
+            <h1>🧮 GPA Calculator</h1>
+            <p>Calculate your semester GPA</p>
+        </div>
+
+        <div class="card">
+            <h3>Add Your Courses</h3>
+            <p>Enter your courses, grades, and units for this semester</p>
+            <div id="gpa-courses">
+                <div class="course-row">
+                    <input type="text" placeholder="Course (e.g. CHM 101)" class="course-code">
+                    <select class="course-grade">
+                        <option value="">Grade</option>
+                        <option value="5">A (70-100)</option>
+                        <option value="4">B (60-69)</option>
+                        <option value="3">C (50-59)</option>
+                        <option value="2">D (45-49)</option>
+                        <option value="1">E (40-44)</option>
+                        <option value="0">F (0-39)</option>
+                    </select>
+                    <input type="number" placeholder="Units" class="course-units" min="1" max="6">
+                    <button class="remove-btn" onclick="removeCourse(this)">×</button>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="addCourse()">+ Add Course</button>
+            <button class="btn btn-primary" onclick="calculateGPA()">Calculate GPA</button>
+            <div id="gpa-result" class="result-box hidden">
+                <h4>Your Semester GPA</h4>
+                <div class="value" id="gpa-value">0.00</div>
+                <div class="label">out of 5.0</div>
+                <div class="message" id="gpa-message"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>LASU Grading System</h3>
+            <div class="grade-legend">
+                <div class="grade-item"><span class="grade">A</span><span class="points">70-100 = 5.0</span></div>
+                <div class="grade-item"><span class="grade">B</span><span class="points">60-69 = 4.0</span></div>
+                <div class="grade-item"><span class="grade">C</span><span class="points">50-59 = 3.0</span></div>
+                <div class="grade-item"><span class="grade">D</span><span class="points">45-49 = 2.0</span></div>
+                <div class="grade-item"><span class="grade">E</span><span class="points">40-44 = 1.0</span></div>
+                <div class="grade-item"><span class="grade">F</span><span class="points">0-39 = 0.0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addCourse() {
+            const container = document.getElementById('gpa-courses');
+            const newRow = document.createElement('div');
+            newRow.className = 'course-row';
+            newRow.innerHTML = `
+                <input type="text" placeholder="Course (e.g. CHM 101)" class="course-code">
+                <select class="course-grade">
+                    <option value="">Grade</option>
+                    <option value="5">A (70-100)</option>
+                    <option value="4">B (60-69)</option>
+                    <option value="3">C (50-59)</option>
+                    <option value="2">D (45-49)</option>
+                    <option value="1">E (40-44)</option>
+                    <option value="0">F (0-39)</option>
+                </select>
+                <input type="number" placeholder="Units" class="course-units" min="1" max="6">
+                <button class="remove-btn" onclick="removeCourse(this)">×</button>`;
+            container.appendChild(newRow);
+        }
+
+        function removeCourse(btn) {
+            const row = btn.parentElement;
+            const container = row.parentElement;
+            if (container.querySelectorAll('.course-row').length > 1) {
+                row.remove();
+            }
+        }
+
+        function calculateGPA() {
+            const rows = document.querySelectorAll('#gpa-courses .course-row');
+            let totalPoints = 0, totalUnits = 0;
+            let validEntries = 0;
+            
+            rows.forEach(row => {
+                const grade = parseFloat(row.querySelector('.course-grade').value);
+                const units = parseFloat(row.querySelector('.course-units').value);
+                if (!isNaN(grade) && !isNaN(units) && units > 0) {
+                    totalPoints += grade * units;
+                    totalUnits += units;
+                    validEntries++;
+                }
+            });
+
+            const resultBox = document.getElementById('gpa-result');
+            const valueEl = document.getElementById('gpa-value');
+            const messageEl = document.getElementById('gpa-message');
+
+            if (validEntries === 0) {
+                messageEl.textContent = 'Please enter at least one course with grade and units.';
+                messageEl.className = 'message error';
+                resultBox.classList.remove('hidden');
+                valueEl.textContent = '0.00';
+                return;
+            }
+
+            const gpa = totalUnits > 0 ? (totalPoints / totalUnits) : 0;
+            valueEl.textContent = gpa.toFixed(2);
+            
+            let classification = '';
+            if (gpa >= 4.50) classification = 'First Class Honours 🏆';
+            else if (gpa >= 3.50) classification = 'Second Class Upper 🥇';
+            else if (gpa >= 2.40) classification = 'Second Class Lower';
+            else if (gpa >= 1.50) classification = 'Third Class';
+            else classification = 'Pass';
+            
+            messageEl.innerHTML = `Total Units: ${totalUnits} | ${classification}`;
+            messageEl.className = 'message success';
+            resultBox.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
