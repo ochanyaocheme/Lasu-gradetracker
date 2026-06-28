@@ -201,13 +201,13 @@
                 <div class="course-row">
                     <input type="text" placeholder="Course code" class="plan-code">
                     <select class="plan-grade">
-                        <option value="">Expected Grade</option>
-                        <option value="5">A</option>
-                        <option value="4">B</option>
-                        <option value="3">C</option>
-                        <option value="2">D</option>
-                        <option value="1">E</option>
-                        <option value="0">F</option>
+                        <option value="">Points</option>
+                        <option value="5">5 (70-100)</option>
+                        <option value="4">4 (60-69)</option>
+                        <option value="3">3 (50-59)</option>
+                        <option value="2">2 (45-49)</option>
+                        <option value="1">1 (40-44)</option>
+                        <option value="0">0 (0-39)</option>
                     </select>
                     <input type="number" placeholder="Units" class="plan-units" min="1" max="6">
                     <button class="remove-btn" onclick="removeCourse(this)">×</button>
@@ -231,13 +231,13 @@
             newRow.innerHTML = `
                 <input type="text" placeholder="Course code" class="plan-code">
                 <select class="plan-grade">
-                    <option value="">Expected Grade</option>
-                    <option value="5">A</option>
-                    <option value="4">B</option>
-                    <option value="3">C</option>
-                    <option value="2">D</option>
-                    <option value="1">E</option>
-                    <option value="0">F</option>
+                    <option value="">Points</option>
+                    <option value="5">5 (70-100)</option>
+                    <option value="4">4 (60-69)</option>
+                    <option value="3">3 (50-59)</option>
+                    <option value="2">2 (45-49)</option>
+                    <option value="1">1 (40-44)</option>
+                    <option value="0">0 (0-39)</option>
                 </select>
                 <input type="number" placeholder="Units" class="plan-units" min="1" max="6">
                 <button class="remove-btn" onclick="removeCourse(this)">×</button>`;
@@ -255,11 +255,11 @@
         function calculatePlanner() {
             const currentCGPA = parseFloat(document.getElementById('planner-current-cgpa').value);
             const currentUnits = parseFloat(document.getElementById('planner-current-units').value);
-            
+
             const rows = document.querySelectorAll('#planner-courses .course-row');
             let semPoints = 0, semUnits = 0;
             let validEntries = 0;
-            
+
             rows.forEach(row => {
                 const grade = parseFloat(row.querySelector('.plan-grade').value);
                 const units = parseFloat(row.querySelector('.plan-units').value);
