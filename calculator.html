@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGPA Calculator - LASU GradeTracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0d1b2a;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-top: 10px;
+        }
+        .back-btn {
+            display: inline-block;
+            color: #e9a319;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .header h1 {
+            color: #e9a319;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        .header p {
+            color: #8899b0;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        .tool-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .tool-card {
+            background-color: #162236;
+            border-radius: 16px;
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .tool-card:hover {
+            border-color: #e9a319;
+            transform: translateY(-2px);
+        }
+        .tool-card.active {
+            border-color: #e9a319;
+            background-color: #1a2d4a;
+        }
+        .tool-card .icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        .tool-card .label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .tool-card .sublabel {
+            font-size: 0.7rem;
+            color: #8899b0;
+            margin-top: 3px;
+        }
+        .tool-section {
+            display: none;
+        }
+        .tool-section.active {
+            display: block;
+        }
+        .card {
+            background-color: #162236;
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 15px;
+        }
+        .card h3 {
+            color: #e9a319;
+            margin-bottom: 18px;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .card p {
+            color: #8899b0;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+        .input-group {
+            margin-bottom: 14px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: #8899b0;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #233554;
+            border-radius: 10px;
+            background-color: #0d1b2a;
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .input-group input:focus, .input-group select:focus {
+            border-color: #e9a319;
+        }
+        .course-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .course-row input, .course-row select {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #233554;
+            border-radius: 8px;
+            background-color: #0d1b2a;
+            color: #ffffff;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .course-row input:focus, .course-row select:focus {
+            border-color: #e9a319;
+        }
+        .course-row .remove-btn {
+            background-color: #e85d4e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        .btn-primary {
+            background-color: #1b998b;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #e9a319;
+            color: #0d1b2a;
+        }
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .result-box {
+            background-color: #0d1b2a;
+            border: 2px solid #1b998b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 18px;
+            text-align: center;
+        }
+        .result-box h4 {
+            color: #e9a319;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        .result-box .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1b998b;
+        }
+        .result-box .label {
+            font-size: 0.85rem;
+            color: #8899b0;
+            margin-top: 5px;
+        }
+        .grade-legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .grade-item {
+            background-color: #0d1b2a;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+        }
+        .grade-item .grade {
+            font-weight: 700;
+            color: #e9a319;
+        }
+        .grade-item .points {
+            color: #8899b0;
+        }
+        .semester-list {
+            margin-top: 15px;
+        }
+        .semester-item {
+            background-color: #0d1b2a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .semester-item .sem-label {
+            font-size: 0.85rem;
+            color: #8899b0;
+        }
+        .semester-item .gpa {
+            font-weight: 700;
+            color: #1b998b;
+        }
+        .hidden {
+            display: none;
+        }
+        .message {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-btn">← Back to Home</a>
+            <h1>📊 CGPA Calculator</h1>
+            <p>Choose a tool to get started</p>
+        </div>
+
+        <div class="tool-selector">
+            <div class="tool-card active" onclick="showTool('gpa')">
+                <div class="icon">🧮</div>
+                <div class="label">GPA Calculator</div>
+                <div class="sublabel">One semester</div>
+            </div>
+            <div class="tool-card" onclick="showTool('cgpa')">
+                <div class="icon">📈</div>
+                <div class="label">CGPA Calculator</div>
+                <div class="sublabel">Cumulative</div>
+            </div>
+            <div class="tool-card" onclick="showTool('target')">
+                <div class="icon">🎯</div>
+                <div class="label">Target Predictor</div>
+                <div class="sublabel">What you need</div>
+            </div>
+            <div class="tool-card" onclick="showTool('planner')">
+                <div class="icon">📅</div>
+                <div class="label">Semester Planner</div>
+                <div class="sublabel">Plan ahead</div>
+            </div>
+        </div>
+
+        <!-- GPA Calculator -->
+        <div id="gpa" class="tool-section active">
+            <div class="card">
+                <h3>Calculate Your Semester GPA</h3>
+                <p>Add your courses, grades, and units for this semester</p>
+                <div id="gpa-courses">
+                    <div class="course-row">
+                        <input type="text" placeholder="Course (e.g. CHM 101)" class="course-code">
+                        <select class="course-grade">
+                            <option value="">Grade</option>
+                            <option value="5">A (70-100)</option>
+                            <option value="4">B (60-69)</option>
+                            <option value="3">C (50-59)</option>
+                            <option value="2">D (45-49)</option>
+                            <option value="1">E (40-44)</option>
+                            <option value="0">F (0-39)</option>
+                        </select>
+                        <input type="number" placeholder="Units" class="course-units" min="1" max="6">
+                        <button class="remove-btn" onclick="removeCourse(this)">×</button>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="addCourse('gpa-courses')">+ Add Course</button>
+                <button class="btn btn-primary" onclick="calculateGPA()">Calculate GPA</button>
+                <div id="gpa-result" class="result-box hidden">
+                    <h4>Your Semester GPA</h4>
+                    <div class="value" id="gpa-value">0.00</div>
+                    <div class="label">out of 5.0</div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>LASU Grading System</h3>
+                <div class="grade-legend">
+                    <div class="grade-item"><span class="grade">A</span><span class="points">70-100 = 5.0</span></div>
+                    <div class="grade-item"><span class="grade">B</span><span class="points">60-69 = 4.0</span></div>
+                    <div class="grade-item"><span class="grade">C</span><span class="points">50-59 = 3.0</span></div>
+                    <div class="grade-item"><span class="grade">D</span><span class="points">45-49 = 2.0</span></div>
+                    <div class="grade-item"><span class="grade">E</span><span class="points">40-44 = 1.0</span></div>
+                    <div class="grade-item"><span class="grade">F</span><span class="points">0-39 = 0.0</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CGPA Calculator -->
+        <div id="cgpa" class="tool-section">
+            <div class="card">
+                <h3>Calculate Your CGPA</h3>
+                <p>Add all your past semesters to get your cumulative GPA</p>
+                <div id="semesters">
+                    <div class="input-group">
+                        <label>Semester 1 GPA</label>
+                        <input type="number" step="0.01" min="0" max="5" class="sem-gpa" placeholder="e.g. 4.25">
+                    </div>
+                    <div class="input-group">
+                        <label>Semester 1 Total Units</label>
+                        <input type="number" class="sem-units" placeholder="e.g. 24">
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="addSemester()">+ Add Another Semester</button>
+                <button class="btn btn-primary" onclick="calculateCGPA()">Calculate CGPA</button>
+                <div id="cgpa-result" class="result-box hidden">
+                    <h4>Your CGPA</h4>
+                    <div class="value" id="cgpa-value">0.00</div>
+                    <div class="label">Cumulative Grade Point Average</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Target Grade Predictor -->
+        <div id="target" class="tool-section">
+            <div class="card">
+                <h3>Target Grade Predictor</h3>
+                <p>"What grades do I need to reach my target CGPA?"</p>
+                <div class="input-group">
+                    <label>Current CGPA</label>
+                    <input type="number" step="0.01" min="0" max="5" id="current-cgpa" placeholder="e.g. 3.50">
+                </div>
+                <div class="input-group">
+                    <label>Total Units Completed</label>
+                    <input type="number" id="completed-units" placeholder="e.g. 60">
+                </div>
+                <div class="input-group">
+                    <label>Target CGPA</label>
+                    <input type="number" step="0.01" min="0" max="5" id="target-cgpa" placeholder="e.g. 4.00">
+                </div>
+                <div class="input-group">
+                    <label>Remaining Units This Semester</label>
+                    <input type="number" id="remaining-units" placeholder="e.g. 24">
+                </div>
+                <button class="btn btn-primary" onclick="predictTarget()">Calculate Required GPA</button>
+                <div id="target-result" class="result-box hidden">
+                    <h4>Required GPA This Semester</h4>
+                    <div class="value" id="target-value">0.00</div>
+                    <div class="label message" id="target-message"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Semester Planner -->
+        <div id="planner" class="tool-section">
+            <div class="card">
+                <h3>Semester Planner</h3>
+                <p>Plan your courses and see your projected CGPA</p>
+                <div class="input-group">
+                    <label>Current CGPA (optional)</label>
+                    <input type="number" step="0.01" min="0" max="5" id="planner-current-cgpa" placeholder="Leave blank if first semester">
+                </div>
+                <div class="input-group">
+                    <label>Current Total Units (optional)</label>
+                    <input type="number" id="planner-current-units" placeholder="Leave blank if first semester">
+                </div>
+                <div id="planner-courses">
+                    <div class="course-row">
+                        <input type="text" placeholder="Course code" class="plan-code">
+                        <select class="plan-grade">
+                            <option value="">Expected Grade</option>
+                            <option value="5">A</option>
+                            <option value="4">B</option>
+                            <option value="3">C</option>
+                            <option value="2">D</option>
+                            <option value="1">E</option>
+                            <option value="0">F</option>
+                        </select>
+                        <input type="number" placeholder="Units" class="plan-units" min="1" max="6">
+                        <button class="remove-btn" onclick="removeCourse(this)">×</button>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="addCourse('planner-courses')">+ Add Course</button>
+                <button class="btn btn-primary" onclick="calculatePlanner()">Project My CGPA</button>
+                <div id="planner-result" class="result-box hidden">
+                    <h4>Projected CGPA</h4>
+                    <div class="value" id="planner-value">0.00</div>
+                    <div class="label message" id="planner-message"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTool(toolId) {
+            document.querySelectorAll('.tool-section').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tool-card').forEach(t => t.classList.remove('active'));
+            document.getElementById(toolId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function addCourse(containerId) {
+            const container = document.getElementById(containerId);
+            const newRow = document.createElement('div');
+            newRow.className = 'course-row';
+            newRow.innerHTML = containerId === 'planner-courses' 
+                ? `<input type="text" placeholder="Course code" class="plan-code">
+                   <select class="plan-grade">
+                       <option value="">Expected Grade</option>
+                       <option value="5">A</option>
+                       <option value="4">B</option>
+                       <option value="3">C</option>
+                       <option value="2">D</option>
+                       <option value="1">E</option>
+                       <option value="0">F</option>
+                   </select>
+                   <input type="number" placeholder="Units" class="plan-units" min="1" max="6">
+                   <button class="remove-btn" onclick="removeCourse(this)">×</button>`
+                : `<input type="text" placeholder="Course (e.g. CHM 101)" class="course-code">
+                   <select class="course-grade">
+                       <option value="">Grade</option>
+                       <option value="5">A (70-100)</option>
+                       <option value="4">B (60-69)</option>
+                       <option value="3">C (50-59)</option>
+                       <option value="2">D (45-49)</option>
+                       <option value="1">E (40-44)</option>
+                       <option value="0">F (0-39)</option>
+                   </select>
+                   <input type="number" placeholder="Units" class="course-units" min="1" max="6">
+                   <button class="remove-btn" onclick="removeCourse(this)">×</button>`;
+            container.appendChild(newRow);
+        }
+
+        function removeCourse(btn) {
+            btn.parentElement.remove();
+        }
+
+        function calculateGPA() {
+            const rows = document.querySelectorAll('#gpa-courses .course-row');
+            let totalPoints = 0, totalUnits = 0;
+
+            rows.forEach(row => {
+                const grade = parseFloat(row.querySelector('.course-grade').value);
+                const units = parseFloat(row.querySelector('.course-units').value);
+                if (grade && units) {
+                    totalPoints += grade * units;
+                    totalUnits += units;
+                }
+            });
+
+            const gpa = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : '0.00';
+            document.getElementById('gpa-value').textContent = gpa;
+            document.getElementById('gpa-result').classList.remove('hidden');
+        }
+
+        let semesterCount = 1;
+        function addSemester() {
+            semesterCount++;
+            const container = document.getElementById('semesters');
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <div class="input-group">
+                    <label>Semester ${semesterCount} GPA</label>
+                    <input type="number" step="0.01" min="0" max="5" class="sem-gpa" placeholder="e.g. 4.25">
+                </div>
+                <div class="input-group">
+                    <label>Semester ${semesterCount} Total Units</label>
+                    <input type="number" class="sem-units" placeholder="e.g. 24">
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function calculateCGPA() {
+            const gpas = document.querySelectorAll('.sem-gpa');
+            const units = document.querySelectorAll('.sem-units');
+            let totalPoints = 0, totalUnits = 0;
+
+            for (let i = 0; i < gpas.length; i++) {
+                const gpa = parseFloat(gpas[i].value);
+                const unit = parseFloat(units[i].value);
+                if (gpa && unit) {
+                    totalPoints += gpa * unit;
+                    totalUnits += unit;
+                }
+            }
+
+            const cgpa = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : '0.00';
+            document.getElementById('cgpa-value').textContent = cgpa;
+            document.getElementById('cgpa-result').classList.remove('hidden');
+        }
+
+        function predictTarget() {
+            const currentCGPA = parseFloat(document.getElementById('current-cgpa').value);
+            const completedUnits = parseFloat(document.getElementById('completed-units').value);
+            const targetCGPA = parseFloat(document.getElementById('target-cgpa').value);
+            const remainingUnits = parseFloat(document.getElementById('remaining-units').value);
+
+            if (!currentCGPA || !completedUnits || !targetCGPA || !remainingUnits) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const totalUnits = completedUnits + remainingUnits;
+            const requiredTotalPoints = targetCGPA * totalUnits;
+            const currentPoints = currentCGPA * completedUnits;
+            const neededPoints = requiredTotalPoints - currentPoints;
+            const neededGPA = (neededPoints / remainingUnits).toFixed(2);
+
+            document.getElementById('target-value').textContent = neededGPA;
+
+            let message = '';
+            let color = '';
+            if (neededGPA > 5.0) {
+                message = 'This target may not be achievable. Consider a lower target.';
+                color = '#e85d4e';
+            } else if (neededGPA > 4.5) {
+                message = 'You need excellent grades. Aim for mostly As!';
+                color = '#e9a319';
+            } else if (neededGPA > 3.5) {
+                message = 'Achievable with good effort. Aim for Bs and above!';
+                color = '#1b998b';
+            } else {
+                message = 'Very achievable! You can do this!';
+                color = '#1b998b';
+            }
+            const msgEl = document.getElementById('target-message');
+            msgEl.textContent = message;
+            msgEl.style.color = color;
+            document.getElementById('target-result').classList.remove('hidden');
+        }
+
+        function calculatePlanner() {
+            const rows = document.querySelectorAll('#planner-courses .course-row');
+            let projectedPoints = 0, projectedUnits = 0;
+
+            rows.forEach(row => {
+                const grade = parseFloat(row.querySelector('.plan-grade').value);
+                const units = parseFloat(row.querySelector('.plan-units').value);
+                if (grade && units) {
+                    projectedPoints += grade * units;
+                    projectedUnits += units;
+                }
+            });
+
+            const currentCGPA = parseFloat(document.getElementById('planner-current-cgpa').value) || 0;
+            const currentUnits = parseFloat(document.getElementById('planner-current-units').value) || 0;
+
+            const totalPoints = (currentCGPA * currentUnits) + projectedPoints;
+            const totalUnits = currentUnits + projectedUnits;
+            const projectedCGPA = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : '0.00';
+
+            document.getElementById('planner-value').textContent = projectedCGPA;
+
+            let message = '';
+            if (currentCGPA > 0) {
+                const diff = (projectedCGPA - currentCGPA).toFixed(2);
+                if (diff > 0) {
+                    message = `Your CGPA will increase by ${diff} points! 🎉`;
+                } else if (diff < 0) {
+                    message = `Your CGPA will decrease by ${Math.abs(diff)} points.`;
+                } else {
+                    message = 'Your CGPA will remain the same.';
+                }
+            } else {
+                message = 'This will be your starting CGPA!';
+            }
+            document.getElementById('planner-message').textContent = message;
+            document.getElementById('planner-result').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
