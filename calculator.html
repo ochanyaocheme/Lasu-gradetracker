@@ -23,7 +23,7 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             padding-top: 10px;
         }
         .back-btn {
@@ -44,212 +44,60 @@
             font-size: 0.85rem;
             margin-top: 5px;
         }
-        .tool-selector {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 25px;
+        .tool-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        .tool-card {
-            background-color: #162236;
+        .tool-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
             border-radius: 16px;
-            padding: 20px 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 2px solid transparent;
+            text-decoration: none;
+            color: #ffffff;
+            transition: transform 0.2s;
         }
-        .tool-card:hover {
-            border-color: #e9a319;
+        .tool-item:hover {
             transform: translateY(-2px);
         }
-        .tool-card.active {
-            border-color: #e9a319;
-            background-color: #1a2d4a;
-        }
-        .tool-card .icon {
+        .tool-item .icon {
             font-size: 2rem;
-            margin-bottom: 8px;
+            margin-right: 18px;
+            width: 45px;
+            text-align: center;
         }
-        .tool-card .label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #ffffff;
+        .tool-item .info {
+            flex: 1;
         }
-        .tool-card .sublabel {
-            font-size: 0.7rem;
-            color: #8899b0;
-            margin-top: 3px;
-        }
-        .tool-section {
-            display: none;
-        }
-        .tool-section.active {
-            display: block;
-        }
-        .card {
-            background-color: #162236;
-            border-radius: 16px;
-            padding: 22px;
-            margin-bottom: 15px;
-        }
-        .card h3 {
-            color: #e9a319;
-            margin-bottom: 18px;
+        .tool-item .label {
             font-size: 1.1rem;
             font-weight: 700;
+            margin-bottom: 3px;
         }
-        .card p {
-            color: #8899b0;
-            font-size: 0.85rem;
-            margin-bottom: 15px;
-        }
-        .input-group {
-            margin-bottom: 14px;
-        }
-        .input-group label {
-            display: block;
+        .tool-item .sublabel {
             font-size: 0.8rem;
-            color: #8899b0;
-            margin-bottom: 6px;
-            font-weight: 500;
+            color: rgba(255,255,255,0.7);
         }
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #233554;
-            border-radius: 10px;
-            background-color: #0d1b2a;
-            color: #ffffff;
-            font-size: 0.9rem;
-            outline: none;
+        .tool-item .arrow {
+            font-size: 1.3rem;
+            margin-left: 10px;
         }
-        .input-group input:focus, .input-group select:focus {
-            border-color: #e9a319;
-        }
-        .course-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-        .course-row input, .course-row select {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #233554;
-            border-radius: 8px;
-            background-color: #0d1b2a;
-            color: #ffffff;
-            font-size: 0.85rem;
-            outline: none;
-        }
-        .course-row input:focus, .course-row select:focus {
-            border-color: #e9a319;
-        }
-        .course-row .remove-btn {
-            background-color: #e85d4e;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 10px 12px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 8px;
-        }
-        .btn-primary {
+        .tool-gpa {
             background-color: #1b998b;
-            color: white;
         }
-        .btn-secondary {
+        .tool-cgpa {
             background-color: #e9a319;
             color: #0d1b2a;
         }
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+        .tool-cgpa .sublabel {
+            color: rgba(13, 27, 42, 0.7);
         }
-        .result-box {
-            background-color: #0d1b2a;
-            border: 2px solid #1b998b;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 18px;
-            text-align: center;
+        .tool-target {
+            background-color: #e85d4e;
         }
-        .result-box h4 {
-            color: #e9a319;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-        .result-box .value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #1b998b;
-        }
-        .result-box .label {
-            font-size: 0.85rem;
-            color: #8899b0;
-            margin-top: 5px;
-        }
-        .grade-legend {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-top: 15px;
-        }
-        .grade-item {
-            background-color: #0d1b2a;
-            padding: 10px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-        }
-        .grade-item .grade {
-            font-weight: 700;
-            color: #e9a319;
-        }
-        .grade-item .points {
-            color: #8899b0;
-        }
-        .semester-list {
-            margin-top: 15px;
-        }
-        .semester-item {
-            background-color: #0d1b2a;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .semester-item .sem-label {
-            font-size: 0.85rem;
-            color: #8899b0;
-        }
-        .semester-item .gpa {
-            font-weight: 700;
-            color: #1b998b;
-        }
-        .hidden {
-            display: none;
-        }
-        .message {
-            font-size: 0.85rem;
-            margin-top: 8px;
-            font-weight: 500;
+        .tool-planner {
+            background-color: #2a5298;
         }
     </style>
 </head>
@@ -261,63 +109,43 @@
             <p>Choose a tool to get started</p>
         </div>
 
-        <div class="tool-selector">
-            <div class="tool-card active" id="card-gpa">
-                <div class="icon">🧮</div>
-                <div class="label">GPA Calculator</div>
-                <div class="sublabel">One semester</div>
-            </div>
-            <div class="tool-card" id="card-cgpa">
-                <div class="icon">📈</div>
-                <div class="label">CGPA Calculator</div>
-                <div class="sublabel">Cumulative</div>
-            </div>
-            <div class="tool-card" id="card-target">
-                <div class="icon">🎯</div>
-                <div class="label">Target Predictor</div>
-                <div class="sublabel">What you need</div>
-            </div>
-            <div class="tool-card" id="card-planner">
-                <div class="icon">📅</div>
-                <div class="label">Semester Planner</div>
-                <div class="sublabel">Plan ahead</div>
-            </div>
+        <div class="tool-list">
+            <a href="gpa-calculator.html" class="tool-item tool-gpa">
+                <span class="icon">🧮</span>
+                <div class="info">
+                    <div class="label">GPA Calculator</div>
+                    <div class="sublabel">Calculate one semester GPA</div>
+                </div>
+                <span class="arrow">›</span>
+            </a>
+            <a href="cgpa-calculator.html" class="tool-item tool-cgpa">
+                <span class="icon">📈</span>
+                <div class="info">
+                    <div class="label">CGPA Calculator</div>
+                    <div class="sublabel">Calculate cumulative GPA</div>
+                </div>
+                <span class="arrow">›</span>
+            </a>
+            <a href="target-predictor.html" class="tool-item tool-target">
+                <span class="icon">🎯</span>
+                <div class="info">
+                    <div class="label">Target Grade Predictor</div>
+                    <div class="sublabel">What grades do you need?</div>
+                </div>
+                <span class="arrow">›</span>
+            </a>
+            <a href="semester-planner.html" class="tool-item tool-planner">
+                <span class="icon">📅</span>
+                <div class="info">
+                    <div class="label">Semester Planner</div>
+                    <div class="sublabel">Plan ahead and project CGPA</div>
+                </div>
+                <span class="arrow">›</span>
+            </a>
         </div>
-
-        <!-- GPA Calculator -->
-        <div id="gpa" class="tool-section active">
-            <div class="card">
-                <h3>Calculate Your Semester GPA</h3>
-                <p>Add your courses, grades, and units for this semester</p>
-                <div id="gpa-courses">
-                    <div class="course-row">
-                        <input type="text" placeholder="Course (e.g. CHM 101)" class="course-code">
-                        <select class="course-grade">
-                            <option value="">Points</option>
-                            <option value="5">5 Points (70-100)</option>
-                            <option value="4">4 Points (60-69)</option>
-                            <option value="3">3 Points (50-59)</option>
-                            <option value="2">2 Points (45-49)</option>
-                            <option value="1">1 Point (40-44)</option>
-                            <option value="0">0 Points (0-39)</option>
-                        </select>
-                        <input type="number" placeholder="Units" class="course-units" min="1" max="6">
-                        <button class="remove-btn" onclick="removeCourse(this)">×</button>
-                    </div>
-                </div>
-                <button class="btn btn-secondary" onclick="addCourse('gpa-courses')">+ Add Course</button>
-                <button class="btn btn-primary" onclick="calculateGPA()">Calculate GPA</button>
-                <div id="gpa-result" class="result-box hidden">
-                    <h4>Your Semester GPA</h4>
-                    <div class="value" id="gpa-value">0.00</div>
-                    <div class="label">out of 5.0</div>
-                </div>
-            </div>
-            <div class="card">
-                <h3>LASU Grading System</h3>
-                <div class="grade-legend">
-                    <div class="grade-item"><span class="grade">A</span><span class="points">70-100 = 5.0</span></div>
-                    <div class="grade-item"><span class="grade">B</span><span class="points">60-69 = 4.0</span></div>
+    </div>
+</body>
+</html>               <div class="grade-item"><span class="grade">B</span><span class="points">60-69 = 4.0</span></div>
                     <div class="grade-item"><span class="grade">C</span><span class="points">50-59 = 3.0</span></div>
                     <div class="grade-item"><span class="grade">D</span><span class="points">45-49 = 2.0</span></div>
                     <div class="grade-item"><span class="grade">E</span><span class="points">40-44 = 1.0</span></div>
