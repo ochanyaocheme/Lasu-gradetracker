@@ -199,7 +199,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <a href="cgpa-calculator.html" class="back-btn">← Back</a>
+            <a href="calculator.html" class="back-btn">← Back</a>
             <h1>🧮 GPA Calculator</h1>
             <p>Calculate your semester GPA</p>
         </div>
@@ -279,7 +279,7 @@
             const rows = document.querySelectorAll('#gpa-courses .course-row');
             let totalPoints = 0, totalUnits = 0;
             let validEntries = 0;
-
+            
             rows.forEach(row => {
                 const grade = parseFloat(row.querySelector('.course-grade').value);
                 const units = parseFloat(row.querySelector('.course-units').value);
@@ -304,14 +304,14 @@
 
             const gpa = totalUnits > 0 ? (totalPoints / totalUnits) : 0;
             valueEl.textContent = gpa.toFixed(2);
-
+            
             let classification = '';
             if (gpa >= 4.50) classification = 'First Class Honours 🏆';
             else if (gpa >= 3.50) classification = 'Second Class Upper 🥇';
             else if (gpa >= 2.40) classification = 'Second Class Lower';
             else if (gpa >= 1.50) classification = 'Third Class';
             else classification = 'Pass';
-
+            
             messageEl.innerHTML = `Total Units: ${totalUnits} | ${classification}`;
             messageEl.className = 'message success';
             resultBox.classList.remove('hidden');
