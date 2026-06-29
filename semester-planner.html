@@ -176,7 +176,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <a href="cgpa-calculator.html" class="back-btn">← Back</a>
+            <a href="calculator.html" class="back-btn">← Back</a>
             <h1>📅 Semester Planner</h1>
             <p>Plan your courses and project your CGPA</p>
         </div>
@@ -255,11 +255,11 @@
         function calculatePlanner() {
             const currentCGPA = parseFloat(document.getElementById('planner-current-cgpa').value);
             const currentUnits = parseFloat(document.getElementById('planner-current-units').value);
-
+            
             const rows = document.querySelectorAll('#planner-courses .course-row');
             let semPoints = 0, semUnits = 0;
             let validEntries = 0;
-
+            
             rows.forEach(row => {
                 const grade = parseFloat(row.querySelector('.plan-grade').value);
                 const units = parseFloat(row.querySelector('.plan-units').value);
@@ -314,4 +314,5 @@
         }
     </script>
 </body>
-</html>
+        </html>
+    
