@@ -134,6 +134,14 @@
             background-color: #e9a319;
             color: #0d1b2a;
         }
+        .btn-whatsapp {
+            background-color: #25d366;
+            color: white;
+        }
+        .btn-copy {
+            background-color: #2a5298;
+            color: white;
+        }
         .btn:hover {
             opacity: 0.9;
             transform: translateY(-1px);
@@ -160,6 +168,39 @@
             font-size: 0.85rem;
             color: #8899b0;
             margin-top: 5px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .action-buttons .btn {
+            flex: 1;
+            margin-top: 0;
+            padding: 10px;
+            font-size: 0.8rem;
+        }
+        .prediction-box {
+            background-color: #1a2d4a;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+        }
+        .prediction-box h5 {
+            color: #e9a319;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        .prediction-box p {
+            color: #8899b0;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .prediction-box .highlight {
+            color: #1b998b;
+            font-weight: 700;
         }
         .grade-legend {
             display: grid;
@@ -194,6 +235,26 @@
         }
         .error { color: #e85d4e; }
         .success { color: #1b998b; }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1b998b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 1000;
+            animation: fadeInOut 3s ease;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        }
     </style>
 </head>
 <body>
@@ -219,17 +280,28 @@
                         <option value="1">1 (40-44)</option>
                         <option value="0">0 (0-39)</option>
                     </select>
-                    <input type="number" placeholder="Units" class="course-units" min="1" max="6">
+                    <input type="number" placeholder="Units" class="course-units" min="1" max="26">
                     <button class="remove-btn" onclick="removeCourse(this)">×</button>
                 </div>
             </div>
             <button class="btn btn-secondary" onclick="addCourse()">+ Add Course</button>
             <button class="btn btn-primary" onclick="calculateGPA()">Calculate GPA</button>
+
             <div id="gpa-result" class="result-box hidden">
                 <h4>Your Semester GPA</h4>
                 <div class="value" id="gpa-value">0.00</div>
                 <div class="label">out of 5.0</div>
                 <div class="message" id="gpa-message"></div>
+
+                <div class="prediction-box hidden" id="prediction-box">
+                    <h5>📈 Prediction</h5>
+                    <p id="prediction-text"></p>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-copy" onclick="copyResult()">📋 Copy</button>
+                    <button class="btn btn-whatsapp" onclick="shareWhatsApp()">💬 WhatsApp</button>
+                </div>
             </div>
         </div>
 
@@ -247,6 +319,9 @@
     </div>
 
     <script>
+        let currentGPA = 0;
+        let currentTotalUnits = 0;
+
         function addCourse() {
             const container = document.getElementById('gpa-courses');
             const newRow = document.createElement('div');
@@ -262,7 +337,7 @@
                     <option value="1">1 (40-44)</option>
                     <option value="0">0 (0-39)</option>
                 </select>
-                <input type="number" placeholder="Units" class="course-units" min="1" max="6">
+                <input type="number" placeholder="Units" class="course-units" min="1" max="26">
                 <button class="remove-btn" onclick="removeCourse(this)">×</button>`;
             container.appendChild(newRow);
         }
@@ -279,7 +354,7 @@
             const rows = document.querySelectorAll('#gpa-courses .course-row');
             let totalPoints = 0, totalUnits = 0;
             let validEntries = 0;
-            
+
             rows.forEach(row => {
                 const grade = parseFloat(row.querySelector('.course-grade').value);
                 const units = parseFloat(row.querySelector('.course-units').value);
@@ -293,28 +368,88 @@
             const resultBox = document.getElementById('gpa-result');
             const valueEl = document.getElementById('gpa-value');
             const messageEl = document.getElementById('gpa-message');
+            const predictionBox = document.getElementById('prediction-box');
+            const predictionText = document.getElementById('prediction-text');
 
             if (validEntries === 0) {
                 messageEl.textContent = 'Please enter at least one course with grade and units.';
                 messageEl.className = 'message error';
                 resultBox.classList.remove('hidden');
+                predictionBox.classList.add('hidden');
                 valueEl.textContent = '0.00';
                 return;
             }
 
             const gpa = totalUnits > 0 ? (totalPoints / totalUnits) : 0;
+            currentGPA = gpa;
+            currentTotalUnits = totalUnits;
             valueEl.textContent = gpa.toFixed(2);
-            
+
             let classification = '';
             if (gpa >= 4.50) classification = 'First Class Honours 🏆';
             else if (gpa >= 3.50) classification = 'Second Class Upper 🥇';
             else if (gpa >= 2.40) classification = 'Second Class Lower';
             else if (gpa >= 1.50) classification = 'Third Class';
             else classification = 'Pass';
-            
+
             messageEl.innerHTML = `Total Units: ${totalUnits} | ${classification}`;
             messageEl.className = 'message success';
+
+            // Prediction
+            let targetCGPA = 3.5;
+            if (gpa >= 4.5) targetCGPA = 4.8;
+            else if (gpa >= 3.5) targetCGPA = 4.5;
+            else if (gpa >= 2.4) targetCGPA = 3.5;
+            else targetCGPA = 2.4;
+
+            let neededGPA = ((targetCGPA * (totalUnits + 24)) - (gpa * totalUnits)) / 24;
+            if (neededGPA > 5.0) neededGPA = 5.0;
+            if (neededGPA < 0) neededGPA = 0;
+
+            let nextClass = '';
+            if (gpa < 4.5) nextClass = 'First Class';
+            else if (gpa < 3.5) nextClass = '2:1 (Second Class Upper)';
+            else if (gpa < 2.4) nextClass = '2:2 (Second Class Lower)';
+            else nextClass = 'a higher CGPA';
+
+            predictionText.innerHTML = `To reach <span class="highlight">${nextClass}</span> next semester, you need at least <span class="highlight">${neededGPA.toFixed(2)} GPA</span> in your next 24 units.`;
+            predictionBox.classList.remove('hidden');
+
             resultBox.classList.remove('hidden');
+        }
+
+        function copyResult() {
+            const gpa = document.getElementById('gpa-value').textContent;
+            const message = document.getElementById('gpa-message').textContent;
+            const text = `My LASU Semester GPA: ${gpa}/5.0
+${message}
+
+Calculated with LASU GradeTracker 📊`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Result copied to clipboard!');
+            }).catch(() => {
+                showToast('Failed to copy. Try again.');
+            });
+        }
+
+        function shareWhatsApp() {
+            const gpa = document.getElementById('gpa-value').textContent;
+            const message = document.getElementById('gpa-message').textContent;
+            const text = `My LASU Semester GPA: ${gpa}/5.0
+${message}
+
+Calculated with LASU GradeTracker 📊`;
+            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
     </script>
 </body>
