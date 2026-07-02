@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LASU GradeTracker - Your Campus, Online</title>
+    <title>LASU GradeTracker</title>
     <style>
         * {
             margin: 0;
@@ -15,212 +15,215 @@
             background-color: #0d1b2a;
             color: #ffffff;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
         .container {
             max-width: 500px;
             margin: 0 auto;
-            padding: 40px 20px 20px;
-            width: 100%;
-            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
         }
         .logo-section {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
         .logo {
-            width: 140px;
-            height: 140px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            overflow: hidden;
+        }
+        .logo img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            margin-bottom: 20px;
-            border: 3px solid #e9a319;
         }
-        .title {
-            font-size: 2.8rem;
-            font-weight: 700;
+        .logo-text {
+            font-size: 3rem;
+            font-weight: 900;
             color: #e9a319;
-            margin-bottom: 8px;
-            line-height: 1.1;
+            letter-spacing: 2px;
         }
-        .title .white {
+        .logo-text span {
             color: #ffffff;
         }
         .tagline {
-            font-size: 1rem;
             color: #e9a319;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .tagline-line {
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 15px;
-            margin-top: 10px;
+            margin-top: 15px;
         }
-        .tagline::before,
-        .tagline::after {
-            content: '';
-            width: 60px;
+        .tagline-line .line {
+            flex: 1;
             height: 1px;
             background-color: #e9a319;
+            opacity: 0.5;
         }
-        .menu-grid {
+        .tagline-line span {
+            color: #e9a319;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .menu-list {
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            margin: 35px 0;
+            gap: 15px;
+            margin-bottom: 30px;
         }
-        .menu-btn {
+        .menu-item {
             display: flex;
             align-items: center;
-            padding: 22px 24px;
-            border-radius: 18px;
+            padding: 22px 20px;
+            border-radius: 20px;
             text-decoration: none;
             color: #ffffff;
+            transition: all 0.2s;
+            font-size: 1.1rem;
             font-weight: 600;
-            font-size: 1.15rem;
-            transition: transform 0.2s;
         }
-        .menu-btn:active {
-            transform: scale(0.98);
+        .menu-item:hover {
+            transform: translateY(-2px);
+            opacity: 0.95;
         }
-        .menu-btn .icon {
-            font-size: 1.8rem;
+        .menu-item .icon {
+            font-size: 2rem;
             margin-right: 18px;
-            width: 40px;
+            width: 45px;
             text-align: center;
         }
-        .menu-btn .arrow-circle {
-            margin-left: auto;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
+        .menu-item .text {
+            flex: 1;
         }
-        .btn-cgpa {
+        .menu-item .arrow {
+            font-size: 1.5rem;
+            opacity: 0.7;
+        }
+        .menu-cgpa {
             background-color: #1b998b;
         }
-        .btn-lounge {
+        .menu-lounge {
             background-color: #e9a319;
             color: #0d1b2a;
         }
-        .btn-lounge .arrow-circle {
-            background-color: rgba(0,0,0,0.15);
+        .menu-lounge .arrow {
             color: #0d1b2a;
         }
-        .btn-corner {
+        .menu-corner {
             background-color: #e85d4e;
         }
-        .community-section {
+        .community-box {
+            width: 100%;
             background-color: #162236;
-            border-radius: 18px;
-            padding: 20px;
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+            margin-bottom: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            border: 2px solid transparent;
         }
-        .community-icon {
-            font-size: 2rem;
+        .community-box:hover {
+            border-color: #e9a319;
+            transform: translateY(-2px);
         }
-        .community-text {
-            font-size: 1.1rem;
-            font-weight: 700;
+        .community-box .icon {
+            font-size: 1.5rem;
+        }
+        .community-box span {
             color: #e9a319;
+            font-weight: 600;
+            font-size: 0.95rem;
         }
         .footer {
             text-align: center;
-            padding: 30px 15px 25px;
-            background-color: #0d1b2a;
-            position: relative;
-            overflow: hidden;
-        }
-        .gate-bg {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120%;
-            height: 65%;
-            object-fit: cover;
-            object-position: center 60%;
-            opacity: 0.18;
-            z-index: 0;
-        }
-        .footer-content {
-            position: relative;
-            z-index: 1;
-        }
-        .founder {
-            font-size: 0.8rem;
-            color: #ffffff;
-            margin-bottom: 8px;
-        }
-        .built-with {
-            font-size: 0.75rem;
             color: #8899b0;
-            margin-bottom: 8px;
+            font-size: 0.8rem;
+            line-height: 1.8;
         }
-        .built-with span {
+        .footer .founder {
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+        .footer .heart {
             color: #e85d4e;
         }
-        .mission {
-            font-size: 0.8rem;
+        .footer .motto {
             color: #e9a319;
+            font-weight: 700;
             letter-spacing: 3px;
-            font-weight: 600;
-            margin-bottom: 8px;
+            margin-top: 8px;
+            font-size: 0.85rem;
         }
-        .est {
-            font-size: 0.7rem;
-            color: #8899b0;
-            letter-spacing: 2px;
+        .footer .est {
+            color: #4a5d7a;
+            margin-top: 5px;
+            font-size: 0.75rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="logo-section">
-            <img src="your-logo.png" alt="LASU GradeTracker Logo" class="logo">
-            <h1 class="title">LASU<br><span class="white">GradeTracker</span></h1>
-            <p class="tagline">Your Campus, Online</p>
+            <div class="logo">
+                <img src="your-logo.png" alt="LASU GradeTracker Logo">
+            </div>
+            <div class="logo-text">LASU<br><span>GradeTracker</span></div>
+            <div class="tagline-line">
+                <div class="line"></div>
+                <span>Your Campus, Online</span>
+                <div class="line"></div>
+            </div>
         </div>
 
-        <div class="menu-grid">
-            <a href="calculator.html" class="menu-btn btn-cgpa">
+        <div class="menu-list">
+            <a href="calculator.html" class="menu-item menu-cgpa">
                 <span class="icon">📊</span>
-                <span>Calculate My CGPA</span>
-                <span class="arrow-circle">›</span>
+                <span class="text">Calculate My CGPA</span>
+                <span class="arrow">›</span>
             </a>
-            <a href="lounge.html" class="menu-btn btn-lounge">
-                <span class="icon">🚪</span>
-                <span>Enter Lounge</span>
-                <span class="arrow-circle">›</span>
-            </a>
-            <a href="ochanyas-corner.html" class="menu-btn btn-corner">
+            <a href="lounge.html" class="menu-item menu-lounge">
                 <span class="icon">💬</span>
-                <span>Ochanya's Corner</span>
-                <span class="arrow-circle">›</span>
+                <span class="text">LASU Lounge</span>
+                <span class="arrow">›</span>
+            </a>
+            <a href="ochanya-corner.html" class="menu-item menu-corner">
+                <span class="icon">📝</span>
+                <span class="text">Ochanya's Corner</span>
+                <span class="arrow">›</span>
             </a>
         </div>
 
-        <div class="community-section">
-            <span class="community-icon">👥</span>
-            <span class="community-text">Join the community</span>
-        </div>
-    </div>
+        <a href="signup.html" class="community-box">
+            <span class="icon">👥</span>
+            <span>Join the Community</span>
+        </a>
 
-    <div class="footer">
-        <div class="footer-content">
-            <div class="founder">Founded by Ocheme Faith Ochanya • Chemistry • LASU</div>
-            <div class="built-with">Built with <span>♥️</span> by a LASUite, for LASUites</div>
-            <div class="mission">CONNECT • LEARN • SUCCEED</div>
+        <div class="footer">
+            <div class="founder">Founded by Ochene Faith Ochanya · Chemistry · LASU</div>
+            <div>Built with <span class="heart">❤</span> by a LASUite, for LASUites</div>
+            <div class="motto">CONNECT · LEARN · SUCCEED</div>
             <div class="est">Est. 2026</div>
         </div>
     </div>
 </body>
-        </html>
+</html>
