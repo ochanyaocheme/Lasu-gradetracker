@@ -4,226 +4,280 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LASU GradeTracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #0d1b2a;
-            color: #ffffff;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #0f172a;
+            color: #fff;
             min-height: 100vh;
-        }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            padding: 20px 16px;
         }
-        .logo-section {
-            text-align: center;
-            margin-bottom: 40px;
+        .logo-container {
+            margin-top: 20px;
+            margin-bottom: 8px;
         }
-        .logo {
-            width: 150px;
-            height: 150px;
+        .logo-container img {
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            overflow: hidden;
-        }
-        .logo img {
-            width: 100%;
-            height: 100%;
             object-fit: cover;
+            border: 3px solid #f59e0b;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
         }
-        .logo-text {
-            font-size: 3rem;
-            font-weight: 900;
-            color: #e9a319;
+        .brand-title {
+            font-size: 42px;
+            font-weight: 800;
+            color: #f59e0b;
             letter-spacing: 2px;
+            margin-top: 4px;
         }
-        .logo-text span {
-            color: #ffffff;
+        .brand-subtitle {
+            font-size: 36px;
+            font-weight: 700;
+            color: #fff;
+            margin-top: -8px;
         }
         .tagline {
-            color: #e9a319;
-            font-size: 0.9rem;
-            margin-top: 10px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+            margin-bottom: 32px;
         }
         .tagline-line {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 15px;
+            width: 60px;
+            height: 2px;
+            background: #f59e0b;
         }
-        .tagline-line .line {
-            flex: 1;
-            height: 1px;
-            background-color: #e9a319;
-            opacity: 0.5;
+        .tagline-text {
+            font-size: 16px;
+            color: #f59e0b;
+            font-weight: 500;
+            letter-spacing: 1px;
         }
-        .tagline-line span {
-            color: #e9a319;
-            font-size: 0.85rem;
-            white-space: nowrap;
-        }
-        .menu-list {
+        .menu-grid {
             width: 100%;
+            max-width: 400px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin-bottom: 30px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
-        .menu-item {
+        .menu-card {
             display: flex;
             align-items: center;
-            padding: 22px 20px;
+            gap: 16px;
+            padding: 20px 24px;
             border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
             text-decoration: none;
-            color: #ffffff;
-            transition: all 0.2s;
-            font-size: 1.1rem;
-            font-weight: 600;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
         }
-        .menu-item:hover {
-            transform: translateY(-2px);
-            opacity: 0.95;
+        .menu-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        .menu-item .icon {
-            font-size: 2rem;
-            margin-right: 18px;
-            width: 45px;
-            text-align: center;
+        .menu-card:active { transform: translateY(0); }
+        .card-cgpa {
+            background: #14b8a6;
         }
-        .menu-item .text {
-            flex: 1;
-        }
-        .menu-item .arrow {
-            font-size: 1.5rem;
-            opacity: 0.7;
-        }
-        .menu-cgpa {
-            background-color: #1b998b;
-        }
-        .menu-lounge {
-            background-color: #e9a319;
-            color: #0d1b2a;
-        }
-        .menu-lounge .arrow {
-            color: #0d1b2a;
-        }
-        .menu-corner {
-            background-color: #e85d4e;
-        }
-        .community-box {
-            width: 100%;
-            background-color: #162236;
-            border-radius: 16px;
-            padding: 18px;
-            text-align: center;
-            margin-bottom: 30px;
+        .card-cgpa::after {
+            content: '›';
+            position: absolute;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            font-size: 24px;
+            font-weight: 300;
+            transition: all 0.3s ease;
+        }
+        .card-cgpa:hover::after {
+            background: rgba(255,255,255,0.35);
+            transform: translateX(4px);
+        }
+        .card-lounge {
+            background: #f59e0b;
+            color: #1a1a2e;
+        }
+        .card-lounge::after {
+            content: '›';
+            position: absolute;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.15);
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 300;
+            transition: all 0.3s ease;
+        }
+        .card-lounge:hover::after {
+            background: rgba(0,0,0,0.25);
+            transform: translateX(4px);
+        }
+        .card-corner {
+            background: #ef4444;
+        }
+        .card-corner::after {
+            content: '›';
+            position: absolute;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 300;
+            transition: all 0.3s ease;
+        }
+        .card-corner:hover::after {
+            background: rgba(255,255,255,0.35);
+            transform: translateX(4px);
+        }
+        .card-icon {
+            font-size: 32px;
+            width: 48px;
+            text-align: center;
+        }
+        .card-content { flex: 1; }
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            display: block;
+        }
+        .join-section {
+            width: 100%;
+            max-width: 400px;
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             text-decoration: none;
+            margin-bottom: 40px;
             border: 2px solid transparent;
         }
-        .community-box:hover {
-            border-color: #e9a319;
-            transform: translateY(-2px);
+        .join-section:hover {
+            border-color: #f59e0b;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
         }
-        .community-box .icon {
-            font-size: 1.5rem;
-        }
-        .community-box span {
-            color: #e9a319;
+        .join-icon { font-size: 32px; }
+        .join-text {
+            font-size: 18px;
             font-weight: 600;
-            font-size: 0.95rem;
+            color: #f59e0b;
+        }
+        .join-arrow {
+            margin-left: auto;
+            font-size: 20px;
+            color: #f59e0b;
+            transition: transform 0.3s ease;
+        }
+        .join-section:hover .join-arrow {
+            transform: translateX(4px);
         }
         .footer {
             text-align: center;
-            color: #8899b0;
-            font-size: 0.8rem;
-            line-height: 1.8;
+            margin-top: auto;
+            padding-bottom: 20px;
         }
-        .footer .founder {
-            color: #ffffff;
-            margin-bottom: 5px;
+        .footer-founder {
+            font-size: 15px;
+            color: #e2e8f0;
+            margin-bottom: 6px;
         }
-        .footer .heart {
-            color: #e85d4e;
+        .footer-tagline {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 12px;
         }
-        .footer .motto {
-            color: #e9a319;
+        .footer-motto {
+            font-size: 16px;
             font-weight: 700;
-            letter-spacing: 3px;
-            margin-top: 8px;
-            font-size: 0.85rem;
+            color: #f59e0b;
+            letter-spacing: 4px;
+            margin-bottom: 8px;
         }
-        .footer .est {
-            color: #4a5d7a;
-            margin-top: 5px;
-            font-size: 0.75rem;
+        .footer-year {
+            font-size: 14px;
+            color: #64748b;
+            letter-spacing: 2px;
+        }
+        .heart { color: #ef4444; }
+        @media (max-width: 480px) {
+            .brand-title { font-size: 32px; }
+            .brand-subtitle { font-size: 28px; }
+            .menu-card { padding: 18px 20px; }
+            .card-title { font-size: 18px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo-section">
-            <div class="logo">
-                <img src="your-logo.png" alt="LASU GradeTracker Logo">
+    <div class="logo-container">
+        <img src="your-logo.png" alt="LASU GradeTracker Logo">
+    </div>
+    <div class="brand-title">LASU</div>
+    <div class="brand-subtitle">GradeTracker</div>
+    <div class="tagline">
+        <div class="tagline-line"></div>
+        <span class="tagline-text">Your Campus, Online</span>
+        <div class="tagline-line"></div>
+    </div>
+    <div class="menu-grid">
+        <a href="calculator.html" class="menu-card card-cgpa">
+            <span class="card-icon">📊</span>
+            <div class="card-content">
+                <span class="card-title">Calculate My CGPA</span>
             </div>
-            <div class="logo-text">LASU<br><span>GradeTracker</span></div>
-            <div class="tagline-line">
-                <div class="line"></div>
-                <span>Your Campus, Online</span>
-                <div class="line"></div>
-            </div>
-        </div>
-
-        <div class="menu-list">
-            <a href="calculator.html" class="menu-item menu-cgpa">
-                <span class="icon">📊</span>
-                <span class="text">Calculate My CGPA</span>
-                <span class="arrow">›</span>
-            </a>
-            <a href="lounge.html" class="menu-item menu-lounge">
-                <span class="icon">💬</span>
-                <span class="text">LASU Lounge</span>
-                <span class="arrow">›</span>
-            </a>
-            <a href="ochanya-corner.html" class="menu-item menu-corner">
-                <span class="icon">📝</span>
-                <span class="text">Ochanya's Corner</span>
-                <span class="arrow">›</span>
-            </a>
-        </div>
-
-        <a href="signup.html" class="community-box">
-            <span class="icon">👥</span>
-            <span>Join the Community</span>
         </a>
-
-        <div class="footer">
-            <div class="founder">Founded by Ochene Faith Ochanya · Chemistry · LASU</div>
-            <div>Built with <span class="heart">❤</span> by a LASUite, for LASUites</div>
-            <div class="motto">CONNECT · LEARN · SUCCEED</div>
-            <div class="est">Est. 2026</div>
-        </div>
+        <a href="lounge.html" class="menu-card card-lounge">
+            <span class="card-icon">🚪</span>
+            <div class="card-content">
+                <span class="card-title">LASU Lounge</span>
+            </div>
+        </a>
+        <a href="ochanyas-corner.html" class="menu-card card-corner">
+            <span class="card-icon">💬</span>
+            <div class="card-content">
+                <span class="card-title">Ochanya's Corner</span>
+            </div>
+        </a>
+    </div>
+    <a href="join-community.html" class="join-section" id="joinCommunityBtn">
+        <span class="join-icon">👥</span>
+        <span class="join-text">Join the community</span>
+        <span class="join-arrow">›</span>
+    </a>
+    <div class="footer">
+        <div class="footer-founder">Founded by Ochanya Faith Ochanya • Chemistry • LASU</div>
+        <div class="footer-tagline">Built with <span class="heart">♥️</span> by a LASUite, for LASUites</div>
+        <div class="footer-motto">CONNECT • LEARN • SUCCEED</div>
+        <div class="footer-year">Est. 2026</div>
     </div>
 </body>
 </html>
