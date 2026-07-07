@@ -754,4 +754,176 @@
             <a href="profile.html">Profile</a>
             <a href="join-community.html" class="btn-gold">Join Community</a>
         </div>
-    </na
+    </nav>
+
+    <!-- ===== EMOJI PICKER MODAL ===== -->
+    <div class="emoji-modal-overlay" id="emojiModal">
+        <div class="emoji-modal">
+            <button class="emoji-modal-close" onclick="closeEmojiModal()">✕</button>
+            <h3>😊 Pick a Reaction</h3>
+            <div class="emoji-grid">
+                <button onclick="selectEmoji('😭')">😭</button>
+                <button onclick="selectEmoji('😂')">😂</button>
+                <button onclick="selectEmoji('🥺')">🥺</button>
+                <button onclick="selectEmoji('😱')">😱</button>
+                <button onclick="selectEmoji('😡')">😡</button>
+                <button onclick="selectEmoji('🌚')">🌚</button>
+                <button onclick="selectEmoji('🔥')">🔥</button>
+                <button onclick="selectEmoji('🎉')">🎉</button>
+                <button onclick="selectEmoji('💯')">💯</button>
+                <button onclick="selectEmoji('🫂')">🫂</button>
+                <button onclick="selectEmoji('🙏')">🙏</button>
+                <button onclick="selectEmoji('👎')">👎</button>
+                <button onclick="selectEmoji('👍')">👍</button>
+                <button onclick="selectEmoji('❤️')">❤️</button>
+                <button onclick="selectEmoji('💡')">💡</button>
+                <button onclick="selectEmoji('🤯')">🤯</button>
+                <button onclick="selectEmoji('😢')">😢</button>
+                <button onclick="selectEmoji('🤩')">🤩</button>
+                <button onclick="selectEmoji('😤')">😤</button>
+                <button onclick="selectEmoji('🤔')">🤔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MAIN MENU ===== -->
+    <div id="mainMenu">
+        <div class="lounge-hero">
+            <a href="index.html" class="back-link">← Back to Home</a>
+            <h1>💬 LASU Lounge</h1>
+            <p>Choose a section to explore</p>
+        </div>
+
+        <div class="sections-container">
+            <!-- General Chat -->
+            <a href="general-chat.html" class="section-card card-general">
+                <div class="section-icon">🔥</div>
+                <div class="section-info">
+                    <div class="section-title">General Chat</div>
+                    <div class="section-desc">Chat with the whole community</div>
+                </div>
+                <div class="section-arrow">›</div>
+            </a>
+
+            <!-- Course Corners -->
+            <a href="course-corners.html" class="section-card card-courses">
+                <div class="section-icon">📚</div>
+                <div class="section-info">
+                    <div class="section-title">Course Corners</div>
+                    <div class="section-desc">Discuss courses & ask questions</div>
+                </div>
+                <div class="section-arrow">›</div>
+            </a>
+
+            <!-- Study Buddies -->
+            <a href="study-buddies.html" class="section-card card-buddies">
+                <div class="section-icon">👥</div>
+                <div class="section-info">
+                    <div class="section-title">Study Buddies</div>
+                    <div class="section-desc">Find study partners</div>
+                </div>
+                <div class="section-arrow">›</div>
+            </a>
+
+            <!-- LASU Confessions -->
+            <a href="confessions.html" class="section-card card-confessions">
+                <div class="section-icon">😂</div>
+                <div class="section-info">
+                    <div class="section-title">LASU Confessions</div>
+                    <div class="section-desc">Share anonymously</div>
+                </div>
+                <div class="section-arrow">›</div>
+            </a>
+
+            <!-- My Diary -->
+            <a href="my-diary.html" class="section-card card-diary">
+                <div class="section-icon">💜</div>
+                <div class="section-info">
+                    <div class="section-title">My Diary</div>
+                    <div class="section-desc">Private thoughts & mood tracker</div>
+                </div>
+                <div class="section-arrow">›</div>
+            </a>
+
+            <!-- Weekly Challenges -->
+            <a href="challenges.html" class="section-card card-challenges">
+                <div class="section-icon">🏆</div>
+                <div class="section-info">
+                    <div class="section-title">Weekly Challenges</div>
+                    <div class="section-desc">Compete & win badges</div>
+                </div>
+                <div class="section-arrow">›</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="footer-founder">
+            Founded by Ocheme Faith Ochanya • Chemistry • LASU
+        </div>
+        <div class="footer-tagline">
+            Built with <span class="heart">♥️</span> by a LASUite, for LASUites
+        </div>
+        <div class="footer-motto">
+            CONNECT • LEARN • SUCCEED
+        </div>
+        <div class="footer-year">
+            Est. 2026
+        </div>
+    </footer>
+
+    <script>
+        let currentReactionBtn = null;
+
+        function openEmojiModal(btn) {
+            currentReactionBtn = btn;
+            document.getElementById('emojiModal').classList.add('active');
+        }
+
+        function closeEmojiModal() {
+            document.getElementById('emojiModal').classList.remove('active');
+            currentReactionBtn = null;
+        }
+
+        function selectEmoji(emoji) {
+            if (currentReactionBtn) {
+                const postActions = currentReactionBtn.parentElement;
+                const existing = Array.from(postActions.querySelectorAll('.reaction-btn')).find(
+                    btn => btn.querySelector('.emoji').textContent === emoji
+                );
+                if (existing) {
+                    toggleReaction(existing);
+                } else {
+                    const newBtn = document.createElement('button');
+                    newBtn.className = 'reaction-btn active';
+                    newBtn.onclick = function() { toggleReaction(this); };
+                    newBtn.innerHTML = `<span class="emoji">${emoji}</span><span class="count\">1</span>`;
+                    postActions.insertBefore(newBtn, currentReactionBtn);
+                }
+            }
+            closeEmojiModal();
+        }
+
+        function toggleReaction(btn) {
+            btn.classList.toggle('active');
+            const countSpan = btn.querySelector('.count');
+            let count = parseInt(countSpan.textContent);
+            if (btn.classList.contains('active')) {
+                count++;
+            } else {
+                count--;
+            }
+            countSpan.textContent = count;
+        }
+
+        document.getElementById('emojiModal').addEventListener('click', function(e) {
+            if (e.target === this) closeEmojiModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeEmojiModal();
+        });
+    </script>
+</body>
+</html>
