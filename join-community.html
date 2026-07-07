@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join the Community - LASU GradeTracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
     <style>
         * {
             margin: 0;
@@ -15,20 +14,20 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #f0f4f8;
+            background: #0f172a;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* Navbar */
+        /* ===== NAVBAR ===== */
         .navbar {
             background: #1e3a5f;
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
 
         .navbar-brand {
@@ -41,8 +40,14 @@
             gap: 0.5rem;
         }
 
+        .navbar-brand img {
+            height: 40px;
+            width: auto;
+            display: block;
+        }
+
         .navbar-brand span {
-            color: #fbbf24;
+            color: #f59e0b;
         }
 
         .nav-links {
@@ -72,7 +77,7 @@
             background: rgba(255,255,255,0.1);
         }
 
-        /* Main Content */
+        /* ===== MAIN CONTENT ===== */
         .signup-container {
             flex: 1;
             display: flex;
@@ -82,24 +87,19 @@
         }
 
         .signup-card {
-            background: white;
+            background: #1e293b;
             border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             width: 100%;
             max-width: 480px;
             padding: 2.5rem;
             animation: slideUp 0.5s ease;
+            border: 1px solid #334155;
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .signup-header {
@@ -108,13 +108,13 @@
         }
 
         .signup-header h1 {
-            color: #1e3a5f;
+            color: #f59e0b;
             font-size: 1.8rem;
             margin-bottom: 0.5rem;
         }
 
         .signup-header p {
-            color: #64748b;
+            color: #94a3b8;
             font-size: 0.95rem;
         }
 
@@ -124,7 +124,7 @@
 
         .form-group label {
             display: block;
-            color: #374151;
+            color: #e2e8f0;
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 0.9rem;
@@ -139,20 +139,25 @@
         .form-group select {
             width: 100%;
             padding: 0.875rem 1rem;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #334155;
             border-radius: 10px;
             font-size: 1rem;
             font-family: inherit;
             transition: all 0.3s;
-            background: #fafbfc;
+            background: #0f172a;
+            color: #f1f5f9;
+        }
+
+        .form-group input::placeholder {
+            color: #64748b;
         }
 
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #1e3a5f;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(30,58,95,0.1);
+            border-color: #f59e0b;
+            background: #1e293b;
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
         }
 
         .form-row {
@@ -179,13 +184,19 @@
             color: #64748b;
             cursor: pointer;
             font-size: 1.1rem;
+            z-index: 10;
+            padding: 0.25rem;
+        }
+
+        .toggle-password:hover {
+            color: #f59e0b;
         }
 
         .password-strength {
             margin-top: 0.5rem;
             height: 4px;
             border-radius: 2px;
-            background: #e2e8f0;
+            background: #334155;
             overflow: hidden;
         }
 
@@ -203,7 +214,6 @@
         .strength-text {
             font-size: 0.75rem;
             margin-top: 0.25rem;
-            color: #64748b;
         }
 
         .terms {
@@ -217,18 +227,19 @@
             width: 1.2rem;
             height: 1.2rem;
             margin-top: 0.1rem;
-            accent-color: #1e3a5f;
+            accent-color: #f59e0b;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         .terms label {
-            color: #64748b;
+            color: #94a3b8;
             font-size: 0.875rem;
             line-height: 1.5;
         }
 
         .terms a {
-            color: #1e3a5f;
+            color: #f59e0b;
             text-decoration: none;
             font-weight: 600;
         }
@@ -240,22 +251,20 @@
         .btn-signup {
             width: 100%;
             padding: 1rem;
-            background: #1e3a5f;
-            color: white;
+            background: #f59e0b;
+            color: #0f172a;
             border: none;
             border-radius: 10px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
         }
 
         .btn-signup:hover {
-            background: #152a45;
+            background: #d97706;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(30,58,95,0.3);
+            box-shadow: 0 4px 12px rgba(245,158,11,0.3);
         }
 
         .btn-signup:active {
@@ -263,7 +272,8 @@
         }
 
         .btn-signup:disabled {
-            background: #94a3b8;
+            background: #475569;
+            color: #94a3b8;
             cursor: not-allowed;
             transform: none;
         }
@@ -272,7 +282,7 @@
             display: flex;
             align-items: center;
             margin: 1.5rem 0;
-            color: #94a3b8;
+            color: #64748b;
             font-size: 0.875rem;
         }
 
@@ -281,7 +291,7 @@
             content: '';
             flex: 1;
             height: 1px;
-            background: #e2e8f0;
+            background: #334155;
         }
 
         .divider span {
@@ -296,8 +306,8 @@
 
         .btn-social {
             padding: 0.75rem;
-            border: 2px solid #e2e8f0;
-            background: white;
+            border: 2px solid #334155;
+            background: #1e293b;
             border-radius: 10px;
             font-size: 0.9rem;
             font-weight: 500;
@@ -307,22 +317,23 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            color: #e2e8f0;
         }
 
         .btn-social:hover {
-            background: #f8fafc;
-            border-color: #cbd5e1;
+            background: #334155;
+            border-color: #475569;
         }
 
         .login-link {
             text-align: center;
             margin-top: 1.5rem;
-            color: #64748b;
+            color: #94a3b8;
             font-size: 0.9rem;
         }
 
         .login-link a {
-            color: #1e3a5f;
+            color: #f59e0b;
             text-decoration: none;
             font-weight: 600;
         }
@@ -331,40 +342,76 @@
             text-decoration: underline;
         }
 
-        /* Footer */
-        .footer {
-            background: #1e3a5f;
-            color: rgba(255,255,255,0.7);
+        /* Member Badge Preview */
+        .badge-preview {
+            background: #0f172a;
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1.5rem;
             text-align: center;
-            padding: 1.5rem;
-            font-size: 0.875rem;
         }
 
-        /* Responsive */
-        @media (max-width: 640px) {
-            .navbar {
-                padding: 1rem;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .signup-card {
-                padding: 1.5rem;
-                border-radius: 12px;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .social-signup {
-                grid-template-columns: 1fr;
-            }
+        .badge-preview h3 {
+            color: #f59e0b;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
         }
 
-        /* Success/Error Messages */
+        .member-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f59e0b;
+            color: #0f172a;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #0f172a;
+            color: white;
+            text-align: center;
+            padding: 2.5rem 1.5rem;
+            border-top: 1px solid #1e293b;
+        }
+
+        .footer-founder {
+            font-size: 1.15rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #f8fafc;
+        }
+
+        .footer-tagline {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+
+        .footer-tagline .heart {
+            color: #ef4444;
+        }
+
+        .footer-motto {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #f59e0b;
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-year {
+            font-size: 0.95rem;
+            color: #64748b;
+            letter-spacing: 0.1em;
+        }
+
+        /* ===== MESSAGES ===== */
         .message {
             padding: 0.875rem 1rem;
             border-radius: 8px;
@@ -386,13 +433,47 @@
             border: 1px solid #bbf7d0;
             display: block;
         }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 640px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .signup-card {
+                padding: 1.5rem;
+                border-radius: 12px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .social-signup {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-founder {
+                font-size: 1rem;
+            }
+
+            .footer-motto {
+                font-size: 0.9rem;
+                letter-spacing: 0.1em;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- ===== NAVBAR ===== -->
     <nav class="navbar">
         <a href="index.html" class="navbar-brand">
-            your-logo LASU<span>GradeTracker</span>
+            <img src="your-logo.png" alt="LASU GradeTracker Logo">
+            <span>GradeTracker</span>
         </a>
         <div class="nav-links">
             <a href="index.html">Calculator</a>
@@ -402,7 +483,7 @@
         </div>
     </nav>
 
-    <!-- Signup Form -->
+    <!-- ===== SIGNUP FORM ===== -->
     <div class="signup-container">
         <div class="signup-card">
             <div class="signup-header">
@@ -431,7 +512,7 @@
 
                 <div class="form-group">
                     <label for="email">Email Address <span class="required">*</span></label>
-                    <input type="email" id="email" name="email" placeholder="yourname@lasu.edu.ng" required>
+                    <input type="email" id="email" name="email" placeholder="yourname@gmail.com" required>
                 </div>
 
                 <div class="form-row">
@@ -469,7 +550,6 @@
                             <option value="300">300 Level</option>
                             <option value="400">400 Level</option>
                             <option value="500">500 Level</option>
-                            <option value="600">600 Level</option>
                         </select>
                     </div>
                 </div>
@@ -493,7 +573,7 @@
 
                 <div class="terms">
                     <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
-                    <label for="agreeTerms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>, and I confirm that I am a LASU student.</label>
+                    <label for="agreeTerms">I agree to the <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>, and I confirm that I am a LASU student.</label>
                 </div>
 
                 <button type="submit" class="btn-signup" id="submitBtn">
@@ -506,12 +586,21 @@
             </div>
 
             <div class="social-signup">
-                <button class="btn-social" type="button">
+                <button class="btn-social" type="button" onclick="showComingSoon('Google')">
                     🔍 Google
                 </button>
-                <button class="btn-social" type="button">
+                <button class="btn-social" type="button" onclick="showComingSoon('Microsoft')">
                     📧 Microsoft
                 </button>
+            </div>
+
+            <!-- Member Badge Preview -->
+            <div class="badge-preview">
+                <h3>🏅 Member Badge Preview</h3>
+                <div class="member-badge">
+                    ⭐ Member
+                </div>
+                <p style="color: #64748b; font-size: 0.8rem; margin-top: 0.5rem;">You'll get this badge on your profile!</p>
             </div>
 
             <div class="login-link">
@@ -520,9 +609,20 @@
         </div>
     </div>
 
-    <!-- Footer -->
+    <!-- ===== FOOTER ===== -->
     <footer class="footer">
-        <p>© 2026 LASU GradeTracker. Founded by Ocheme Faith Ochanya • Chemistry • LASU. Built with ♥️ by a LASUite for LASUites. 💙</p>
+        <div class="footer-founder">
+            Founded by Ocheme Faith Ochanya • Chemistry • LASU
+        </div>
+        <div class="footer-tagline">
+            Built with <span class="heart">♥️</span> by a LASUite, for LASUites
+        </div>
+        <div class="footer-motto">
+            CONNECT • LEARN • SUCCEED
+        </div>
+        <div class="footer-year">
+            Est. 2026
+        </div>
     </footer>
 
     <script>
@@ -553,62 +653,4 @@
             if (password.match(/[^a-zA-Z0-9]/)) strength++;
 
             strengthBar.className = 'password-strength-bar';
-            
-            if (password.length === 0) {
-                strengthBar.style.width = '0%';
-                strengthText.textContent = '';
-            } else if (strength <= 1) {
-                strengthBar.classList.add('strength-weak');
-                strengthText.textContent = 'Weak password';
-                strengthText.style.color = '#ef4444';
-            } else if (strength === 2 || strength === 3) {
-                strengthBar.classList.add('strength-medium');
-                strengthText.textContent = 'Medium strength';
-                strengthText.style.color = '#f59e0b';
-            } else {
-                strengthBar.classList.add('strength-strong');
-                strengthText.textContent = 'Strong password 💪';
-                strengthText.style.color = '#10b981';
-            }
-        });
-
-        // Form submission (frontend validation only for now)
-        document.getElementById('signupForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const messageDiv = document.getElementById('message');
-            const submitBtn = document.getElementById('submitBtn');
-
-            // Validate passwords match
-            if (password !== confirmPassword) {
-                messageDiv.className = 'message error';
-                messageDiv.textContent = '❌ Passwords do not match. Please try again.';
-                return;
-            }
-
-            // Validate password length
-            if (password.length < 8) {
-                messageDiv.className = 'message error';
-                messageDiv.textContent = '❌ Password must be at least 8 characters long.';
-                return;
-            }
-
-            // Simulate signup (will be replaced with Firebase later)
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating account... ⏳';
-
-            setTimeout(() => {
-                messageDiv.className = 'message success';
-                messageDiv.textContent = '✅ Account created successfully! (Demo mode — Firebase integration coming in Stage 2)';
-                submitBtn.textContent = 'Account Created! 🎉';
-                
-                // Reset form after 2 seconds
-                setTimeout(() => {
-                    document.getElementById('signupForm').reset();
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Create Account 🚀';
-                    messageDiv.style.display = 'none';
-                    document.getElementById('strengthBar').style.width = '0%';
-                    document.getElementById('st
+      
