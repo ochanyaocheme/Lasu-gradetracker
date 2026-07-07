@@ -6,7 +6,11 @@
     <title>LASU Lounge - LASU GradeTracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -40,9 +44,19 @@
             gap: 0.5rem;
         }
 
-        .navbar-brand img { height: 40px; width: auto; }
-        .navbar-brand .lasu-text { color: white; }
-        .navbar-brand .grade-text { color: #f59e0b; }
+        .navbar-brand img {
+            height: 40px;
+            width: auto;
+            display: block;
+        }
+
+        .navbar-brand .lasu-text {
+            color: white;
+        }
+
+        .navbar-brand .grade-text {
+            color: #f59e0b;
+        }
 
         .nav-links {
             display: flex;
@@ -57,7 +71,9 @@
             transition: color 0.3s;
         }
 
-        .nav-links a:hover { color: white; }
+        .nav-links a:hover {
+            color: white;
+        }
 
         .nav-links .btn-gold {
             background: #f59e0b;
@@ -67,7 +83,9 @@
             font-weight: 600;
         }
 
-        .nav-links .btn-gold:hover { background: #d97706; }
+        .nav-links .btn-gold:hover {
+            background: #d97706;
+        }
 
         /* ===== HERO ===== */
         .lounge-hero {
@@ -92,7 +110,10 @@
             margin-bottom: 0.5rem;
         }
 
-        .lounge-hero p { color: #94a3b8; font-size: 1rem; }
+        .lounge-hero p {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
 
         /* ===== SECTION CARDS ===== */
         .sections-container {
@@ -124,7 +145,9 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
 
-        .section-card:active { transform: translateY(0); }
+        .section-card:active {
+            transform: translateY(0);
+        }
 
         .section-icon {
             font-size: 2.5rem;
@@ -133,7 +156,9 @@
             text-align: center;
         }
 
-        .section-info { flex: 1; }
+        .section-info {
+            flex: 1;
+        }
 
         .section-title {
             font-size: 1.25rem;
@@ -151,530 +176,35 @@
             opacity: 0.7;
         }
 
-        .card-general { background: #14b8a6; color: white; }
-        .card-courses { background: #f59e0b; color: #0f172a; }
-        .card-buddies { background: #ef4444; color: white; }
-        .card-confessions { background: #8b5cf6; color: white; }
-        .card-diary { background: #ec4899; color: white; }
+        .card-general {
+            background: #14b8a6;
+            color: white;
+        }
+
+        .card-courses {
+            background: #f59e0b;
+            color: #0f172a;
+        }
+
+        .card-buddies {
+            background: #ef4444;
+            color: white;
+        }
+
+        .card-confessions {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .card-diary {
+            background: #ec4899;
+            color: white;
+        }
+
         .card-challenges {
             background: #1e3a5f;
             color: white;
             border: 2px solid #f59e0b;
-        }
-
-        /* ===== CONTENT AREA ===== */
-        .content-area {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 1.5rem 2rem;
-            display: none;
-        }
-
-        .content-area.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .back-to-menu {
-            color: #f59e0b;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            cursor: pointer;
-            background: none;
-            border: none;
-            font-size: 1rem;
-            font-family: inherit;
-        }
-
-        .section-header { margin-bottom: 1.5rem; }
-        .section-header h2 { color: #f59e0b; font-size: 1.5rem; }
-        .section-header p { color: #94a3b8; font-size: 0.9rem; }
-
-        /* ===== POST CARD ===== */
-        .post-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-            transition: all 0.3s;
-        }
-
-        .post-card:hover {
-            border-color: #475569;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        .post-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .post-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #f59e0b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: #0f172a;
-            font-size: 0.9rem;
-        }
-
-        .post-avatar.anonymous {
-            background: #64748b;
-            color: white;
-        }
-
-        .post-meta { flex: 1; }
-
-        .post-author {
-            font-weight: 600;
-            color: #f1f5f9;
-            font-size: 0.95rem;
-        }
-
-        .post-author .member-badge-inline {
-            background: #f59e0b;
-            color: #0f172a;
-            font-size: 0.65rem;
-            padding: 0.15rem 0.4rem;
-            border-radius: 10px;
-            margin-left: 0.4rem;
-            font-weight: 700;
-        }
-
-        .post-time {
-            font-size: 0.8rem;
-            color: #64748b;
-        }
-
-        .post-body {
-            color: #e2e8f0;
-            line-height: 1.6;
-            margin-bottom: 0.75rem;
-        }
-
-        .post-tag {
-            display: inline-block;
-            background: #334155;
-            color: #94a3b8;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .post-tag.course {
-            background: #1e3a5f;
-            color: #60a5fa;
-        }
-
-        /* ===== EMOJI REACTIONS ===== */
-        .post-actions {
-            display: flex;
-            gap: 0.5rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid #334155;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .reaction-btn {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 20px;
-            padding: 0.4rem 0.75rem;
-            color: #94a3b8;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-family: inherit;
-        }
-
-        .reaction-btn:hover {
-            background: #1e3a5f;
-            border-color: #f59e0b;
-            transform: scale(1.05);
-        }
-
-        .reaction-btn.active {
-            background: #1e3a5f;
-            border-color: #f59e0b;
-            color: #f59e0b;
-        }
-
-        .reaction-btn .emoji { font-size: 1rem; }
-        .reaction-btn .count { font-size: 0.8rem; font-weight: 600; }
-
-        .reaction-more {
-            background: #334155;
-            border: 1px solid #475569;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #94a3b8;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-
-        .reaction-more:hover {
-            background: #f59e0b;
-            color: #0f172a;
-            border-color: #f59e0b;
-        }
-
-        /* ===== EMOJI PICKER MODAL ===== */
-        .emoji-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .emoji-modal-overlay.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .emoji-modal {
-            background: #1e293b;
-            border: 2px solid #f59e0b;
-            border-radius: 16px;
-            padding: 1.5rem;
-            max-width: 350px;
-            width: 90%;
-            position: relative;
-            animation: modalSlide 0.3s ease;
-        }
-
-        @keyframes modalSlide {
-            from { transform: translateY(-30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .emoji-modal h3 {
-            color: #f59e0b;
-            text-align: center;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-
-        .emoji-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0.5rem;
-        }
-
-        .emoji-grid button {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 0.5rem;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .emoji-grid button:hover {
-            background: #f59e0b;
-            border-color: #f59e0b;
-            transform: scale(1.1);
-        }
-
-        .emoji-modal-close {
-            position: absolute;
-            top: 0.75rem;
-            right: 0.75rem;
-            background: none;
-            border: none;
-            color: #94a3b8;
-            font-size: 1.3rem;
-            cursor: pointer;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .emoji-modal-close:hover {
-            background: #334155;
-            color: #f59e0b;
-        }
-
-        /* ===== WRITE POST ===== */
-        .write-post {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 1.25rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .write-post textarea {
-            width: 100%;
-            background: #0f172a;
-            border: 2px solid #334155;
-            border-radius: 10px;
-            padding: 0.875rem 1rem;
-            color: #f1f5f9;
-            font-size: 1rem;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 80px;
-            transition: all 0.3s;
-        }
-
-        .write-post textarea:focus {
-            outline: none;
-            border-color: #f59e0b;
-            box-shadow: 0 0 0 3px rgba(245,158,11,0.1);
-        }
-
-        .write-post textarea::placeholder { color: #64748b; }
-
-        .write-post-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 0.75rem;
-        }
-
-        .post-options {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .post-option {
-            background: #334155;
-            border: none;
-            color: #94a3b8;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-
-        .post-option:hover {
-            background: #475569;
-            color: #e2e8f0;
-        }
-
-        .btn-post {
-            background: #f59e0b;
-            color: #0f172a;
-            border: none;
-            padding: 0.6rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-
-        .btn-post:hover { background: #d97706; }
-
-        /* ===== COURSE FILTER ===== */
-        .course-filter {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .course-chip {
-            background: #334155;
-            border: 1px solid #475569;
-            color: #94a3b8;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-
-        .course-chip:hover, .course-chip.active {
-            background: #f59e0b;
-            color: #0f172a;
-            border-color: #f59e0b;
-            font-weight: 600;
-        }
-
-        /* ===== STUDY BUDDY ===== */
-        .buddy-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .buddy-info { flex: 1; }
-
-        .buddy-name {
-            font-weight: 600;
-            color: #f1f5f9;
-            margin-bottom: 0.25rem;
-        }
-
-        .buddy-details {
-            color: #94a3b8;
-            font-size: 0.85rem;
-        }
-
-        .btn-connect {
-            background: #1e3a5f;
-            color: #60a5fa;
-            border: 1px solid #334155;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-
-        .btn-connect:hover {
-            background: #f59e0b;
-            color: #0f172a;
-            border-color: #f59e0b;
-        }
-
-        /* ===== DIARY ===== */
-        .diary-entry {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-        }
-
-        .diary-date {
-            color: #f59e0b;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .diary-mood {
-            display: inline-block;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .diary-text {
-            color: #e2e8f0;
-            line-height: 1.6;
-        }
-
-        .diary-private {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            background: #334155;
-            color: #94a3b8;
-            padding: 0.25rem 0.6rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            margin-top: 0.75rem;
-        }
-
-        /* ===== CHALLENGE ===== */
-        .challenge-banner {
-            background: #1e3a5f;
-            border: 2px solid #f59e0b;
-            border-radius: 16px;
-            padding: 2rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .challenge-banner h2 {
-            color: #f59e0b;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .challenge-banner p {
-            color: #94a3b8;
-            margin-bottom: 1rem;
-        }
-
-        .challenge-stats {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .challenge-stat { text-align: center; }
-
-        .challenge-stat-number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #f59e0b;
-        }
-
-        .challenge-stat-label {
-            font-size: 0.8rem;
-            color: #94a3b8;
-        }
-
-        .btn-challenge {
-            background: #f59e0b;
-            color: #0f172a;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-
-        .btn-challenge:hover {
-            background: #d97706;
-            transform: translateY(-2px);
         }
 
         /* ===== FOOTER ===== */
@@ -700,7 +230,9 @@
             margin-bottom: 1rem;
         }
 
-        .footer-tagline .heart { color: #ef4444; }
+        .footer-tagline .heart {
+            color: #ef4444;
+        }
 
         .footer-motto {
             font-size: 1.1rem;
@@ -719,25 +251,48 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .navbar { padding: 1rem; }
-            .nav-links { display: none; }
-            .lounge-hero h1 { font-size: 1.6rem; }
-            .sections-container { padding: 1rem; }
-            .section-card { padding: 1rem 1.25rem; border-radius: 16px; }
-            .section-icon { font-size: 2rem; width: 50px; }
-            .section-title { font-size: 1.1rem; }
-            .section-desc { font-size: 0.85rem; }
-            .content-area { padding: 0 1rem 2rem; }
-            .write-post-footer {
-                flex-direction: column;
-                gap: 0.75rem;
-                align-items: stretch;
+            .navbar {
+                padding: 1rem;
             }
-            .btn-post { width: 100%; }
-            .buddy-card { flex-direction: column; text-align: center; }
-            .challenge-stats { gap: 1rem; }
-            .post-actions { gap: 0.35rem; }
-            .reaction-btn { padding: 0.3rem 0.6rem; font-size: 0.8rem; }
+
+            .nav-links {
+                display: none;
+            }
+
+            .lounge-hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .sections-container {
+                padding: 1rem;
+            }
+
+            .section-card {
+                padding: 1rem 1.25rem;
+                border-radius: 16px;
+            }
+
+            .section-icon {
+                font-size: 2rem;
+                width: 50px;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+
+            .section-desc {
+                font-size: 0.85rem;
+            }
+
+            .footer-founder {
+                font-size: 1rem;
+            }
+
+            .footer-motto {
+                font-size: 0.9rem;
+                letter-spacing: 0.1em;
+            }
         }
     </style>
 </head>
@@ -756,105 +311,68 @@
         </div>
     </nav>
 
-    <!-- ===== EMOJI PICKER MODAL ===== -->
-    <div class="emoji-modal-overlay" id="emojiModal">
-        <div class="emoji-modal">
-            <button class="emoji-modal-close" onclick="closeEmojiModal()">✕</button>
-            <h3>😊 Pick a Reaction</h3>
-            <div class="emoji-grid">
-                <button onclick="selectEmoji('😭')">😭</button>
-                <button onclick="selectEmoji('😂')">😂</button>
-                <button onclick="selectEmoji('🥺')">🥺</button>
-                <button onclick="selectEmoji('😱')">😱</button>
-                <button onclick="selectEmoji('😡')">😡</button>
-                <button onclick="selectEmoji('🌚')">🌚</button>
-                <button onclick="selectEmoji('🔥')">🔥</button>
-                <button onclick="selectEmoji('🎉')">🎉</button>
-                <button onclick="selectEmoji('💯')">💯</button>
-                <button onclick="selectEmoji('🫂')">🫂</button>
-                <button onclick="selectEmoji('🙏')">🙏</button>
-                <button onclick="selectEmoji('👎')">👎</button>
-                <button onclick="selectEmoji('👍')">👍</button>
-                <button onclick="selectEmoji('❤️')">❤️</button>
-                <button onclick="selectEmoji('💡')">💡</button>
-                <button onclick="selectEmoji('🤯')">🤯</button>
-                <button onclick="selectEmoji('😢')">😢</button>
-                <button onclick="selectEmoji('🤩')">🤩</button>
-                <button onclick="selectEmoji('😤')">😤</button>
-                <button onclick="selectEmoji('🤔')">🤔</button>
-            </div>
-        </div>
+    <!-- ===== HERO ===== -->
+    <div class="lounge-hero">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <h1>💬 LASU Lounge</h1>
+        <p>Choose a section to explore</p>
     </div>
 
-    <!-- ===== MAIN MENU ===== -->
-    <div id="mainMenu">
-        <div class="lounge-hero">
-            <a href="index.html" class="back-link">← Back to Home</a>
-            <h1>💬 LASU Lounge</h1>
-            <p>Choose a section to explore</p>
-        </div>
+    <!-- ===== SECTION CARDS ===== -->
+    <div class="sections-container">
+        <a href="general-chat.html" class="section-card card-general">
+            <div class="section-icon">🔥</div>
+            <div class="section-info">
+                <div class="section-title">General Chat</div>
+                <div class="section-desc">Chat with the whole community</div>
+            </div>
+            <div class="section-arrow">›</div>
+        </a>
 
-        <div class="sections-container">
-            <!-- General Chat -->
-            <a href="general-chat.html" class="section-card card-general">
-                <div class="section-icon">🔥</div>
-                <div class="section-info">
-                    <div class="section-title">General Chat</div>
-                    <div class="section-desc">Chat with the whole community</div>
-                </div>
-                <div class="section-arrow">›</div>
-            </a>
+        <a href="course-corners.html" class="section-card card-courses">
+            <div class="section-icon">📚</div>
+            <div class="section-info">
+                <div class="section-title">Course Corners</div>
+                <div class="section-desc">Discuss courses & ask questions</div>
+            </div>
+            <div class="section-arrow">›</div>
+        </a>
 
-            <!-- Course Corners -->
-            <a href="course-corners.html" class="section-card card-courses">
-                <div class="section-icon">📚</div>
-                <div class="section-info">
-                    <div class="section-title">Course Corners</div>
-                    <div class="section-desc">Discuss courses & ask questions</div>
-                </div>
-                <div class="section-arrow">›</div>
-            </a>
+        <a href="study-buddies.html" class="section-card card-buddies">
+            <div class="section-icon">👥</div>
+            <div class="section-info">
+                <div class="section-title">Study Buddies</div>
+                <div class="section-desc">Find study partners</div>
+            </div>
+            <div class="section-arrow">›</div>
+        </a>
 
-            <!-- Study Buddies -->
-            <a href="study-buddies.html" class="section-card card-buddies">
-                <div class="section-icon">👥</div>
-                <div class="section-info">
-                    <div class="section-title">Study Buddies</div>
-                    <div class="section-desc">Find study partners</div>
-                </div>
-                <div class="section-arrow">›</div>
-            </a>
+        <a href="confessions.html" class="section-card card-confessions">
+            <div class="section-icon">😂</div>
+            <div class="section-info">
+                <div class="section-title">LASU Confessions</div>
+                <div class="section-desc">Share anonymously</div>
+            </div>
+            <div class="section-arrow">›</div>
+        </a>
 
-            <!-- LASU Confessions -->
-            <a href="confessions.html" class="section-card card-confessions">
-                <div class="section-icon">😂</div>
-                <div class="section-info">
-                    <div class="section-title">LASU Confessions</div>
-                    <div class="section-desc">Share anonymously</div>
-                </div>
-                <div class="section-arrow">›</div>
-            </a>
+        <a href="my-diary.html" class="section-card card-diary">
+            <div class="section-icon">💜</div>
+            <div class="section-info">
+                <div class="section-title">My Diary</div>
+                <div class="section-desc">Private thoughts & mood tracker</div>
+            </div>
+            <div class="section-arrow">›</div>
+        </a>
 
-            <!-- My Diary -->
-            <a href="my-diary.html" class="section-card card-diary">
-                <div class="section-icon">💜</div>
-                <div class="section-info">
-                    <div class="section-title">My Diary</div>
-                    <div class="section-desc">Private thoughts & mood tracker</div>
-                </div>
-                <div class="section-arrow">›</div>
-            </a>
-
-            <!-- Weekly Challenges -->
-            <a href="challenges.html" class="section-card card-challenges">
-                <div class="section-icon">🏆</div>
-                <div class="section-info">
-                    <div class="section-title">Weekly Challenges</div>
-                    <div class="section-desc">Compete & win badges</div>
-                </div>
-                <div class="section-arrow">›</div>
-            </a>
-        </div>
+        <a href="challenges.html" class="section-card card-challenges">
+            <div class="section-icon">🏆</div>
+            <div class="section-info">
+                <div class="section-title">Weekly Challenges</div>
+                <div class="section-desc">Compete & win badges</div>
+            </div>
+            <div class="section-arrow">›</div>
+        </a>
     </div>
 
     <!-- ===== FOOTER ===== -->
@@ -872,58 +390,6 @@
             Est. 2026
         </div>
     </footer>
-
-    <script>
-        let currentReactionBtn = null;
-
-        function openEmojiModal(btn) {
-            currentReactionBtn = btn;
-            document.getElementById('emojiModal').classList.add('active');
-        }
-
-        function closeEmojiModal() {
-            document.getElementById('emojiModal').classList.remove('active');
-            currentReactionBtn = null;
-        }
-
-        function selectEmoji(emoji) {
-            if (currentReactionBtn) {
-                const postActions = currentReactionBtn.parentElement;
-                const existing = Array.from(postActions.querySelectorAll('.reaction-btn')).find(
-                    btn => btn.querySelector('.emoji').textContent === emoji
-                );
-                if (existing) {
-                    toggleReaction(existing);
-                } else {
-                    const newBtn = document.createElement('button');
-                    newBtn.className = 'reaction-btn active';
-                    newBtn.onclick = function() { toggleReaction(this); };
-                    newBtn.innerHTML = `<span class="emoji">${emoji}</span><span class="count\">1</span>`;
-                    postActions.insertBefore(newBtn, currentReactionBtn);
-                }
-            }
-            closeEmojiModal();
-        }
-
-        function toggleReaction(btn) {
-            btn.classList.toggle('active');
-            const countSpan = btn.querySelector('.count');
-            let count = parseInt(countSpan.textContent);
-            if (btn.classList.contains('active')) {
-                count++;
-            } else {
-                count--;
-            }
-            countSpan.textContent = count;
-        }
-
-        document.getElementById('emojiModal').addEventListener('click', function(e) {
-            if (e.target === this) closeEmojiModal();
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeEmojiModal();
-        });
-    </script>
 </body>
-</html>
+    </html>
+    
