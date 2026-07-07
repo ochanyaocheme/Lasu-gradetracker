@@ -1,1381 +1,852 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LASU Lounge - General Chat</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        :root {
-            --bg-dark: #0f172a; --bg-card: #1e293b; --bg-card-hover: #27354f;
-            --accent: #f59e0b; --accent-light: #fbbf24; --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8; --text-muted: #64748b; --border: #334155;
-            --badge-member: #22c55e; --badge-contributor: #f97316;
-            --badge-champion: #eab308; --badge-admin: #ef4444;
-            --success: #22c55e; --error: #ef4444; --info: #3b82f6;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif; background: var(--bg-dark);
-            color: var(--text-primary); min-height: 100vh; overflow-x: hidden;
-            padding-bottom: 20px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LASU GradeTracker - General Chat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: #0f172a; color: #fff; }
+    ::-webkit-scrollbar { width: 0; height: 0; }
 
-        /* Header */
-        .header {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border); padding: 12px 20px;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.3rem; }
-        .logo img { width: 36px; height: 36px; border-radius: 8px; }
-        .logo .lasu { color: var(--accent); }
-        .logo .gradetracker { color: var(--text-primary); }
-        .back-btn { background: none; border: none; color: var(--accent);
-            font-size: 1.1rem; cursor: pointer; padding: 8px; border-radius: 8px; transition: all 0.2s; }
-        .back-btn:hover { background: rgba(245, 158, 11, 0.1); }
-        .header-right { display: flex; align-items: center; gap: 12px; }
-        .header-avatar { width: 38px; height: 38px; border-radius: 50%;
-            border: 2px solid var(--accent); object-fit: cover; cursor: pointer; transition: transform 0.2s; }
-        .header-avatar:hover { transform: scale(1.1); }
-        .notification-btn { background: none; border: none; color: var(--text-secondary);
-            font-size: 1.2rem; cursor: pointer; padding: 8px; border-radius: 8px;
-            position: relative; transition: all 0.2s; }
-        .notification-btn:hover { color: var(--accent); background: rgba(245, 158, 11, 0.1); }
-        .notif-badge { position: absolute; top: 4px; right: 4px;
-            width: 8px; height: 8px; background: var(--error); border-radius: 50%; border: 2px solid var(--bg-dark); }
+    @keyframes slide-up { 
+      from { transform: translateY(100%); opacity: 0; } 
+      to { transform: translateY(0); opacity: 1; } 
+    }
+    @keyframes fade-in { 
+      from { opacity: 0; transform: scale(0.95); } 
+      to { opacity: 1; transform: scale(1); } 
+    }
+    .animate-slide-up { animation: slide-up 0.3s ease-out; }
+    .animate-fade-in { animation: fade-in 0.2s ease-out; }
 
-        /* Main Container */
-        .main-container { max-width: 680px; margin: 0 auto; padding: 80px 16px 20px; }
+    .tab-active { 
+      color: #f59e0b !important; 
+      background: rgba(245, 158, 11, 0.12) !important; 
+    }
+    .tab-inactive { 
+      color: #64748b; 
+    }
+    .tab-inactive:hover { 
+      color: #f59e0b; 
+      background: rgba(255,255,255,0.03); 
+    }
 
-        /* Page Title */
-        .page-title { text-align: center; margin-bottom: 24px; }
-        .page-title h1 { font-size: 1.8rem; font-weight: 800;
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .page-title p { color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px; }
+    .post-card { transition: border-color 0.2s ease; }
+    .post-card:hover { border-color: rgba(245, 158, 11, 0.15); }
 
-        /* Create Post */
-        .create-post-card {
-            background: var(--bg-card); border-radius: 16px;
-            border: 1px solid var(--border); padding: 16px; margin-bottom: 20px;
-        }
-        .create-post-top { display: flex; gap: 12px; align-items: flex-start; }
-        .create-post-avatar { width: 44px; height: 44px; border-radius: 50%;
-            border: 2px solid var(--accent); object-fit: cover; flex-shrink: 0; }
-        .create-post-input-wrap { flex: 1; }
-        .create-post-input { width: 100%; background: rgba(30, 41, 59, 0.8);
-            border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px;
-            color: var(--text-primary); font-family: inherit; font-size: 0.95rem;
-            resize: none; outline: none; transition: all 0.2s; min-height: 80px; }
-        .create-post-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1); }
-        .create-post-input::placeholder { color: var(--text-muted); }
-        .create-post-actions { display: flex; justify-content: space-between; align-items: center;
-            margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
-        .post-tools { display: flex; gap: 8px; }
-        .tool-btn { background: none; border: none; color: var(--text-secondary);
-            font-size: 0.85rem; cursor: pointer; padding: 8px 12px; border-radius: 8px;
-            transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
-        .tool-btn:hover { color: var(--accent); background: rgba(245, 158, 11, 0.1); }
-        .tool-btn i { font-size: 1rem; }
-        .post-btn { background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            border: none; color: var(--bg-dark); font-weight: 700; padding: 10px 24px;
-            border-radius: 10px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;
-            display: flex; align-items: center; gap: 6px; }
-        .post-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
-        .post-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .action-btn { transition: all 0.15s ease; }
+    .action-btn:active { transform: scale(0.92); }
 
-        /* FILTER TABS - Bottom nav style */
-        .filter-tabs {
-            display: flex; justify-content: space-around; align-items: center;
-            background: var(--bg-card); border-radius: 16px; padding: 8px 4px;
-            border: 1px solid var(--border); margin-bottom: 20px;
-        }
-        .filter-tab {
-            display: flex; flex-direction: column; align-items: center; gap: 3px;
-            color: var(--text-muted); text-decoration: none; font-size: 0.65rem;
-            padding: 6px 12px; border-radius: 10px; transition: all 0.2s;
-            cursor: pointer; background: none; border: none; flex: 1;
-        }
-        .filter-tab:hover { color: var(--accent); }
-        .filter-tab.active { color: var(--accent); }
-        .filter-tab i { font-size: 1.2rem; }
+    .avatar-hover { transition: box-shadow 0.2s ease; }
+    .avatar-hover:hover { box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.4); }
 
-        /* Post Card */
-        .post-card { background: var(--bg-card); border-radius: 16px;
-            border: 1px solid var(--border); margin-bottom: 16px; overflow: hidden; transition: all 0.2s; }
-        .post-card:hover { border-color: rgba(245, 158, 11, 0.3); }
-        .post-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 16px 0; }
-        .post-author { display: flex; gap: 12px; align-items: flex-start; }
-        .author-avatar-link { text-decoration: none; }
-        .author-avatar { width: 44px; height: 44px; border-radius: 50%;
-            border: 2px solid var(--accent); object-fit: cover; cursor: pointer; transition: transform 0.2s; }
-        .author-avatar:hover { transform: scale(1.08); }
-        .author-info { display: flex; flex-direction: column; gap: 2px; }
-        .author-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .author-name { font-weight: 700; font-size: 0.95rem; color: var(--text-primary);
-            text-decoration: none; cursor: pointer; transition: color 0.2s; }
-        .author-name:hover { color: var(--accent); }
-        .badges-row { display: flex; gap: 3px; align-items: center; }
-        .badge { width: 14px; height: 14px; border-radius: 50%; display: inline-block;
-            border: 1.5px solid rgba(255,255,255,0.3); box-shadow: 0 0 4px rgba(0,0,0,0.3); }
-        .badge.member { background: var(--badge-member); }
-        .badge.contributor { background: var(--badge-contributor); }
-        .badge.champion { background: var(--badge-champion); }
-        .badge.admin { background: var(--badge-admin); }
-        .author-meta { display: flex; align-items: center; gap: 8px;
-            font-size: 0.8rem; color: var(--text-muted); }
-        .follow-btn-small { background: none; border: 1px solid var(--accent); color: var(--accent);
-            padding: 3px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;
-            cursor: pointer; transition: all 0.2s; }
-        .follow-btn-small:hover { background: var(--accent); color: var(--bg-dark); }
-        .follow-btn-small.following { background: var(--accent); color: var(--bg-dark); border-color: var(--accent); }
-        .post-menu-btn { background: none; border: none; color: var(--text-muted);
-            font-size: 1.2rem; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all 0.2s; }
-        .post-menu-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-        .post-content { padding: 12px 16px 8px; }
-        .post-text { font-size: 0.95rem; line-height: 1.6; color: var(--text-primary);
-            white-space: pre-wrap; word-break: break-word; }
-        .post-text a { color: var(--accent); text-decoration: none; }
-        .post-text a:hover { text-decoration: underline; }
-        .post-image { width: 100%; border-radius: 12px; margin-top: 12px; max-height: 400px; object-fit: cover; }
-        .post-stats { display: flex; gap: 16px; padding: 8px 16px;
-            font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border); }
-        .post-actions { display: flex; justify-content: space-around; padding: 8px 0; }
-        .action-btn { background: none; border: none; color: var(--text-secondary);
-            font-size: 0.85rem; cursor: pointer; padding: 8px 16px; border-radius: 8px;
-            transition: all 0.2s; display: flex; align-items: center; gap: 6px;
-            font-weight: 500; position: relative; }
-        .action-btn:hover { background: rgba(245, 158, 11, 0.1); color: var(--accent); }
-        .action-btn.active { color: var(--accent); }
-        .action-btn.active i { color: var(--accent); }
-        .reaction-picker { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
-            padding: 8px; display: flex; gap: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            z-index: 100; opacity: 0; visibility: hidden; transition: all 0.2s; margin-bottom: 8px; }
-        .reaction-picker.show { opacity: 1; visibility: visible; }
-        .reaction-opt { font-size: 1.4rem; cursor: pointer; padding: 4px 6px;
-            border-radius: 8px; transition: all 0.2s; background: none; border: none; }
-        .reaction-opt:hover { background: rgba(245, 158, 11, 0.15); transform: scale(1.2); }
-        .reaction-opt.selected { background: rgba(245, 158, 11, 0.2); }
-        .comments-section { padding: 0 16px 16px; display: none; }
-        .comments-section.show { display: block; }
-        .comment-input-wrap { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
-        .comment-avatar { width: 32px; height: 32px; border-radius: 50%;
-            border: 1.5px solid var(--accent); object-fit: cover; }
-        .comment-input-area { flex: 1; display: flex; gap: 8px; align-items: flex-start; }
-        .comment-input { flex: 1; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border);
-            border-radius: 10px; padding: 10px 14px; color: var(--text-primary);
-            font-family: inherit; font-size: 0.9rem; resize: none; outline: none;
-            min-height: 40px; max-height: 120px; }
-        .comment-input:focus { border-color: var(--accent); }
-        .comment-submit { background: var(--accent); border: none; color: var(--bg-dark);
-            width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s; flex-shrink: 0; }
-        .comment-submit:hover { transform: scale(1.1); }
-        .comment-item { display: flex; gap: 10px; margin-bottom: 12px;
-            padding: 10px; background: rgba(255,255,255,0.02); border-radius: 10px; }
-        .comment-body { flex: 1; }
-        .comment-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-        .comment-author { font-weight: 600; font-size: 0.85rem; color: var(--text-primary);
-            text-decoration: none; cursor: pointer; }
-        .comment-author:hover { color: var(--accent); }
-        .comment-time { font-size: 0.75rem; color: var(--text-muted); }
-        .comment-text { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
-        .comment-actions { display: flex; gap: 12px; margin-top: 6px; }
-        .comment-action { background: none; border: none; color: var(--text-muted);
-            font-size: 0.75rem; cursor: pointer; font-weight: 500; transition: color 0.2s; }
-        .comment-action:hover { color: var(--accent); }
-        .reply-input-wrap { margin-top: 8px; margin-left: 42px; display: none; }
-        .reply-input-wrap.show { display: flex; gap: 8px; }
-
-        /* Dropdown Menu */
-        .dropdown-menu { position: absolute; right: 0; top: 100%; background: var(--bg-card);
-            border: 1px solid var(--border); border-radius: 12px; min-width: 200px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5); z-index: 200; overflow: hidden; display: none; }
-        .dropdown-menu.show { display: block; }
-        .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px;
-            color: var(--text-primary); font-size: 0.9rem; cursor: pointer;
-            transition: all 0.2s; border: none; background: none; width: 100%; text-align: left; }
-        .dropdown-item:hover { background: rgba(245, 158, 11, 0.1); }
-        .dropdown-item.danger { color: var(--error); }
-        .dropdown-item.danger:hover { background: rgba(239, 68, 68, 0.1); }
-        .dropdown-item i { width: 20px; text-align: center; }
-        .dropdown-divider { height: 1px; background: var(--border); margin: 4px 0; }
-
-        /* Modals */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-            z-index: 2000; display: none; align-items: center; justify-content: center;
-            padding: 20px; backdrop-filter: blur(5px); }
-        .modal-overlay.show { display: flex; }
-        .modal { background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border);
-            max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;
-            animation: modalIn 0.3s ease; }
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.9) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .modal-header { display: flex; justify-content: space-between; align-items: center;
-            padding: 20px; border-bottom: 1px solid var(--border); }
-        .modal-header h2 { font-size: 1.2rem; font-weight: 700; }
-        .modal-close { background: none; border: none; color: var(--text-muted);
-            font-size: 1.3rem; cursor: pointer; padding: 4px; border-radius: 6px; transition: all 0.2s; }
-        .modal-close:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-        .modal-body { padding: 20px; }
-
-        /* Profile Modal */
-        .profile-header { text-align: center; padding: 20px 0; }
-        .profile-avatar-large { width: 100px; height: 100px; border-radius: 50%;
-            border: 3px solid var(--accent); object-fit: cover; margin: 0 auto 12px; }
-        .profile-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px;
-            display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .profile-badges { display: flex; justify-content: center; gap: 6px; margin-bottom: 8px; }
-        .profile-badges .badge { width: 18px; height: 18px; }
-        .profile-stats-row { display: flex; justify-content: center; gap: 24px; margin: 16px 0; }
-        .profile-stat { text-align: center; }
-        .profile-stat-value { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
-        .profile-stat-label { font-size: 0.8rem; color: var(--text-muted); }
-        .profile-bio { color: var(--text-secondary); font-size: 0.9rem; max-width: 300px; margin: 0 auto; }
-        .profile-actions { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
-        .profile-btn { padding: 10px 24px; border-radius: 10px; font-weight: 600;
-            font-size: 0.9rem; cursor: pointer; transition: all 0.2s; border: none; }
-        .profile-btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: var(--bg-dark); }
-        .profile-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
-        .profile-btn.secondary { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); }
-        .profile-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
-        .profile-posts { margin-top: 20px; }
-        .profile-posts h3 { font-size: 1rem; margin-bottom: 12px; color: var(--text-secondary); }
-
-        /* Edit Profile Modal */
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 600;
-            color: var(--text-secondary); margin-bottom: 6px; }
-        .form-group input, .form-group textarea { width: 100%; background: rgba(30, 41, 59, 0.8);
-            border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px;
-            color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; }
-        .form-group input:focus, .form-group textarea:focus { border-color: var(--accent); }
-        .form-group textarea { resize: vertical; min-height: 80px; }
-        .avatar-picker { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
-        .avatar-option { width: 60px; height: 60px; border-radius: 50%; border: 2px solid transparent;
-            cursor: pointer; object-fit: cover; transition: all 0.2s; }
-        .avatar-option:hover { transform: scale(1.1); }
-        .avatar-option.selected { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3); }
-        .save-btn { width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            border: none; color: var(--bg-dark); font-weight: 700; padding: 14px;
-            border-radius: 12px; cursor: pointer; font-size: 1rem; transition: all 0.2s; }
-        .save-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
-
-        /* Toast */
-        .toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 3000; display: flex; flex-direction: column; gap: 8px; }
-        .toast { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
-            padding: 12px 20px; display: flex; align-items: center; gap: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4); animation: toastIn 0.3s ease; font-size: 0.9rem; }
-        .toast.success { border-color: var(--success); }
-        .toast.error { border-color: var(--error); }
-        .toast.info { border-color: var(--info); }
-        @keyframes toastIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .loading-posts { text-align: center; padding: 40px; color: var(--text-muted); }
-        .loading-posts i { font-size: 2rem; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
-        .empty-state i { font-size: 3rem; margin-bottom: 16px; color: var(--accent); opacity: 0.5; }
-        .empty-state h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--text-primary); }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
-        @media (max-width: 480px) {
-            .main-container { padding: 70px 12px 20px; }
-            .post-actions { padding: 6px 0; }
-            .action-btn { padding: 6px 10px; font-size: 0.8rem; }
-            .header { padding: 10px 12px; }
-            .logo { font-size: 1.1rem; }
-            .logo img { width: 30px; height: 30px; }
-        }
-
-        .reactions-display { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 16px 8px; }
-        .reaction-chip { display: flex; align-items: center; gap: 4px;
-            background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2);
-            border-radius: 20px; padding: 4px 10px; font-size: 0.8rem;
-            color: var(--accent); cursor: pointer; transition: all 0.2s; }
-        .reaction-chip:hover { background: rgba(245, 158, 11, 0.2); }
-        .reaction-chip.active { background: rgba(245, 158, 11, 0.25); border-color: var(--accent); }
-        .report-reasons { display: flex; flex-direction: column; gap: 8px; }
-        .report-reason { padding: 12px 16px; background: rgba(30, 41, 59, 0.8);
-            border: 1px solid var(--border); border-radius: 10px; cursor: pointer;
-            transition: all 0.2s; color: var(--text-primary); font-size: 0.9rem; }
-        .report-reason:hover { border-color: var(--accent); background: rgba(245, 158, 11, 0.05); }
-        .report-reason.selected { border-color: var(--accent); background: rgba(245, 158, 11, 0.1); }
-        .post-card.muted { opacity: 0.6; }
-        .action-btn.bookmarked i { color: var(--accent); }
-        .share-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 16px; }
-        .share-option { display: flex; flex-direction: column; align-items: center; gap: 6px;
-            padding: 16px; border-radius: 12px; cursor: pointer; transition: all 0.2s;
-            background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border);
-            color: var(--text-primary); font-size: 0.8rem; border: none; }
-        .share-option:hover { border-color: var(--accent); background: rgba(245, 158, 11, 0.1); }
-        .share-option i { font-size: 1.5rem; }
-        .share-option.whatsapp i { color: #25d366; }
-        .share-option.facebook i { color: #1877f2; }
-        .share-option.twitter i { color: #1da1f2; }
-        .share-option.copy i { color: var(--accent); }
-        .share-link-box { display: flex; gap: 8px; padding: 0 16px 16px; }
-        .share-link-box input { flex: 1; background: rgba(30, 41, 59, 0.8);
-            border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px;
-            color: var(--text-primary); font-size: 0.85rem; }
-        .share-link-box button { background: var(--accent); border: none; color: var(--bg-dark);
-            padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
-    </style>
+    /* Badge tooltip */
+    .badge-wrap { position: relative; }
+    .badge-wrap:hover .badge-tooltip {
+      opacity: 1; visibility: visible; transform: translateY(0);
+    }
+    .badge-tooltip {
+      position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%) translateY(4px);
+      background: #1e293b; border: 1px solid rgba(255,255,255,0.1);
+      padding: 6px 12px; border-radius: 10px; font-size: 11px; white-space: nowrap;
+      opacity: 0; visibility: hidden; transition: all 0.2s ease; z-index: 10;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .badge-tooltip::after {
+      content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      border: 5px solid transparent; border-top-color: #1e293b;
+    }
+  </style>
 </head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-left">
-            <button class="back-btn" onclick="goBack()">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            <div class="logo">
-                <img src="your-logo.png" alt="LASU">
-                <span class="lasu">LASU</span><span class="gradetracker">GradeTracker</span>
-            </div>
-        </div>
-        <div class="header-right">
-            <button class="notification-btn" onclick="showNotifications()">
-                <i class="fas fa-bell"></i>
-                <span class="notif-badge" id="notifBadge" style="display:none"></span>
-            </button>
-            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Emma&style=circle" 
-                 class="header-avatar" id="headerAvatar" 
-                 onclick="openEditProfile()" alt="Profile">
-        </div>
-    </header>
+<body class="min-h-screen bg-[#0f172a] text-white antialiased">
 
-    <main class="main-container">
-        <div class="page-title">
-            <h1><i class="fas fa-fire"></i> General Chat</h1>
-            <p>Chat with the whole LASU community</p>
-        </div>
+  <!-- ========== HEADER ========== -->
+  <header class="sticky top-0 z-50 bg-[#0f172a] border-b border-white/8 px-4 py-3 flex items-center gap-3">
+    <button class="p-2 -ml-2 rounded-full hover:bg-white/5 active:bg-white/10 transition" aria-label="Go back">
+      <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
 
-        <!-- Create Post -->
-        <div class="create-post-card">
-            <div class="create-post-top">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Emma&style=circle" 
-                     class="create-post-avatar" id="createPostAvatar" alt="You">
-                <div class="create-post-input-wrap">
-                    <textarea class="create-post-input" id="postInput" 
-                              placeholder="What's on your mind? Share with the community..."
-                              rows="3"></textarea>
-                </div>
-            </div>
-            <div class="create-post-actions">
-                <div class="post-tools">
-                    <button class="tool-btn" onclick="addPhoto()">
-                        <i class="fas fa-image"></i> Photo
-                    </button>
-                    <button class="tool-btn" onclick="addEmoji()">
-                        <i class="fas fa-smile"></i> Emoji
-                    </button>
-                    <button class="tool-btn" onclick="addTag()">
-                        <i class="fas fa-hashtag"></i> Tag
-                    </button>
-                </div>
-                <button class="post-btn" id="postBtn" onclick="createPost()">
-                    <i class="fas fa-paper-plane"></i> Post
-                </button>
-            </div>
-        </div>
-
-        <!-- FILTER TABS - Bottom nav style -->
-        <div class="filter-tabs">
-            <button class="filter-tab active" onclick="filterPosts('all')">
-                <i class="fas fa-list"></i> All Posts
-            </button>
-            <button class="filter-tab" onclick="filterPosts('trending')">
-                <i class="fas fa-fire"></i> Trending
-            </button>
-            <button class="filter-tab" onclick="filterPosts('following')">
-                <i class="fas fa-user-check"></i> Following
-            </button>
-            <button class="filter-tab" onclick="filterPosts('mine')">
-                <i class="fas fa-user"></i> My Posts
-            </button>
-        </div>
-
-        <!-- Posts Feed -->
-        <div id="postsFeed">
-            <div class="loading-posts">
-                <i class="fas fa-spinner"></i>
-                <p>Loading posts...</p>
-            </div>
-        </div>
-    </main>
-
-    <!-- Post Menu Dropdown -->
-    <div class="dropdown-menu" id="postMenuDropdown">
-        <button class="dropdown-item" onclick="sharePostMenu()">
-            <i class="fas fa-share-alt"></i> Share
-        </button>
-        <button class="dropdown-item" onclick="bookmarkPostMenu()">
-            <i class="fas fa-bookmark"></i> Save / Bookmark
-        </button>
-        <button class="dropdown-item" onclick="copyPostLinkMenu()">
-            <i class="fas fa-link"></i> Copy Link
-        </button>
-        <div class="dropdown-divider"></div>
-        <button class="dropdown-item" onclick="muteUserMenu()">
-            <i class="fas fa-volume-mute"></i> Mute @<span id="menuUsername"></span>
-        </button>
-        <button class="dropdown-item" onclick="reportPostMenu()">
-            <i class="fas fa-flag"></i> Report Post
-        </button>
-        <div class="dropdown-divider" id="ownerActionsDivider"></div>
-        <button class="dropdown-item" id="editPostBtn" onclick="editPostMenu()">
-            <i class="fas fa-edit"></i> Edit Post
-        </button>
-        <button class="dropdown-item danger" id="deletePostBtn" onclick="deletePostMenu()">
-            <i class="fas fa-trash"></i> Delete Post
-        </button>
+    <!-- LASU GradeTracker Logo -->
+    <img src="your-logo.png" class="w-10 h-10 rounded-xl object-cover shrink-0" alt="LASU GradeTracker" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="hidden w-10 h-10 bg-amber-500 rounded-xl items-center justify-center shrink-0">
+      <span class="text-[#0f172a] font-extrabold text-[10px]">LASU</span>
     </div>
 
-    <!-- Profile Modal -->
-    <div class="modal-overlay" id="profileModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>Profile</h2>
-                <button class="modal-close" onclick="closeModal('profileModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body" id="profileModalBody"></div>
-        </div>
+    <h1 class="text-[17px] font-bold leading-tight tracking-tight">
+      <span class="text-amber-400">LASU</span> <span class="text-white">GradeTracker</span>
+    </h1>
+
+    <div class="ml-auto flex items-center gap-3">
+      <button class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition" aria-label="Notifications">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+        </svg>
+        <span class="absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0f172a]"></span>
+      </button>
+
+      <button onclick="openProfile(0)" class="rounded-full" aria-label="My profile">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=student" 
+          class="w-9 h-9 rounded-full border-2 border-amber-500/50 cursor-pointer avatar-hover object-cover" 
+          alt="My Profile">
+      </button>
+    </div>
+  </header>
+
+  <!-- ========== PAGE TITLE ========== -->
+  <div class="px-4 pt-6 pb-1 text-center">
+    <h2 class="text-[28px] font-extrabold text-amber-400 flex items-center justify-center gap-2.5 tracking-tight">
+      <span class="text-2xl">🔥</span>
+      General Chat
+    </h2>
+    <p class="text-gray-400 text-[14px] mt-1.5">Chat with the whole LASU community</p>
+  </div>
+
+  <!-- ========== POST COMPOSER ========== -->
+  <div class="mx-4 mt-5 bg-[#1e293b] rounded-2xl border border-white/8 p-4">
+    <div class="flex gap-3">
+      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=student" 
+        class="w-10 h-10 rounded-full shrink-0 border border-white/8 object-cover" alt="Me">
+      <div class="flex-1">
+        <textarea id="postInput" 
+          placeholder="What's on your mind? Share with the community..." 
+          class="w-full bg-[#0f172a] rounded-xl px-4 py-3 text-[14px] text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none resize-none h-[72px] transition-all"
+          oninput="togglePostBtn(this)"></textarea>
+      </div>
     </div>
 
-    <!-- Edit Profile Modal -->
-    <div class="modal-overlay" id="editProfileModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>Edit Profile</h2>
-                <button class="modal-close" onclick="closeModal('editProfileModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div style="text-align:center; margin-bottom:16px;">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Emma&style=circle" 
-                         class="profile-avatar-large" id="editProfileAvatar" alt="Current">
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px;">
-                        Choose a new avatar (free - DiceBear)
-                    </p>
-                </div>
-                <div class="avatar-picker" id="avatarPicker"></div>
-                <div class="form-group">
-                    <label>Display Name</label>
-                    <input type="text" id="editDisplayName" placeholder="Your display name">
-                </div>
-                <div class="form-group">
-                    <label>Bio</label>
-                    <textarea id="editBio" placeholder="Tell us about yourself..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Department</label>
-                    <input type="text" id="editDepartment" placeholder="e.g. Computer Science">
-                </div>
-                <div class="form-group">
-                    <label>Level</label>
-                    <input type="text" id="editLevel" placeholder="e.g. 300 Level">
-                </div>
-                <button class="save-btn" onclick="saveProfile()">Save Changes</button>
-            </div>
-        </div>
+    <div class="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
+      <div class="flex items-center gap-1">
+        <button class="action-btn flex items-center gap-1.5 text-gray-400 hover:text-amber-400 text-[13px] font-medium px-3 py-2 rounded-lg hover:bg-white/5 transition" aria-label="Add photo">
+          <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          Photo
+        </button>
+        <button class="action-btn flex items-center gap-1.5 text-gray-400 hover:text-amber-400 text-[13px] font-medium px-3 py-2 rounded-lg hover:bg-white/5 transition" aria-label="Add emoji">
+          <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Emoji
+        </button>
+        <button class="action-btn flex items-center gap-1.5 text-gray-400 hover:text-amber-400 text-[13px] font-medium px-3 py-2 rounded-lg hover:bg-white/5 transition" aria-label="Add tag">
+          <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+          </svg>
+          Tag
+        </button>
+      </div>
+      <button onclick="createPost()" id="postBtn"
+        class="action-btn bg-amber-500 hover:bg-amber-400 text-black font-bold text-[13px] px-5 py-2.5 rounded-xl flex items-center gap-1.5 transition disabled:opacity-40 disabled:cursor-not-allowed"
+        disabled>
+        <span class="text-lg leading-none">➤</span>
+        Post
+      </button>
     </div>
+  </div>
 
-    <!-- Report Modal -->
-    <div class="modal-overlay" id="reportModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>Report Post</h2>
-                <button class="modal-close" onclick="closeModal('reportModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p style="color:var(--text-secondary); margin-bottom:16px; font-size:0.9rem;">
-                    Why are you reporting this post?
-                </p>
-                <div class="report-reasons" id="reportReasons">
-                    <button class="report-reason" onclick="selectReportReason(this)">Spam or misleading</button>
-                    <button class="report-reason" onclick="selectReportReason(this)">Harassment or bullying</button>
-                    <button class="report-reason" onclick="selectReportReason(this)">Hate speech</button>
-                    <button class="report-reason" onclick="selectReportReason(this)">Inappropriate content</button>
-                    <button class="report-reason" onclick="selectReportReason(this)">False information</button>
-                    <button class="report-reason" onclick="selectReportReason(this)">Other</button>
-                </div>
-                <button class="save-btn" style="margin-top:16px;" onclick="submitReport()">Submit Report</button>
-            </div>
+  <!-- ========== FILTER TABS ========== -->
+  <div class="mx-4 mt-4 bg-[#1e293b] rounded-2xl border border-white/8 p-1.5">
+    <div class="flex items-center justify-around">
+      <button onclick="setFilter('all')" id="tab-all" class="tab-active flex flex-col items-center gap-1 py-2.5 px-5 rounded-xl transition-all duration-200" aria-label="All posts">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+        </svg>
+        <span class="text-[11px] font-semibold">All Posts</span>
+      </button>
+
+      <button onclick="setFilter('trending')" id="tab-trending" class="tab-inactive flex flex-col items-center gap-1 py-2.5 px-5 rounded-xl transition-all duration-200" aria-label="Trending posts">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+        </svg>
+        <span class="text-[11px] font-semibold">Trending</span>
+      </button>
+
+      <button onclick="setFilter('following')" id="tab-following" class="tab-inactive flex flex-col items-center gap-1 py-2.5 px-5 rounded-xl transition-all duration-200" aria-label="Following">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+        <span class="text-[11px] font-semibold">Following</span>
+      </button>
+
+      <button onclick="setFilter('my')" id="tab-my" class="tab-inactive flex flex-col items-center gap-1 py-2.5 px-5 rounded-xl transition-all duration-200 relative" aria-label="My posts">
+        <div class="relative">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          <span class="absolute -top-1 -right-2 w-2 h-2 bg-amber-500 rounded-full"></span>
         </div>
+        <span class="text-[11px] font-semibold">My Posts</span>
+      </button>
     </div>
+  </div>
 
-    <!-- Share Modal -->
-    <div class="modal-overlay" id="shareModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>Share Post</h2>
-                <button class="modal-close" onclick="closeModal('shareModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="share-options">
-                    <button class="share-option whatsapp" onclick="shareTo('whatsapp')">
-                        <i class="fab fa-whatsapp"></i><span>WhatsApp</span>
-                    </button>
-                    <button class="share-option facebook" onclick="shareTo('facebook')">
-                        <i class="fab fa-facebook"></i><span>Facebook</span>
-                    </button>
-                    <button class="share-option twitter" onclick="shareTo('twitter')">
-                        <i class="fab fa-twitter"></i><span>Twitter</span>
-                    </button>
-                    <button class="share-option" onclick="shareTo('native')">
-                        <i class="fas fa-share"></i><span>More</span>
-                    </button>
-                    <button class="share-option copy" onclick="shareTo('copy')">
-                        <i class="fas fa-copy"></i><span>Copy Link</span>
-                    </button>
-                    <button class="share-option" onclick="resharePost()">
-                        <i class="fas fa-retweet"></i><span>Reshare</span>
-                    </button>
-                </div>
-                <div class="share-link-box">
-                    <input type="text" id="shareLinkInput" readonly>
-                    <button onclick="copyShareLink()">Copy</button>
-                </div>
-            </div>
+  <!-- ========== POSTS FEED ========== -->
+  <div id="postsFeed" class="px-4 pb-24 mt-4 space-y-3">
+    <!-- Posts injected by JS -->
+  </div>
+
+  <!-- ========== EMPTY STATE ========== -->
+  <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center">
+    <div class="w-16 h-16 bg-amber-500/20 rounded-2xl flex items-center justify-center mb-5">
+      <svg class="w-8 h-8 text-amber-500/60" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
+        <path d="M7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+      </svg>
+    </div>
+    <h3 class="text-lg font-bold text-white">No posts yet</h3>
+    <p class="text-gray-500 text-sm mt-1.5">Be the first to share something!</p>
+  </div>
+
+  <!-- ========== FLOATING NEW POST BUTTON ========== -->
+  <button onclick="document.getElementById('postInput').focus(); window.scrollTo({top:0,behavior:'smooth'});" 
+    class="fixed bottom-6 right-5 w-14 h-14 bg-amber-500 hover:bg-amber-400 rounded-2xl shadow-lg shadow-amber-500/30 flex items-center justify-center text-black transition hover:scale-105 active:scale-90 z-40"
+    aria-label="New post">
+    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+    </svg>
+  </button>
+
+  <!-- ========== SHARE MODAL ========== -->
+  <div id="shareModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeShareModal()">
+    <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] p-6 border-t border-white/8 animate-slide-up">
+      <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mb-6"></div>
+      <h3 class="text-lg font-bold text-white mb-5">Share Post</h3>
+
+      <div class="grid grid-cols-4 gap-3 mb-6">
+        <button onclick="shareTo('whatsapp')" class="action-btn flex flex-col items-center gap-2 p-3 rounded-2xl bg-[#0f172a] hover:bg-white/5 transition border border-white/5">
+          <div class="w-11 h-11 bg-green-500/15 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+          </div>
+          <span class="text-[11px] text-gray-400 font-medium">WhatsApp</span>
+        </button>
+
+        <button onclick="shareTo('twitter')" class="action-btn flex flex-col items-center gap-2 p-3 rounded-2xl bg-[#0f172a] hover:bg-white/5 transition border border-white/5">
+          <div class="w-11 h-11 bg-sky-500/15 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-sky-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+            </svg>
+          </div>
+          <span class="text-[11px] text-gray-400 font-medium">Twitter</span>
+        </button>
+
+        <button onclick="shareTo('facebook')" class="action-btn flex flex-col items-center gap-2 p-3 rounded-2xl bg-[#0f172a] hover:bg-white/5 transition border border-white/5">
+          <div class="w-11 h-11 bg-blue-600/15 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+            </svg>
+          </div>
+          <span class="text-[11px] text-gray-400 font-medium">Facebook</span>
+        </button>
+
+        <button onclick="copyLink()" class="action-btn flex flex-col items-center gap-2 p-3 rounded-2xl bg-[#0f172a] hover:bg-white/5 transition border border-white/5">
+          <div class="w-11 h-11 bg-gray-500/15 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <span class="text-[11px] text-gray-400 font-medium">Copy Link</span>
+        </button>
+      </div>
+
+      <button onclick="closeShareModal()" class="w-full bg-[#0f172a] hover:bg-white/5 text-white font-semibold py-3.5 rounded-2xl transition text-sm border border-white/5">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ========== PROFILE MODAL ========== -->
+  <div id="profileModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4" onclick="if(event.target===this)closeProfileModal()">
+    <div class="bg-[#1e293b] w-full max-w-sm rounded-[28px] border border-white/8 overflow-hidden animate-fade-in">
+      <div class="h-24 bg-gradient-to-br from-amber-500/25 via-orange-500/20 to-amber-600/25 relative">
+        <button onclick="closeProfileModal()" class="absolute top-3 right-3 w-8 h-8 bg-black/40 rounded-full flex items-center justify-center text-white hover:bg-black/60 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="px-5 pb-6 -mt-10">
+        <img id="modalAvatar" src="" class="w-20 h-20 rounded-full border-4 border-[#1e293b] bg-[#1e293b] object-cover" alt="">
+
+        <div class="mt-3">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h3 id="modalName" class="text-lg font-bold text-white"></h3>
+            <!-- BADGES next to name -->
+            <div id="modalBadgeArea" class="flex items-center gap-1"></div>
+          </div>
+          <p id="modalHandle" class="text-gray-400 text-sm mt-0.5"></p>
         </div>
+
+        <p id="modalBio" class="text-gray-300 text-sm mt-3 leading-relaxed"></p>
+
+        <div class="mt-3 flex items-center gap-3 text-sm">
+          <span class="inline-flex items-center gap-1 text-gray-400 bg-white/5 px-2.5 py-1 rounded-lg text-xs">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            <span id="modalDept" class="text-white font-medium"></span>
+          </span>
+          <span class="inline-flex items-center gap-1 text-gray-400 bg-white/5 px-2.5 py-1 rounded-lg text-xs">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            <span id="modalLevel" class="text-white font-medium"></span>
+          </span>
+        </div>
+
+        <div class="mt-4 flex items-center justify-around py-3 border-y border-white/8">
+          <div class="text-center">
+            <div id="modalPosts" class="text-lg font-bold text-white">0</div>
+            <div class="text-[11px] text-gray-500 font-medium mt-0.5">Posts</div>
+          </div>
+          <div class="text-center">
+            <div id="modalLikes" class="text-lg font-bold text-white">0</div>
+            <div class="text-[11px] text-gray-500 font-medium mt-0.5">Likes</div>
+          </div>
+          <div class="text-center">
+            <div id="modalWins" class="text-lg font-bold text-white">0</div>
+            <div class="text-[11px] text-gray-500 font-medium mt-0.5">Wins</div>
+          </div>
+          <div class="text-center">
+            <div id="modalFollowers" class="text-lg font-bold text-white">0</div>
+            <div class="text-[11px] text-gray-500 font-medium mt-0.5">Followers</div>
+          </div>
+        </div>
+
+        <div class="mt-4 flex gap-3">
+          <button id="modalFollowBtn" onclick="toggleFollow()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-black font-bold py-2.5 rounded-xl text-sm transition">
+            Follow
+          </button>
+          <button class="flex-1 bg-[#0f172a] hover:bg-white/5 text-white font-semibold py-2.5 rounded-xl text-sm transition border border-white/8">
+            Message
+          </button>
+        </div>
+
+        <div class="mt-4 flex gap-1 bg-[#0f172a] p-1 rounded-xl">
+          <button class="flex-1 py-2 rounded-lg text-xs font-semibold text-amber-400 bg-amber-500/10">Posts</button>
+          <button class="flex-1 py-2 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-300 transition">Diary</button>
+          <button class="flex-1 py-2 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-300 transition">Saved</button>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="toast-container" id="toastContainer"></div>
+  <!-- ========== TOAST ========== -->
+  <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 bg-[#1e293b] text-white px-5 py-3 rounded-2xl shadow-2xl border border-white/8 flex items-center gap-2.5 text-sm font-semibold opacity-0 pointer-events-none transition-all duration-300 z-50 -translate-y-2">
+    <svg id="toastIcon" class="w-5 h-5 text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+    </svg>
+    <span id="toastMsg">Copied!</span>
+  </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { 
-            getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
-            query, orderBy, limit, where, onSnapshot, increment, arrayUnion, arrayRemove,
-            serverTimestamp, Timestamp 
-        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { 
-            getAuth, onAuthStateChanged, signInAnonymously 
-        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  <!-- ========== JAVASCRIPT ========== -->
+  <script>
+    // ==================== BADGE SYSTEM (4 BADGES ONLY) ====================
+    const BADGES = {
+      member: {
+        icon: '🟢',
+        name: 'Member',
+        desc: 'Become a registered member of LASU GradeTracker',
+        bg: 'bg-green-500/15',
+        border: 'border-green-500/30',
+        text: 'text-green-400',
+        condition: (u) => u.isMember
+      },
+      influencer: {
+        icon: '🟠',
+        name: 'Influencer',
+        desc: 'Create 30+ posts in the community',
+        bg: 'bg-orange-500/15',
+        border: 'border-orange-500/30',
+        text: 'text-orange-400',
+        condition: (u) => u.posts >= 30
+      },
+      popular: {
+        icon: '⭐',
+        name: 'Popular',
+        desc: 'Get 500+ likes on your posts',
+        bg: 'bg-yellow-500/15',
+        border: 'border-yellow-500/30',
+        text: 'text-yellow-400',
+        condition: (u) => u.likes >= 500
+      },
+      admin: {
+        icon: '🔴',
+        name: 'Admin',
+        desc: 'Official LASU GradeTracker administrator',
+        bg: 'bg-red-500/15',
+        border: 'border-red-500/30',
+        text: 'text-red-400',
+        condition: (u) => u.isAdmin
+      }
+    };
 
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "your-app.firebaseapp.com",
-            projectId: "your-project-id",
-            storageBucket: "your-app.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "your-app-id"
-        };
+    function getUserBadges(user) {
+      return Object.entries(BADGES)
+        .filter(([key, badge]) => badge.condition(user))
+        .map(([key, badge]) => ({ key, ...badge }));
+    }
 
-        let app, db, auth;
-        let firebaseReady = false;
-        try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            firebaseReady = true;
-        } catch(e) {
-            console.log('Firebase not configured, running in demo mode');
+    function renderBadge(badge, small = false) {
+      const size = small ? 'w-5 h-5 text-[11px]' : 'w-6 h-6 text-sm';
+      return `
+        <div class="badge-wrap inline-flex items-center justify-center ${size} ${badge.bg} ${badge.border} border rounded-full cursor-help" title="${badge.name}: ${badge.desc}">
+          <span>${badge.icon}</span>
+          <div class="badge-tooltip">
+            <div class="font-semibold text-white flex items-center gap-1.5">
+              <span>${badge.icon}</span>
+              <span>${badge.name}</span>
+            </div>
+            <div class="text-gray-400 text-[10px] mt-0.5">${badge.desc}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ==================== DEMO DATA ====================
+    const demoUsers = [
+      { 
+        name: 'Adebola Oluwaseun', 
+        handle: '@adebola_seun', 
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=adebola', 
+        dept: 'Chemistry', 
+        level: '200L', 
+        bio: 'LASU Chemistry student | GradeTracker enthusiast | Always grinding 💪 | 4.0 or nothing!', 
+        posts: 12, 
+        likes: 48, 
+        wins: 3,
+        followers: 156,
+        following: false,
+        online: true,
+        isMember: true,
+        isAdmin: false
+      },
+      { 
+        name: 'Chioma Nwosu', 
+        handle: '@chioma_n', 
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chioma', 
+        dept: 'Biology', 
+        level: '300L', 
+        bio: 'Bio major | Nature lover 🌿 | LASU represent! | Future researcher', 
+        posts: 8, 
+        likes: 32, 
+        wins: 1,
+        followers: 89,
+        following: false,
+        online: true,
+        isMember: true,
+        isAdmin: false
+      },
+      { 
+        name: 'Tunde Bakare', 
+        handle: '@tunde_b', 
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=tunde', 
+        dept: 'Physics', 
+        level: '100L', 
+        bio: 'First year vibes | Physics is life ⚛️ | Still figuring things out', 
+        posts: 5, 
+        likes: 19, 
+        wins: 0,
+        followers: 42,
+        following: false,
+        online: false,
+        isMember: true,
+        isAdmin: false
+      },
+    ];
+
+    // ADMIN USER (you)
+    const adminUser = {
+      name: 'LASU GradeTracker Official',
+      handle: '@lasu_official',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=official',
+      dept: 'Administration',
+      level: 'Staff',
+      bio: 'Official LASU GradeTracker account. Announcements, updates & community management.',
+      posts: 45,
+      likes: 1200,
+      wins: 0,
+      followers: 2500,
+      following: false,
+      online: true,
+      isMember: true,
+      isAdmin: true
+    };
+
+    const currentUser = demoUsers[0];
+    let posts = JSON.parse(localStorage.getItem('lasu_posts') || '[]');
+    let currentFilter = 'all';
+    let sharePostId = null;
+    let viewedProfileId = null;
+
+    // Seed demo posts if empty
+    if (posts.length === 0) {
+      posts = [
+        { 
+          id: 1, 
+          userId: 1, 
+          content: 'Just calculated my CGPA using the LASU GradeTracker! Went from 3.2 to 3.8 this semester 🔥 Who else is using it?', 
+          time: '2h ago', 
+          likes: 24, 
+          comments: 5, 
+          shares: 3, 
+          liked: false, 
+          saved: false, 
+          tags: ['#GradeTracker', '#LASU'],
+          image: null
+        },
+        { 
+          id: 2, 
+          userId: 2, 
+          content: 'Bio 301 practical was something else today 😭 Thank God for this app helping me track my grades so I know where I stand!', 
+          time: '4h ago', 
+          likes: 15, 
+          comments: 2, 
+          shares: 1, 
+          liked: false, 
+          saved: false, 
+          tags: ['#BioLife', '#LASU'],
+          image: null
+        },
+        { 
+          id: 3, 
+          userId: 0, 
+          content: 'New semester, new goals! Aiming for a 4.0 this time. Let\'s get it! 💯 #NoExcuses', 
+          time: '6h ago', 
+          likes: 8, 
+          comments: 1, 
+          shares: 0, 
+          liked: false, 
+          saved: false, 
+          tags: ['#Goals', '#NewSemester'],
+          image: null
+        },
+        {
+          id: 4,
+          userId: 99,
+          content: '📢 Important Announcement: The new GPA calculator update is live! Now supports 5-point and 4-point grading systems. Check it out!',
+          time: '1h ago',
+          likes: 156,
+          comments: 23,
+          shares: 45,
+          liked: false,
+          saved: false,
+          tags: ['#Announcement', '#Update'],
+          image: null
         }
+      ];
+      localStorage.setItem('lasu_posts', JSON.stringify(posts));
+    }
 
-        let currentUser = null;
-        let currentUserData = null;
-        let activePostId = null;
-        let activeCommentId = null;
-        let selectedReportReason = null;
-        let currentFilter = 'all';
-        let postsUnsubscribe = null;
-        let selectedAvatar = null;
+    // ==================== HELPERS ====================
+    function getUser(id) {
+      if (id === 99) return adminUser;
+      return id === 0 ? currentUser : demoUsers[id - 1] || currentUser;
+    }
 
-        const AVATAR_SEEDS = [
-            'Aaliyah', 'Bella', 'Chloe', 'Diana', 'Emma', 'Fiona', 'Grace', 'Hannah',
-            'Aiden', 'Brandon', 'Caleb', 'Dylan', 'Ethan', 'Felix', 'Gavin', 'Henry',
-            'Jasmine', 'Kayla', 'Luna', 'Maya', 'Nora', 'Olivia', 'Piper', 'Quinn',
-            'Jake', 'Kevin', 'Leo', 'Mason', 'Noah', 'Owen', 'Parker', 'Ryan'
-        ];
+    function togglePostBtn(el) {
+      document.getElementById('postBtn').disabled = el.value.trim().length === 0;
+    }
 
-        const demoUsers = {
-            'user1': {
-                uid: 'user1', displayName: 'Ochanya_Ade', 
-                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aaliyah&style=circle',
-                bio: 'LASU Student | Chemistry Major | 300L',
-                department: 'Chemistry', level: '300 Level',
-                badges: ['member'], postsCount: 5, followers: 23, following: 15,
-                createdAt: Date.now() - 86400000 * 30
-            },
-            'user2': {
-                uid: 'user2', displayName: 'Jide_Kola',
-                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Brandon&style=circle',
-                bio: 'Computer Science | Code lover | LASU',
-                department: 'Computer Science', level: '200 Level',
-                badges: ['member', 'contributor'], postsCount: 35, followers: 56, following: 42,
-                createdAt: Date.now() - 86400000 * 60
-            },
-            'user3': {
-                uid: 'user3', displayName: 'Amina_M',
-                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Chloe&style=circle',
-                bio: 'Mass Comm | Writer | Dreamer',
-                department: 'Mass Communication', level: '400 Level',
-                badges: ['member', 'contributor', 'champion'], postsCount: 42, followers: 89, following: 67,
-                createdAt: Date.now() - 86400000 * 90
-            },
-            'user4': {
-                uid: 'user4', displayName: 'Ochanya_Official',
-                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Diana&style=circle',
-                bio: 'Founder of LASU GradeTracker | Building community',
-                department: 'Admin', level: 'Admin',
-                badges: ['member', 'admin'], postsCount: 120, followers: 234, following: 12,
-                createdAt: Date.now() - 86400000 * 120
-            }
-        };
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      const icon = document.getElementById('toastIcon');
+      document.getElementById('toastMsg').textContent = msg;
 
-        const demoPosts = [
-            {
-                id: 'post1', userId: 'user2', text: 'Who else is stressed about CHM 206 test next week? Need a study group ASAP!',
-                image: null, createdAt: Date.now() - 7200000,
-                reactions: { '&#128557;': ['user1', 'user3'], '&#128514;': ['user4'], '&#128293;': ['user1'], '&#128079;': ['user3'] },
-                comments: [
-                    { id: 'c1', userId: 'user1', text: 'Same here! Count me in', createdAt: Date.now() - 7000000, replies: [] },
-                    { id: 'c2', userId: 'user3', text: 'I can help organize. DM me!', createdAt: Date.now() - 6800000, replies: [] }
-                ],
-                shares: 3, bookmarks: ['user1'], mutedBy: [], reportedBy: []
-            },
-            {
-                id: 'post2', userId: 'user1', text: 'LASU WiFi is actually working today! Miracles do happen',
-                image: null, createdAt: Date.now() - 18000000,
-                reactions: { '&#128514;': ['user2', 'user3', 'user4'], '&#128293;': ['user2'], '&#128530;': ['user3'] },
-                comments: [],
-                shares: 8, bookmarks: [], mutedBy: [], reportedBy: []
-            },
-            {
-                id: 'post3', userId: 'user3', text: "Shoutout to everyone writing exams this week! You've got this. Remember to sleep and eat well!",
-                image: null, createdAt: Date.now() - 86400000,
-                reactions: { '&#10084;': ['user1', 'user2', 'user4'], '&#128079;': ['user1', 'user2'], '&#128293;': ['user4'] },
-                comments: [
-                    { id: 'c3', userId: 'user2', text: 'Thanks Amina! Needed this', createdAt: Date.now() - 85000000, replies: [] },
-                    { id: 'c4', userId: 'user4', text: 'Best of luck to everyone!', createdAt: Date.now() - 84000000, replies: [] }
-                ],
-                shares: 15, bookmarks: ['user2', 'user4'], mutedBy: [], reportedBy: []
-            },
-            {
-                id: 'post4', userId: 'user4', text: "Welcome to the LASU Lounge! This is your space to connect, share, and grow together. Remember to be kind and respectful to everyone. Let's build an amazing community!",
-                image: null, createdAt: Date.now() - 172800000,
-                reactions: { '&#10084;': ['user1', 'user2', 'user3'], '&#128079;': ['user1', 'user2', 'user3'], '&#128293;': ['user1', 'user2'] },
-                comments: [],
-                shares: 45, bookmarks: ['user1', 'user2', 'user3'], mutedBy: [], reportedBy: []
-            }
-        ];
+      if (type === 'success') {
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>';
+        icon.className = 'w-5 h-5 text-green-400 shrink-0';
+      } else if (type === 'info') {
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+        icon.className = 'w-5 h-5 text-amber-400 shrink-0';
+      }
 
-        async function init() {
-            if (firebaseReady) {
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        currentUser = user;
-                        await loadUserData(user.uid);
-                    } else {
-                        const cred = await signInAnonymously(auth);
-                        currentUser = cred.user;
-                        await createDemoUser(currentUser.uid);
-                        await loadUserData(currentUser.uid);
-                    }
-                });
-            } else {
-                currentUser = { uid: 'demoUser' };
-                currentUserData = {
-                    uid: 'demoUser', displayName: 'You', 
-                    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma&style=circle',
-                    bio: '', department: '', level: '',
-                    badges: ['member'], postsCount: 0, followers: 0, following: 0,
-                    followingUsers: [], mutedUsers: [], savedPosts: [],
-                    createdAt: Date.now()
-                };
-                updateHeader();
-                loadPosts();
-                initAvatarPicker();
-            }
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      toast.style.pointerEvents = 'auto';
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(-10px)';
+        toast.style.pointerEvents = 'none';
+      }, 2500);
+    }
+
+    // ==================== POST ACTIONS ====================
+    function createPost() {
+      const input = document.getElementById('postInput');
+      const content = input.value.trim();
+      if (!content) return;
+
+      const newPost = {
+        id: Date.now(),
+        userId: 0,
+        content: content,
+        time: 'Just now',
+        likes: 0,
+        comments: 0,
+        shares: 0,
+        liked: false,
+        saved: false,
+        tags: extractTags(content),
+        image: null
+      };
+      posts.unshift(newPost);
+      localStorage.setItem('lasu_posts', JSON.stringify(posts));
+      input.value = '';
+      togglePostBtn(input);
+      renderPosts();
+      showToast('Post created successfully!');
+    }
+
+    function extractTags(text) {
+      const tags = text.match(/#[\w]+/g);
+      return tags || [];
+    }
+
+    function likePost(id) {
+      const post = posts.find(p => p.id === id);
+      if (post) {
+        post.liked = !post.liked;
+        post.likes += post.liked ? 1 : -1;
+        localStorage.setItem('lasu_posts', JSON.stringify(posts));
+        renderPosts();
+      }
+    }
+
+    function savePost(id) {
+      const post = posts.find(p => p.id === id);
+      if (post) {
+        post.saved = !post.saved;
+        localStorage.setItem('lasu_posts', JSON.stringify(posts));
+        renderPosts();
+        showToast(post.saved ? 'Saved to your diary' : 'Removed from diary', 'info');
+      }
+    }
+
+    function commentPost(id) {
+      showToast('Comments coming with Firebase! 🔥', 'info');
+    }
+
+    // ==================== SHARE MODAL ====================
+    function openShare(id) {
+      sharePostId = id;
+      const modal = document.getElementById('shareModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeShareModal() {
+      const modal = document.getElementById('shareModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      sharePostId = null;
+    }
+
+    function shareTo(platform) {
+      const post = posts.find(p => p.id === sharePostId);
+      const text = post ? post.content.substring(0, 100) + '...' : 'Check out LASU GradeTracker!';
+      const url = 'https://lasu-gradetracker.github.io/post/' + sharePostId;
+
+      let shareUrl = '';
+      switch(platform) {
+        case 'whatsapp':
+          shareUrl = 'https://wa.me/?text=' + encodeURIComponent(text + '\n\n' + url);
+          break;
+        case 'twitter':
+          shareUrl = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url);
+          break;
+        case 'facebook':
+          shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url);
+          break;
+      }
+
+      if (shareUrl) window.open(shareUrl, '_blank');
+      closeShareModal();
+      showToast('Opening ' + platform + '...');
+    }
+
+    function copyLink() {
+      navigator.clipboard.writeText('https://lasu-gradetracker.github.io/post/' + sharePostId);
+      closeShareModal();
+      showToast('Link copied to clipboard!');
+    }
+
+    // ==================== PROFILE MODAL ====================
+    function openProfile(userId) {
+      viewedProfileId = userId;
+      const user = getUser(userId);
+      const isSelf = userId === 0;
+      const badges = getUserBadges(user);
+
+      document.getElementById('modalAvatar').src = user.avatar;
+      document.getElementById('modalName').textContent = user.name;
+      document.getElementById('modalHandle').textContent = user.handle;
+      document.getElementById('modalBio').textContent = user.bio;
+      document.getElementById('modalDept').textContent = user.dept;
+      document.getElementById('modalLevel').textContent = user.level;
+      document.getElementById('modalPosts').textContent = user.posts;
+      document.getElementById('modalLikes').textContent = user.likes;
+      document.getElementById('modalWins').textContent = user.wins;
+      document.getElementById('modalFollowers').textContent = user.followers;
+
+      // BADGES next to name
+      const badgeArea = document.getElementById('modalBadgeArea');
+      if (badges.length > 0) {
+        badgeArea.innerHTML = badges.map(b => renderBadge(b, true)).join('');
+      } else {
+        badgeArea.innerHTML = '';
+      }
+
+      const followBtn = document.getElementById('modalFollowBtn');
+      if (isSelf) {
+        followBtn.textContent = 'Edit Profile';
+        followBtn.onclick = () => showToast('Edit profile coming with Firebase! 🔥', 'info');
+        followBtn.className = 'flex-1 bg-[#0f172a] hover:bg-white/5 text-white font-bold py-2.5 rounded-xl text-sm transition border border-white/8';
+      } else {
+        followBtn.textContent = user.following ? 'Following' : 'Follow';
+        followBtn.onclick = toggleFollow;
+        followBtn.className = user.following 
+          ? 'flex-1 bg-[#0f172a] hover:bg-white/5 text-white font-bold py-2.5 rounded-xl text-sm transition border border-white/8'
+          : 'flex-1 bg-amber-500 hover:bg-amber-400 text-black font-bold py-2.5 rounded-xl text-sm transition';
+      }
+
+      const modal = document.getElementById('profileModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeProfileModal() {
+      const modal = document.getElementById('profileModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      viewedProfileId = null;
+    }
+
+    function toggleFollow() {
+      if (viewedProfileId === null || viewedProfileId === 0) return;
+      const user = viewedProfileId === 99 ? adminUser : demoUsers[viewedProfileId - 1];
+      user.following = !user.following;
+      user.followers += user.following ? 1 : -1;
+      openProfile(viewedProfileId);
+      showToast(user.following ? 'Now following ' + user.name + '!' : 'Unfollowed ' + user.name, 'info');
+    }
+
+    // ==================== FILTER TABS ====================
+    function setFilter(filter) {
+      currentFilter = filter;
+      ['all','trending','following','my'].forEach(f => {
+        const btn = document.getElementById('tab-' + f);
+        if (f === filter) {
+          btn.className = 'tab-active flex flex-col items-center gap-1 py-2.5 px-5 rounded-xl transition-all duration-200';
+        } else {
+          btn.className = 'tab-inactive flex flex-col items-center gap-1 py-2.5 px-5 rounded-xl transition-all duration-200';
         }
+      });
+      renderPosts();
+    }
 
-        async function createDemoUser(uid) {
-            if (!db) return;
-            const userRef = doc(db, 'users', uid);
-            const snap = await getDoc(userRef);
-            if (!snap.exists()) {
-                await updateDoc(userRef, {
-                    uid, displayName: 'New Member',
-                    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${AVATAR_SEEDS[0]}&style=circle`,
-                    bio: '', department: '', level: '',
-                    badges: ['member'], postsCount: 0, followers: 0, following: 0,
-                    followingUsers: [], mutedUsers: [], savedPosts: [],
-                    createdAt: serverTimestamp()
-                });
-            }
-        }
+    // ==================== RENDER POSTS ====================
+    function renderPosts() {
+      const feed = document.getElementById('postsFeed');
+      const empty = document.getElementById('emptyState');
 
-        async function loadUserData(uid) {
-            if (!db) {
-                currentUserData = demoUsers[uid] || currentUserData;
-                updateHeader();
-                loadPosts();
-                initAvatarPicker();
-                return;
-            }
-            try {
-                const userRef = doc(db, 'users', uid);
-                const snap = await getDoc(userRef);
-                if (snap.exists()) {
-                    currentUserData = { uid, ...snap.data() };
-                } else {
-                    currentUserData = {
-                        uid, displayName: 'New Member',
-                        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${AVATAR_SEEDS[0]}&style=circle`,
-                        bio: '', department: '', level: '',
-                        badges: ['member'], postsCount: 0, followers: 0, following: 0,
-                        followingUsers: [], mutedUsers: [], savedPosts: [],
-                        createdAt: Date.now()
-                    };
-                }
-            } catch (e) {
-                currentUserData = demoUsers[uid] || currentUserData;
-            }
-            updateHeader();
-            loadPosts();
-            initAvatarPicker();
-        }
+      let filtered = posts;
+      if (currentFilter === 'my') filtered = posts.filter(p => p.userId === 0);
+      if (currentFilter === 'trending') filtered = [...posts].sort((a,b) => b.likes - a.likes);
+      if (currentFilter === 'following') filtered = posts.filter(p => p.userId !== 0 && p.userId !== 99);
 
-        function updateHeader() {
-            if (currentUserData) {
-                document.getElementById('headerAvatar').src = currentUserData.avatar;
-                document.getElementById('createPostAvatar').src = currentUserData.avatar;
-                document.getElementById('editProfileAvatar').src = currentUserData.avatar;
-            }
-        }
+      if (filtered.length === 0) {
+        feed.innerHTML = '';
+        empty.classList.remove('hidden');
+        empty.classList.add('flex');
+        return;
+      }
+      empty.classList.add('hidden');
+      empty.classList.remove('flex');
 
-        function loadPosts() {
-            if (firebaseReady && db) {
-                const postsRef = collection(db, 'posts');
-                let q = query(postsRef, orderBy('createdAt', 'desc'), limit(50));
-                if (currentFilter === 'following' && currentUserData?.followingUsers?.length > 0) {
-                    q = query(postsRef, where('userId', 'in', currentUserData.followingUsers.slice(0, 10)), orderBy('createdAt', 'desc'));
-                } else if (currentFilter === 'mine') {
-                    q = query(postsRef, where('userId', '==', currentUser.uid), orderBy('createdAt', 'desc'));
-                }
-                if (postsUnsubscribe) postsUnsubscribe();
-                postsUnsubscribe = onSnapshot(q, (snapshot) => {
-                    const posts = [];
-                    snapshot.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
-                    renderPosts(posts);
-                }, (err) => {
-                    renderDemoPosts();
-                });
-            } else {
-                renderDemoPosts();
-            }
-        }
-
-        function renderDemoPosts() {
-            let posts = [...demoPosts];
-            if (currentFilter === 'trending') {
-                posts.sort((a, b) => {
-                    const scoreA = Object.values(a.reactions).flat().length + a.comments.length + a.shares;
-                    const scoreB = Object.values(b.reactions).flat().length + b.comments.length + b.shares;
-                    return scoreB - scoreA;
-                });
-            } else if (currentFilter === 'following') {
-                posts = posts.filter(p => currentUserData?.followingUsers?.includes(p.userId));
-            } else if (currentFilter === 'mine') {
-                posts = posts.filter(p => p.userId === currentUser?.uid);
-            }
-            renderPosts(posts);
-        }
-
-        function renderPosts(posts) {
-            const feed = document.getElementById('postsFeed');
-            if (posts.length === 0) {
-                feed.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><h3>No posts yet</h3><p>Be the first to share something!</p></div>';
-                return;
-            }
-            feed.innerHTML = posts.map(post => renderPostCard(post)).join('');
-        }
-
-        function renderPostCard(post) {
-            const user = demoUsers[post.userId] || { displayName: 'Unknown', avatar: '', badges: [] };
-            const isOwner = post.userId === currentUser?.uid;
-            const isMuted = currentUserData?.mutedUsers?.includes(post.userId);
-            const isBookmarked = currentUserData?.savedPosts?.includes(post.id);
-            const timeAgo = getTimeAgo(post.createdAt);
-            const reactionCounts = {};
-            Object.entries(post.reactions || {}).forEach(([emoji, users]) => { reactionCounts[emoji] = users.length; });
-            const totalReactions = Object.values(reactionCounts).reduce((a, b) => a + b, 0);
-            const commentsCount = (post.comments || []).length;
-            const myReactions = [];
-            Object.entries(post.reactions || {}).forEach(([emoji, users]) => { if (users.includes(currentUser?.uid)) myReactions.push(emoji); });
-
-            return `<div class="post-card ${isMuted ? 'muted' : ''}" id="post-${post.id}" data-post-id="${post.id}">
-                <div class="post-header">
-                    <div class="post-author">
-                        <a href="#" class="author-avatar-link" onclick="viewProfile('${post.userId}'); return false;">
-                            <img src="${user.avatar}" class="author-avatar" alt="${user.displayName}">
-                        </a>
-                        <div class="author-info">
-                            <div class="author-name-row">
-                                <a href="#" class="author-name" onclick="viewProfile('${post.userId}'); return false;">${user.displayName}</a>
-                                <div class="badges-row">${user.badges.map(b => `<span class="badge ${b}" title="${getBadgeTitle(b)}"></span>`).join('')}</div>
-                                ${post.userId !== currentUser?.uid ? `<button class="follow-btn-small ${currentUserData?.followingUsers?.includes(post.userId) ? 'following' : ''}" onclick="toggleFollow('${post.userId}', this)">${currentUserData?.followingUsers?.includes(post.userId) ? 'Following' : 'Follow'}</button>` : ''}
-                            </div>
-                            <div class="author-meta"><span>${timeAgo}</span>${user.department ? `<span>·</span><span>${user.department}</span>` : ''}</div>
-                        </div>
+      feed.innerHTML = filtered.map(post => {
+        const user = getUser(post.userId);
+        const isOwner = post.userId === 0;
+        const isAdmin = post.userId === 99;
+        const userBadges = getUserBadges(user);
+        return `
+          <div class="post-card bg-[#1e293b] rounded-2xl border border-white/6 p-4">
+            <div class="flex items-start gap-3">
+              <div class="relative shrink-0">
+                <img src="${user.avatar}" onclick="openProfile(${post.userId})" 
+                  class="w-10 h-10 rounded-full cursor-pointer avatar-hover object-cover border ${isAdmin ? 'border-red-500/50' : 'border-white/8'}" alt="${user.name}">
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span onclick="openProfile(${post.userId})" class="font-semibold text-white text-[13px] cursor-pointer hover:text-amber-400 transition truncate ${isAdmin ? 'text-red-400' : ''}">${user.name}</span>
+                  <!-- BADGES next to name -->
+                  ${userBadges.length > 0 ? `
+                    <div class="flex items-center gap-0.5">
+                      ${userBadges.map(b => renderBadge(b, true)).join('')}
                     </div>
-                    <div style="position:relative;">
-                        <button class="post-menu-btn" onclick="showPostMenu(event, '${post.id}', '${post.userId}', '${user.displayName}')"><i class="fas fa-ellipsis-h"></i></button>
-                    </div>
+                  ` : ''}
+                  <span class="text-gray-500 text-[11px] ml-auto">${post.time}</span>
                 </div>
-                <div class="post-content">
-                    <div class="post-text">${linkifyText(post.text)}</div>
-                    ${post.image ? `<img src="${post.image}" class="post-image" alt="Post image">` : ''}
+
+                <p class="text-gray-200 text-[14px] mt-2 leading-relaxed">${formatContent(post.content)}</p>
+
+                ${post.tags.length ? `
+                  <div class="flex flex-wrap gap-2 mt-2.5">
+                    ${post.tags.map(t => `<span class="text-amber-400/70 text-[11px] font-medium hover:text-amber-400 cursor-pointer transition">${t}</span>`).join('')}
+                  </div>
+                ` : ''}
+
+                <div class="flex items-center gap-1 mt-3.5 pt-3 border-t border-white/5">
+                  <button onclick="likePost(${post.id})" 
+                    class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ${post.liked ? 'text-red-400 bg-red-500/8' : 'text-gray-400 hover:text-red-400 hover:bg-white/4'}"
+                    aria-label="Like">
+                    <svg class="w-[18px] h-[18px] ${post.liked ? 'fill-current' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                    <span>${post.likes}</span>
+                  </button>
+
+                  <button onclick="commentPost(${post.id})" 
+                    class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-blue-400 hover:bg-white/4 transition"
+                    aria-label="Comment">
+                    <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    <span>${post.comments}</span>
+                  </button>
+
+                  <button onclick="openShare(${post.id})" 
+                    class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-green-400 hover:bg-white/4 transition"
+                    aria-label="Share">
+                    <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                    </svg>
+                    <span>${post.shares}</span>
+                  </button>
+
+                  <button onclick="savePost(${post.id})" 
+                    class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ml-auto ${post.saved ? 'text-amber-400 bg-amber-500/8' : 'text-gray-400 hover:text-amber-400 hover:bg-white/4'}"
+                    aria-label="Save">
+                    <svg class="w-[18px] h-[18px] ${post.saved ? 'fill-current' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                    </svg>
+                  </button>
                 </div>
-                ${totalReactions > 0 ? `<div class="reactions-display">${Object.entries(reactionCounts).map(([emoji, count]) => `<span class="reaction-chip ${myReactions.includes(emoji) ? 'active' : ''}" onclick="toggleReaction('${post.id}', '${emoji}')">${emoji} ${count}</span>`).join('')}</div>` : ''}
-                <div class="post-stats"><span>${totalReactions} reactions</span><span>${commentsCount} comments</span><span>${post.shares || 0} shares</span></div>
-                <div class="post-actions">
-                    <button class="action-btn ${myReactions.length > 0 ? 'active' : ''}" onmouseenter="showReactions(event, '${post.id}')" onmouseleave="hideReactions(event)" onclick="toggleReaction('${post.id}', '&#128077;')">
-                        <div class="reaction-picker" id="reactions-${post.id}">
-                            <button class="reaction-opt ${myReactions.includes('&#128077;') ? 'selected' : ''}" onclick="event.stopPropagation(); toggleReaction('${post.id}', '&#128077;')">&#128077;</button>
-                            <button class="reaction-opt ${myReactions.includes('&#10084;') ? 'selected' : ''}" onclick="event.stopPropagation(); toggleReaction('${post.id}', '&#10084;')">&#10084;</button>
-                            <button class="reaction-opt ${myReactions.includes('&#128514;') ? 'selected' : ''}" onclick="event.stopPropagation(); toggleReaction('${post.id}', '&#128514;')">&#128514;</button>
-                            <button class="reaction-opt ${myReactions.includes('&#128293;') ? 'selected' : ''}" onclick="event.stopPropagation(); toggleReaction('${post.id}', '&#128293;')">&#128293;</button>
-                            <button class="reaction-opt ${myReactions.includes('&#128079;') ? 'selected' : ''}" onclick="event.stopPropagation(); toggleReaction('${post.id}', '&#128079;')">&#128079;</button>
-                            <button class="reaction-opt ${myReactions.includes('&#128557;') ? 'selected' : ''}" onclick="event.stopPropagation(); toggleReaction('${post.id}', '&#128557;')">&#128557;</button>
-                        </div>
-                        <i class="fas fa-thumbs-up"></i> Like
-                    </button>
-                    <button class="action-btn" onclick="toggleComments('${post.id}')"><i class="fas fa-comment"></i> Comment</button>
-                    <button class="action-btn ${isBookmarked ? 'bookmarked' : ''}" onclick="bookmarkPost('${post.id}')"><i class="fas fa-bookmark"></i> Save</button>
-                    <button class="action-btn" onclick="openShareModal('${post.id}')"><i class="fas fa-share"></i> Share</button>
-                </div>
-                <div class="comments-section ${post.comments?.length > 0 ? 'show' : ''}" id="comments-${post.id}">
-                    <div class="comment-input-wrap">
-                        <img src="${currentUserData?.avatar || ''}" class="comment-avatar" alt="You">
-                        <div class="comment-input-area">
-                            <textarea class="comment-input" id="comment-input-${post.id}" placeholder="Write a comment..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();addComment('${post.id}')}"></textarea>
-                            <button class="comment-submit" onclick="addComment('${post.id}')"><i class="fas fa-paper-plane"></i></button>
-                        </div>
-                    </div>
-                    <div id="comments-list-${post.id}">${(post.comments || []).map(c => renderComment(c, post.id)).join('')}</div>
-                </div>
-            </div>`;
-        }
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
 
-        function renderComment(comment, postId) {
-            const user = demoUsers[comment.userId] || { displayName: 'Unknown', avatar: '' };
-            const timeAgo = getTimeAgo(comment.createdAt);
-            const isOwner = comment.userId === currentUser?.uid;
-            return `<div class="comment-item" id="comment-${comment.id}">
-                <img src="${user.avatar}" class="comment-avatar" alt="${user.displayName}">
-                <div class="comment-body">
-                    <div class="comment-header">
-                        <a href="#" class="comment-author" onclick="viewProfile('${comment.userId}'); return false;">${user.displayName}</a>
-                        <span class="comment-time">${timeAgo}</span>
-                    </div>
-                    <div class="comment-text">${comment.text}</div>
-                    <div class="comment-actions">
-                        <button class="comment-action" onclick="replyToComment('${postId}', '${comment.id}')">Reply</button>
-                        ${isOwner ? `<button class="comment-action" onclick="deleteComment('${postId}', '${comment.id}')">Delete</button>` : ''}
-                    </div>
-                    <div class="reply-input-wrap" id="reply-wrap-${comment.id}">
-                        <textarea class="comment-input" id="reply-input-${comment.id}" placeholder="Write a reply..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();addReply('${postId}', '${comment.id}')}"></textarea>
-                        <button class="comment-submit" onclick="addReply('${postId}', '${comment.id}')"><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>
-            </div>`;
-        }
+    function formatContent(text) {
+      return text.replace(/(#[\w]+)/g, '<span class="text-amber-400/80 hover:text-amber-400 cursor-pointer transition">$1</span>');
+    }
 
-        function getBadgeTitle(badge) {
-            const titles = { member: 'Community Member', contributor: 'Active Contributor', champion: 'Challenge Champion', admin: 'Admin' };
-            return titles[badge] || badge;
-        }
-
-        function getTimeAgo(timestamp) {
-            const seconds = Math.floor((Date.now() - timestamp) / 1000);
-            if (seconds < 60) return 'Just now';
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `${minutes}m ago`;
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return `${hours}h ago`;
-            const days = Math.floor(hours / 24);
-            if (days < 7) return `${days}d ago`;
-            const weeks = Math.floor(days / 7);
-            if (weeks < 4) return `${weeks}w ago`;
-            const months = Math.floor(days / 30);
-            return `${months}mo ago`;
-        }
-
-        function linkifyText(text) {
-            return text.replace(/#(\w+)/g, '<a href="#">#$1</a>').replace(/@(\w+)/g, '<a href="#" onclick="viewProfileByName(\'$1\'); return false;">@$1</a>');
-        }
-
-        window.goBack = () => { window.location.href = 'index.html'; };
-        window.showNotifications = () => { showToast('Notifications coming soon!', 'info'); };
-        window.addPhoto = () => { showToast('Photo upload coming soon!', 'info'); };
-        window.addEmoji = () => { showToast('Emoji picker coming soon!', 'info'); };
-        window.addTag = () => { showToast('Tag feature coming soon!', 'info'); };
-
-        window.createPost = async () => {
-            const input = document.getElementById('postInput');
-            const text = input.value.trim();
-            if (!text) { showToast('Write something first!', 'error'); return; }
-            if (firebaseReady && db) {
-                await addDoc(collection(db, 'posts'), {
-                    userId: currentUser.uid, text, image: null,
-                    createdAt: serverTimestamp(), reactions: {}, comments: [],
-                    shares: 0, bookmarks: [], mutedBy: [], reportedBy: []
-                });
-                await updateDoc(doc(db, 'users', currentUser.uid), { postsCount: increment(1) });
-            } else {
-                const newPost = {
-                    id: 'post' + Date.now(), userId: currentUser.uid, text, image: null,
-                    createdAt: Date.now(), reactions: {}, comments: [],
-                    shares: 0, bookmarks: [], mutedBy: [], reportedBy: []
-                };
-                demoPosts.unshift(newPost);
-                currentUserData.postsCount++;
-                renderDemoPosts();
-            }
-            input.value = '';
-            showToast('Post created!', 'success');
-        };
-
-        window.filterPosts = (filter) => {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-            event.target.closest('.filter-tab').classList.add('active');
-            loadPosts();
-        };
-
-        window.showReactions = (e, postId) => {
-            const picker = document.getElementById('reactions-' + postId);
-            if (picker) picker.classList.add('show');
-        };
-        window.hideReactions = (e) => {
-            const picker = e.currentTarget.querySelector('.reaction-picker');
-            if (picker) {
-                setTimeout(() => { if (!picker.matches(':hover')) picker.classList.remove('show'); }, 200);
-            }
-        };
-
-        window.toggleReaction = async (postId, emoji) => {
-            const post = demoPosts.find(p => p.id === postId);
-            if (!post) return;
-            const myUid = currentUser?.uid;
-            if (!post.reactions[emoji]) post.reactions[emoji] = [];
-            const idx = post.reactions[emoji].indexOf(myUid);
-            if (idx > -1) {
-                post.reactions[emoji].splice(idx, 1);
-                if (post.reactions[emoji].length === 0) delete post.reactions[emoji];
-            } else {
-                let myTotal = 0;
-                Object.values(post.reactions).forEach(users => { if (users.includes(myUid)) myTotal++; });
-                if (myTotal >= 2 && idx === -1) {
-                    showToast('You can only add 2 reactions per post', 'error'); return;
-                }
-                post.reactions[emoji].push(myUid);
-            }
-            if (firebaseReady && db) {
-                await updateDoc(doc(db, 'posts', postId), { reactions: post.reactions });
-            } else {
-                renderDemoPosts();
-            }
-        };
-
-        window.toggleComments = (postId) => {
-            const section = document.getElementById('comments-' + postId);
-            if (section) section.classList.toggle('show');
-        };
-
-        window.addComment = async (postId) => {
-            const input = document.getElementById('comment-input-' + postId);
-            const text = input.value.trim();
-            if (!text) return;
-            const comment = { id: 'c' + Date.now(), userId: currentUser.uid, text, createdAt: Date.now(), replies: [] };
-            const post = demoPosts.find(p => p.id === postId);
-            if (post) {
-                post.comments.push(comment);
-                if (firebaseReady && db) {
-                    await updateDoc(doc(db, 'posts', postId), { comments: post.comments });
-                } else {
-                    renderDemoPosts();
-                }
-            }
-            input.value = '';
-        };
-
-        window.replyToComment = (postId, commentId) => {
-            const wrap = document.getElementById('reply-wrap-' + commentId);
-            if (wrap) wrap.classList.toggle('show');
-        };
-
-        window.addReply = async (postId, commentId) => {
-            const input = document.getElementById('reply-input-' + commentId);
-            const text = input.value.trim();
-            if (!text) return;
-            const reply = { id: 'r' + Date.now(), userId: currentUser.uid, text, createdAt: Date.now() };
-            const post = demoPosts.find(p => p.id === postId);
-            if (post) {
-                const comment = post.comments.find(c => c.id === commentId);
-                if (comment) {
-                    if (!comment.replies) comment.replies = [];
-                    comment.replies.push(reply);
-                    if (firebaseReady && db) {
-                        await updateDoc(doc(db, 'posts', postId), { comments: post.comments });
-                    } else {
-                        renderDemoPosts();
-                    }
-                }
-            }
-            input.value = '';
-            document.getElementById('reply-wrap-' + commentId).classList.remove('show');
-        };
-
-        window.deleteComment = async (postId, commentId) => {
-            const post = demoPosts.find(p => p.id === postId);
-            if (post) {
-                post.comments = post.comments.filter(c => c.id !== commentId);
-                if (firebaseReady && db) {
-                    await updateDoc(doc(db, 'posts', postId), { comments: post.comments });
-                } else {
-                    renderDemoPosts();
-                }
-                showToast('Comment deleted', 'success');
-            }
-        };
-
-        window.showPostMenu = (e, postId, userId, username) => {
-            e.stopPropagation();
-            activePostId = postId;
-            const dropdown = document.getElementById('postMenuDropdown');
-            const rect = e.currentTarget.getBoundingClientRect();
-            dropdown.style.position = 'fixed';
-            dropdown.style.top = (rect.bottom + 5) + 'px';
-            dropdown.style.right = '16px';
-            document.getElementById('menuUsername').textContent = username;
-            const isOwner = userId === currentUser?.uid;
-            document.getElementById('editPostBtn').style.display = isOwner ? 'flex' : 'none';
-            document.getElementById('deletePostBtn').style.display = isOwner ? 'flex' : 'none';
-            document.getElementById('ownerActionsDivider').style.display = isOwner ? 'block' : 'none';
-            dropdown.classList.add('show');
-            const closeMenu = (ev) => { if (!dropdown.contains(ev.target)) { dropdown.classList.remove('show'); document.removeEventListener('click', closeMenu); } };
-            setTimeout(() => document.addEventListener('click', closeMenu), 10);
-        };
-
-        window.sharePostMenu = () => { closeDropdown(); openShareModal(activePostId); };
-        window.bookmarkPostMenu = () => { closeDropdown(); bookmarkPost(activePostId); };
-        window.copyPostLinkMenu = () => { closeDropdown(); copyToClipboard(window.location.href + '?post=' + activePostId); showToast('Link copied!', 'success'); };
-        window.muteUserMenu = () => { closeDropdown(); muteUser(activePostId); };
-        window.reportPostMenu = () => { closeDropdown(); openReportModal(activePostId); };
-        window.editPostMenu = () => { closeDropdown(); showToast('Edit feature coming soon!', 'info'); };
-        window.deletePostMenu = async () => {
-            closeDropdown();
-            const post = demoPosts.find(p => p.id === activePostId);
-            if (post) {
-                const idx = demoPosts.indexOf(post);
-                if (idx > -1) demoPosts.splice(idx, 1);
-                if (firebaseReady && db) await deleteDoc(doc(db, 'posts', activePostId));
-                renderDemoPosts();
-                showToast('Post deleted', 'success');
-            }
-        };
-
-        function closeDropdown() { document.getElementById('postMenuDropdown').classList.remove('show'); }
-
-        window.bookmarkPost = async (postId) => {
-            if (!currentUserData.savedPosts) currentUserData.savedPosts = [];
-            const idx = currentUserData.savedPosts.indexOf(postId);
-            if (idx > -1) currentUserData.savedPosts.splice(idx, 1);
-            else currentUserData.savedPosts.push(postId);
-            if (firebaseReady && db) {
-                await updateDoc(doc(db, 'users', currentUser.uid), { savedPosts: currentUserData.savedPosts });
-            }
-            renderDemoPosts();
-            showToast(idx > -1 ? 'Removed from saved' : 'Saved to bookmarks!', 'success');
-        };
-
-        window.muteUser = async (postId) => {
-            const post = demoPosts.find(p => p.id === postId);
-            if (!post) return;
-            if (!currentUserData.mutedUsers) currentUserData.mutedUsers = [];
-            const idx = currentUserData.mutedUsers.indexOf(post.userId);
-            if (idx > -1) { currentUserData.mutedUsers.splice(idx, 1); showToast('Unmuted user', 'success'); }
-            else { currentUserData.mutedUsers.push(post.userId); showToast('User muted', 'info'); }
-            if (firebaseReady && db) {
-                await updateDoc(doc(db, 'users', currentUser.uid), { mutedUsers: currentUserData.mutedUsers });
-            }
-            renderDemoPosts();
-        };
-
-        window.openReportModal = (postId) => {
-            activePostId = postId;
-            selectedReportReason = null;
-            document.querySelectorAll('.report-reason').forEach(r => r.classList.remove('selected'));
-            document.getElementById('reportModal').classList.add('show');
-        };
-
-        window.selectReportReason = (el) => {
-            document.querySelectorAll('.report-reason').forEach(r => r.classList.remove('selected'));
-            el.classList.add('selected');
-            selectedReportReason = el.textContent;
-        };
-
-        window.submitReport = async () => {
-            if (!selectedReportReason) { showToast('Select a reason first', 'error'); return; }
-            const post = demoPosts.find(p => p.id === activePostId);
-            if (post) {
-                if (!post.reportedBy) post.reportedBy = [];
-                post.reportedBy.push(currentUser.uid);
-                if (firebaseReady && db) {
-                    await updateDoc(doc(db, 'posts', activePostId), { reportedBy: post.reportedBy });
-                }
-            }
-            closeModal('reportModal');
-            showToast('Report submitted. Thank you!', 'success');
-        };
-
-        window.openShareModal = (postId) => {
-            activePostId = postId;
-            const url = window.location.origin + window.location.pathname + '?post=' + postId;
-            document.getElementById('shareLinkInput').value = url;
-            document.getElementById('shareModal').classList.add('show');
-        };
-
-        window.shareTo = (platform) => {
-            const url = document.getElementById('shareLinkInput').value;
-            const text = 'Check out this post on LASU GradeTracker!';
-            let shareUrl = '';
-            switch(platform) {
-                case 'whatsapp': shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`; break;
-                case 'facebook': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`; break;
-                case 'twitter': shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`; break;
-                case 'native': if (navigator.share) { navigator.share({ title: 'LASU GradeTracker', text, url }); return; }
-                case 'copy': copyToClipboard(url); showToast('Link copied!', 'success'); return;
-            }
-            if (shareUrl) window.open(shareUrl, '_blank');
-            closeModal('shareModal');
-        };
-
-        window.copyShareLink = () => {
-            copyToClipboard(document.getElementById('shareLinkInput').value);
-            showToast('Link copied!', 'success');
-        };
-
-        window.resharePost = async () => {
-            const post = demoPosts.find(p => p.id === activePostId);
-            if (post) {
-                const newPost = {
-                    id: 'post' + Date.now(), userId: currentUser.uid,
-                    text: `Reshared from @${demoUsers[post.userId]?.displayName || 'unknown'}:\n\n${post.text}`,
-                    image: post.image, createdAt: Date.now(),
-                    reactions: {}, comments: [], shares: 0, bookmarks: [], mutedBy: [], reportedBy: []
-                };
-                demoPosts.unshift(newPost);
-                post.shares++;
-                if (firebaseReady && db) {
-                    await addDoc(collection(db, 'posts'), newPost);
-                    await updateDoc(doc(db, 'posts', activePostId), { shares: increment(1) });
-                }
-                renderDemoPosts();
-                showToast('Reshared!', 'success');
-            }
-            closeModal('shareModal');
-        };
-
-        window.viewProfile = (userId) => {
-            const user = demoUsers[userId];
-            if (!user) return;
-            const isMe = userId === currentUser?.uid;
-            const isFollowing = currentUserData?.followingUsers?.includes(userId);
-            const userPosts = demoPosts.filter(p => p.userId === userId);
-
-            document.getElementById('profileModalBody').innerHTML = `
-                <div class="profile-header">
-                    <img src="${user.avatar}" class="profile-avatar-large" alt="${user.displayName}">
-                    <div class="profile-name">${user.displayName}
-                        <div class="badges-row">${user.badges.map(b => `<span class="badge ${b}" title="${getBadgeTitle(b)}"></span>`).join('')}</div>
-                    </div>
-                    <div class="profile-badges">${user.badges.map(b => `<span style="font-size:0.75rem;color:var(--text-secondary);background:rgba(245,158,11,0.1);padding:2px 8px;border-radius:4px;">${getBadgeTitle(b)}</span>`).join('')}</div>
-                    <div class="profile-stats-row">
-                        <div class="profile-stat"><div class="profile-stat-value">${user.postsCount}</div><div class="profile-stat-label">Posts</div></div>
-                        <div class="profile-stat"><div class="profile-stat-value">${user.followers}</div><div class="profile-stat-label">Followers</div></div>
-                        <div class="profile-stat"><div class="profile-stat-value">${user.following}</div><div class="profile-stat-label">Following</div></div>
-                    </div>
-                    <p class="profile-bio">${user.bio || 'No bio yet'}</p>
-                    ${user.department ? `<p style="color:var(--text-muted);font-size:0.8rem;margin-top:4px;">${user.department} ${user.level ? '| ' + user.level : ''}</p>` : ''}
-                    <div class="profile-actions">
-                        ${!isMe ? `<button class="profile-btn primary" onclick="toggleFollowProfile('${userId}')">${isFollowing ? 'Following' : 'Follow'}</button>` : ''}
-                        ${!isMe ? `<button class="profile-btn secondary" onclick="muteUserProfile('${userId}')">${currentUserData?.mutedUsers?.includes(userId) ? 'Unmute' : 'Mute'}</button>` : ''}
-                        ${isMe ? `<button class="profile-btn primary" onclick="closeModal('profileModal'); openEditProfile();">Edit Profile</button>` : ''}
-                    </div>
-                </div>
-                <div class="profile-posts">
-                    <h3>Recent Posts (${userPosts.length})</h3>
-                    ${userPosts.length === 0 ? '<p style="color:var(--text-muted);text-align:center;padding:20px;">No posts yet</p>' : 
-                      userPosts.map(p => `<div style="padding:12px;background:rgba(255,255,255,0.02);border-radius:10px;margin-bottom:10px;">
-                        <p style="font-size:0.9rem;color:var(--text-primary);margin-bottom:6px;">${p.text.substring(0, 120)}${p.text.length > 120 ? '...' : ''}</p>
-                        <p style="font-size:0.75rem;color:var(--text-muted);">${getTimeAgo(p.createdAt)} · ${Object.values(p.reactions).flat().length} reactions · ${p.comments.length} comments</p>
-                      </div>`).join('')}
-                </div>
-            `;
-            document.getElementById('profileModal').classList.add('show');
-        };
-
-        window.viewProfileByName = (name) => {
-            const user = Object.values(demoUsers).find(u => u.displayName.toLowerCase() === name.toLowerCase());
-            if (user) viewProfile(user.uid);
-        };
-
-        window.toggleFollow = async (userId, btn) => {
-            if (!currentUserData.followingUsers) currentUserData.followingUsers = [];
-            const idx = currentUserData.followingUsers.indexOf(userId);
-            const targetUser = demoUsers[userId];
-            if (idx > -1) {
-                currentUserData.followingUsers.splice(idx, 1);
-                if (targetUser) targetUser.followers--;
-                btn.textContent = 'Follow';
-                btn.classList.remove('following');
-                showToast(`Unfollowed ${targetUser?.displayName || 'user'}`, 'info');
-            } else {
-                currentUserData.followingUsers.push(userId);
-                if (targetUser) targetUser.followers++;
-                btn.textContent = 'Following';
-                btn.classList.add('following');
-                showToast(`Following ${targetUser?.displayName || 'user'}!`, 'success');
-            }
-            if (firebaseReady && db) {
-                await updateDoc(doc(db, 'users', currentUser.uid), { followingUsers: currentUserData.followingUsers });
-            }
-        };
-
-        window.toggleFollowProfile = async (userId) => {
-            if (!currentUserData.followingUsers) currentUserData.followingUsers = [];
-            const idx = currentUserData.followingUsers.indexOf(userId);
-            const targetUser = demoUsers[userId];
-            if (idx > -1) {
-                currentUserData.followingUsers.splice(idx, 1);
-                if (targetUser) targetUser.followers--;
-                showToast(`Unfollowed ${targetUser?.displayName || 'user'}`, 'info');
-            } else {
-                currentUserData.followingUsers.push(userId);
-                if (targetUser) targetUser.followers++;
-                showToast(`Following ${targetUser?.displayName || 'user'}!`, 'success');
-            }
-            if (firebaseReady && db) {
-                await updateDoc(doc(db, 'users', currentUser.uid), { followingUsers: currentUserData.followingUsers });
-            }
-            viewProfile(userId);
-        };
-
-        window.muteUserProfile = async (userId) => {
-            if (!currentUserData.mutedUsers) currentUserData.mutedUsers = [];
-            const idx = currentUserData.mutedUsers.indexOf(userId);
-            if (idx > -1) { currentUserData.mutedUsers.splice(idx, 1); showToast('Unmuted user', 'success'); }
-            else { currentUserData.mutedUsers.push(userId); showToast('User muted', 'info'); }
-            if (firebaseReady && db) {
-                await updateDoc(doc(db, 'users', currentUser.uid), { mutedUsers: currentUserData.mutedUsers });
-            }
-            viewProfile(userId);
-        };
-
-        window.openEditProfile = () => {
-            if (!currentUserData) return;
-            document.getElementById('editDisplayName').value = currentUserData.displayName || '';
-            document.getElementById('editBio').value = currentUserData.bio || '';
-            document.getElementById('editDepartment').value = currentUserData.department || '';
-            document.getElementById('editLevel').value = currentUserData.level || '';
-            document.getElementById('editProfileModal').classList.add('show');
-        };
-
-        function initAvatarPicker() {
-            const picker = document.getElementById('avatarPicker');
-            picker.innerHTML = AVATAR_SEEDS.map(seed => 
-                `<img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&style=circle" class="avatar-option ${selectedAvatar === seed ? 'selected' : ''}" onclick="selectAvatar('${seed}', this)" alt="Avatar">`
-            ).join('');
-        }
-
-        window.selectAvatar = (seed, el) => {
-            selectedAvatar = seed;
-            document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
-            el.classList.add('selected');
-            document.getElementById('editProfileAvatar').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&style=circle`;
-        };
-
-        window.saveProfile = async () => {
-            const displayName = document.getElementById('editDisplayName').value.trim();
-            const bio = document.getElementById('editBio').value.trim();
-            const department = document.getElementById('editDepartment').value.trim();
-            const level = document.getElementById('editLevel').value.trim();
-
-            if (!displayName) { showToast('Display name is required', 'error'); return; }
-
-            const updates = { displayName, bio, department, level };
-            if (selectedAvatar) updates.avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedAvatar}&style=circle`;
-
-            Object.assign(currentUserData, updates);
-            if (firebaseReady && db) {
-                await updateDoc(doc(db, 'users', currentUser.uid), updates);
-            }
-            updateHeader();
-            closeModal('editProfileModal');
-            showToast('Profile updated!', 'success');
-        };
-
-        window.closeModal = (id) => { document.getElementById(id).classList.remove('show'); };
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
-            toast.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(20px)'; setTimeout(() => toast.remove(), 300); }, 3000);
-        }
-
-        function copyToClipboard(text) {
-            if (navigator.clipboard) navigator.clipboard.writeText(text);
-            else {
-                const ta = document.createElement('textarea');
-                ta.value = text; document.body.appendChild(ta); ta.select();
-                document.execCommand('copy'); document.body.removeChild(ta);
-            }
-        }
-
-        document.querySelectorAll('.modal-overlay').forEach(overlay => {
-            overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('show'); });
-        });
-
-        document.addEventListener('input', (e) => {
-            if (e.target.tagName === 'TEXTAREA' && e.target.classList.contains('comment-input')) {
-                e.target.style.height = 'auto';
-                e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
-            }
-        });
-
-        init();
-    </script>
+    // ==================== INIT ====================
+    renderPosts();
+  </script>
 </body>
 </html>
