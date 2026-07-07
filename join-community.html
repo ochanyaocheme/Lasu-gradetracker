@@ -46,7 +46,11 @@
             display: block;
         }
 
-        .navbar-brand span {
+        .navbar-brand .lasu-text {
+            color: white;
+        }
+
+        .navbar-brand .grade-text {
             color: #f59e0b;
         }
 
@@ -95,6 +99,7 @@
             padding: 2.5rem;
             animation: slideUp 0.5s ease;
             border: 1px solid #334155;
+            position: relative;
         }
 
         @keyframes slideUp {
@@ -105,6 +110,7 @@
         .signup-header {
             text-align: center;
             margin-bottom: 2rem;
+            position: relative;
         }
 
         .signup-header h1 {
@@ -116,6 +122,124 @@
         .signup-header p {
             color: #94a3b8;
             font-size: 0.95rem;
+        }
+
+        /* Why Join Icon Button */
+        .why-join-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #334155;
+            border: 2px solid #475569;
+            color: #f59e0b;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            z-index: 5;
+        }
+
+        .why-join-btn:hover {
+            background: #f59e0b;
+            color: #0f172a;
+            border-color: #f59e0b;
+            transform: scale(1.1);
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border: 2px solid #f59e0b;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 420px;
+            width: 90%;
+            position: relative;
+            animation: modalSlide 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        @keyframes modalSlide {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: #334155;
+            color: #f59e0b;
+        }
+
+        .modal-content h2 {
+            color: #f59e0b;
+            font-size: 1.3rem;
+            margin-bottom: 1.25rem;
+            text-align: center;
+        }
+
+        .benefits-list {
+            list-style: none;
+        }
+
+        .benefits-list li {
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            padding: 0.6rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .benefits-list li:last-child {
+            border-bottom: none;
+        }
+
+        .benefits-list li::before {
+            content: '✅';
+            flex-shrink: 0;
         }
 
         .form-group {
@@ -465,6 +589,11 @@
                 font-size: 0.9rem;
                 letter-spacing: 0.1em;
             }
+
+            .modal-content {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
         }
     </style>
 </head>
@@ -473,7 +602,7 @@
     <nav class="navbar">
         <a href="index.html" class="navbar-brand">
             <img src="your-logo.png" alt="LASU GradeTracker Logo">
-            <span>GradeTracker</span>
+            <span class="lasu-text">LASU</span><span class="grade-text">GradeTracker</span>
         </a>
         <div class="nav-links">
             <a href="index.html">Calculator</a>
@@ -483,12 +612,33 @@
         </div>
     </nav>
 
+    <!-- ===== WHY JOIN MODAL ===== -->
+    <div class="modal-overlay" id="whyJoinModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeWhyJoin()">✕</button>
+            <h2>🌟 Why Join?</h2>
+            <ul class="benefits-list">
+                <li>Post in the LASU Lounge & Course Corners</li>
+                <li>Find Study Buddies by course & level</li>
+                <li>Write in your private Diary (The Locker)</li>
+                <li>Submit entries for Weekly Challenges</li>
+                <li>Vote and react to posts & confessions</li>
+                <li>Get a Member badge on your profile</li>
+                <li>Save/bookmark posts for later</li>
+                <li>Receive notifications on replies & reactions</li>
+            </ul>
+        </div>
+    </div>
+
     <!-- ===== SIGNUP FORM ===== -->
     <div class="signup-container">
         <div class="signup-card">
             <div class="signup-header">
                 <h1>🎓 Join the Community</h1>
                 <p>Create your account and connect with fellow LASU students</p>
+                <button class="why-join-btn" onclick="openWhyJoin()" title="Why join?">
+                    💡
+                </button>
             </div>
 
             <div class="message" id="message"></div>
@@ -549,108 +699,4 @@
                             <option value="200">200 Level</option>
                             <option value="300">300 Level</option>
                             <option value="400">400 Level</option>
-                            <option value="500">500 Level</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password <span class="required">*</span></label>
-                    <div class="password-wrapper">
-                        <input type="password" id="password" name="password" placeholder="Min 8 characters" required>
-                        <button type="button" class="toggle-password" onclick="togglePassword()">👁️</button>
-                    </div>
-                    <div class="password-strength">
-                        <div class="password-strength-bar" id="strengthBar"></div>
-                    </div>
-                    <div class="strength-text" id="strengthText"></div>
-                </div>
-
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter your password" required>
-                </div>
-
-                <div class="terms">
-                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
-                    <label for="agreeTerms">I agree to the <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>, and I confirm that I am a LASU student.</label>
-                </div>
-
-                <button type="submit" class="btn-signup" id="submitBtn">
-                    Create Account 🚀
-                </button>
-            </form>
-
-            <div class="divider">
-                <span>or sign up with</span>
-            </div>
-
-            <div class="social-signup">
-                <button class="btn-social" type="button" onclick="showComingSoon('Google')">
-                    🔍 Google
-                </button>
-                <button class="btn-social" type="button" onclick="showComingSoon('Microsoft')">
-                    📧 Microsoft
-                </button>
-            </div>
-
-            <!-- Member Badge Preview -->
-            <div class="badge-preview">
-                <h3>🏅 Member Badge Preview</h3>
-                <div class="member-badge">
-                    ⭐ Member
-                </div>
-                <p style="color: #64748b; font-size: 0.8rem; margin-top: 0.5rem;">You'll get this badge on your profile!</p>
-            </div>
-
-            <div class="login-link">
-                Already have an account? <a href="login.html">Log in</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== FOOTER ===== -->
-    <footer class="footer">
-        <div class="footer-founder">
-            Founded by Ocheme Faith Ochanya • Chemistry • LASU
-        </div>
-        <div class="footer-tagline">
-            Built with <span class="heart">♥️</span> by a LASUite, for LASUites
-        </div>
-        <div class="footer-motto">
-            CONNECT • LEARN • SUCCEED
-        </div>
-        <div class="footer-year">
-            Est. 2026
-        </div>
-    </footer>
-
-    <script>
-        // Toggle password visibility
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleBtn = document.querySelector('.toggle-password');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleBtn.textContent = '🙈';
-            } else {
-                passwordInput.type = 'password';
-                toggleBtn.textContent = '👁️';
-            }
-        }
-
-        // Password strength checker
-        document.getElementById('password').addEventListener('input', function(e) {
-            const password = e.target.value;
-            const strengthBar = document.getElementById('strengthBar');
-            const strengthText = document.getElementById('strengthText');
-            
-            let strength = 0;
-            if (password.length >= 8) strength++;
-            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
-            if (password.match(/[0-9]/)) strength++;
-            if (password.match(/[^a-zA-Z0-9]/)) strength++;
-
-            strengthBar.className = 'password-strength-bar';
-      
+                            <option value="500">500 Level</opti
