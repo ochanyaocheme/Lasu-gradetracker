@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LASU GradeTracker - Study Buddies</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+body{background-color:#0f172a;color:#fff}
+::-webkit-scrollbar{width:0;height:0}
+@keyframes slide-up{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fade-in{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse-ring{0%{transform:scale(.8);opacity:.5}100%{transform:scale(1.3);opacity:0}}
+.animate-slide-up{animation:slide-up .35s cubic-bezier(.16,1,.3,1)}
+.animate-fade-in{animation:fade-in .2s ease-out}
+.buddy-card{transition:all .2s ease}
+.buddy-card:hover{transform:translateY(-2px)}
+.buddy-card:active{transform:scale(.98)}
+.action-btn{transition:all .15s ease}
+.action-btn:active{transform:scale(.92)}
+.online-dot{position:relative}
+.online-dot::after{content:'';position:absolute;bottom:2px;right:2px;width:10px;height:10px;background:#22c55e;border:2px solid #1e293b;border-radius:50%}
+.tab-pill{transition:all .2s ease}
+.tab-pill:active{transform:scale(.95)}
+.status-pill{transition:all .15s ease}
+.request-btn{transition:all .2s ease}
+.request-btn:hover{transform:translateY(-1px)}
+.chat-bubble{max-width:80%;word-break:break-word}
+.chat-bubble-sent{background:#ef4444;border-radius:18px 18px 4px 18px}
+.chat-bubble-received{background:#1e293b;border-radius:18px 18px 18px 4px}
+.recording-wave{display:flex;align-items:center;gap:2px;height:20px}
+.recording-wave span{width:3px;background:#ef4444;border-radius:2px;animation:wave 1s ease-in-out infinite}
+.recording-wave span:nth-child(2){animation-delay:.1s;height:12px}
+.recording-wave span:nth-child(3){animation-delay:.2s;height:8px}
+.recording-wave span:nth-child(4){animation-delay:.3s;height:16px}
+.recording-wave span:nth-child(5){animation-delay:.4s;height:10px}
+@keyframes wave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.5)}}
+.call-pulse{animation:pulse-ring 1.5s cubic-bezier(0.4,0,0.6,1) infinite}
+</style>
+</head>
+<body class="min-h-screen bg-[#0f172a] text-white antialiased relative">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 bg-[#0f172a]/95 backdrop-blur-md border-b border-white/8 px-4 py-3 flex items-center gap-3">
+  <button class="p-2 -ml-2 rounded-full hover:bg-white/5 active:bg-white/10 transition" onclick="showToast('Back to Home')">
+    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+  </button>
+  <img src="your-logo.png" class="w-10 h-10 rounded-xl object-cover shrink-0" alt="LASU GradeTracker" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+  <div class="hidden w-10 h-10 bg-amber-500 rounded-xl items-center justify-center shrink-0"><span class="text-[#0f172a] font-extrabold text-[10px]">LASU</span></div>
+  <h1 class="text-[17px] font-bold leading-tight tracking-tight"><span class="text-amber-400">LASU</span> <span class="text-white">GradeTracker</span></h1>
+  <div class="ml-auto flex items-center gap-3">
+    <button class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition" onclick="showToast('No new notifications')">
+      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <span class="absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0f172a]"></span>
+    </button>
+    <button onclick="openProfile()" class="rounded-full">
+      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-9 h-9 rounded-full border-2 border-amber-500/50 cursor-pointer object-cover" alt="My Profile">
+    </button>
+  </div>
+</header>
+
+<!-- PAGE TITLE -->
+<div class="px-4 pt-6 pb-1 text-center">
+  <div class="flex items-center justify-center gap-2.5 mb-2">
+    <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
+      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+    </div>
+    <h2 class="text-[26px] font-extrabold text-red-400 tracking-tight">Study Buddies</h2>
+  </div>
+  <p class="text-gray-400 text-[14px] mt-1">Find study partners & form study groups</p>
+</div>
+
+<!-- MY STATUS CARD -->
+<div class="mx-4 mt-5">
+  <div class="bg-gradient-to-r from-red-500/20 to-pink-500/20 rounded-2xl border border-red-500/20 p-4">
+    <div class="flex items-center gap-3">
+      <div class="relative">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-12 h-12 rounded-full object-cover border-2 border-red-500/50">
+        <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#0f172a]"></span>
+      </div>
+      <div class="flex-1">
+        <h3 class="font-bold text-white text-[15px]">You</h3>
+        <p class="text-gray-400 text-xs">Chemistry &bull; 300L &bull; Looking for study partners</p>
+      </div>
+      <button onclick="toggleMyStatus()" id="myStatusBtn" class="status-pill px-3 py-1.5 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30">Available</button>
+    </div>
+    <div class="flex gap-2 mt-3 flex-wrap">
+      <span class="px-2.5 py-1 bg-[#0f172a]/60 rounded-lg text-[11px] text-gray-300 border border-white/6">Organic Chemistry</span>
+      <span class="px-2.5 py-1 bg-[#0f172a]/60 rounded-lg text-[11px] text-gray-300 border border-white/6">Physical Chemistry</span>
+      <span class="px-2.5 py-1 bg-[#0f172a]/60 rounded-lg text-[11px] text-gray-300 border border-white/6">Evening Study</span>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH + FILTER -->
+<div class="mx-4 mt-4 flex gap-2">
+  <div class="relative flex-1">
+    <svg class="w-5 h-5 text-gray-500 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    <input type="text" id="searchInput" placeholder="Search by name, course, or faculty..." class="w-full bg-[#1e293b] rounded-2xl pl-12 pr-4 py-3.5 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-red-500/50 focus:outline-none transition" oninput="filterBuddies(this.value)">
+  </div>
+  <button onclick="openFilterModal()" class="shrink-0 bg-[#1e293b] hover:bg-white/5 text-white font-semibold px-4 rounded-2xl transition flex items-center gap-1.5 border border-white/8 action-btn">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+  </button>
+</div>
+
+<!-- TABS -->
+<div class="mx-4 mt-4 flex gap-2 overflow-x-auto pb-1 scrollbar-hide" id="buddyTabs">
+  <button onclick="setTab('discover')" id="tab-discover" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-red-500 text-white">Discover</button>
+  <button onclick="setTab('requests')" id="tab-requests" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 relative">
+    Requests
+    <span id="requestBadge" class="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 rounded-full text-[10px] text-black font-bold flex items-center justify-center">3</span>
+  </button>
+  <button onclick="setTab('mybuddies')" id="tab-mybuddies" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">My Buddies</button>
+  <button onclick="setTab('mygroups')" id="tab-mygroups" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 relative">
+    My Groups
+    <span id="groupBadge" class="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 rounded-full text-[10px] text-black font-bold flex items-center justify-center">2</span>
+  </button>
+</div>
+
+<!-- BUDDIES GRID -->
+<div id="buddiesGrid" class="mx-4 mt-4 pb-24 grid grid-cols-1 gap-3"></div>
+
+<!-- EMPTY STATE -->
+<div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center">
+  <div class="w-16 h-16 bg-red-500/20 rounded-2xl flex items-center justify-center mb-5">
+    <svg class="w-8 h-8 text-red-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+  </div>
+  <h3 class="text-lg font-bold text-white">No buddies found</h3>
+  <p class="text-gray-500 text-sm mt-1.5">Try adjusting your filters</p>
+</div>
+
+<!-- BUDDY DETAIL MODAL -->
+<div id="buddyModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeBuddyModal()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up max-h-[85vh] overflow-y-auto">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6 text-center">
+      <div class="relative inline-block mb-3">
+        <img id="buddyAvatar" src="" class="w-20 h-20 rounded-full object-cover border-3 border-red-500/30">
+        <span id="buddyOnline" class="absolute bottom-1 right-1 w-4 h-4 bg-green-500 rounded-full border-3 border-[#1e293b]"></span>
+      </div>
+      <h3 id="buddyName" class="text-xl font-bold text-white"></h3>
+      <p id="buddyInfo" class="text-red-400 text-sm font-medium mt-1"></p>
+      <p id="buddyBio" class="text-gray-400 text-sm mt-2 leading-relaxed"></p>
+      <div class="flex flex-wrap justify-center gap-2 mt-4" id="buddyTags"></div>
+      <div class="flex items-center justify-center gap-6 mt-5 text-sm text-gray-400">
+        <div class="text-center"><p class="text-white font-bold text-lg" id="buddyGPA">4.2</p><p class="text-xs">GPA</p></div>
+        <div class="w-px h-8 bg-white/10"></div>
+        <div class="text-center"><p class="text-white font-bold text-lg" id="buddyStudyHours">12</p><p class="text-xs">Study hrs/wk</p></div>
+        <div class="w-px h-8 bg-white/10"></div>
+        <div class="text-center"><p class="text-white font-bold text-lg" id="buddyBuddies">8</p><p class="text-xs">Buddies</p></div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button onclick="sendBuddyRequest()" id="buddyActionBtn" class="request-btn flex-1 bg-red-500 hover:bg-red-400 text-white font-bold py-3 rounded-2xl text-sm transition"></button>
+        <button onclick="openOneOnOneChat()" class="px-4 bg-[#0f172a] hover:bg-white/5 text-white rounded-2xl border border-white/10 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ONE-ON-ONE CHAT MODAL -->
+<div id="chatModal" class="fixed inset-0 z-50 hidden flex-col bg-[#0f172a]">
+  <div class="bg-[#1e293b] border-b border-white/8 px-4 py-3 flex items-center gap-3">
+    <button onclick="closeChatModal()" class="p-2 -ml-2 rounded-full hover:bg-white/5 transition">
+      <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="relative">
+      <img id="chatAvatar" src="" class="w-9 h-9 rounded-full object-cover">
+      <span id="chatOnline" class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-[#1e293b]"></span>
+    </div>
+    <div class="flex-1 min-w-0">
+      <h3 id="chatName" class="font-bold text-white text-sm truncate"></h3>
+      <p id="chatStatus" class="text-gray-400 text-[11px]">Online</p>
+    </div>
+    <button onclick="openCallUI('voice')" class="p-2 rounded-full hover:bg-white/5 transition">
+      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+    </button>
+    <button onclick="openCallUI('video')" class="p-2 rounded-full hover:bg-white/5 transition">
+      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+    </button>
+  </div>
+  <div id="chatMessages" class="flex-1 overflow-y-auto px-4 py-4 space-y-3"></div>
+  <div class="bg-[#1e293b] border-t border-white/8 px-4 py-3">
+    <div id="voiceRecorder" class="hidden items-center gap-3 mb-3 bg-red-500/10 rounded-xl px-4 py-2 border border-red-500/20">
+      <div class="recording-wave"><span></span><span></span><span></span><span></span><span></span></div>
+      <span class="text-red-400 text-sm font-medium flex-1">Recording... 0:00</span>
+      <button onclick="stopRecording()" class="text-red-400 hover:text-red-300"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="openFileShare()" class="p-2.5 rounded-xl bg-[#0f172a] border border-white/8 hover:bg-white/5 transition">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+      </button>
+      <button onclick="startRecording()" class="p-2.5 rounded-xl bg-[#0f172a] border border-white/8 hover:bg-white/5 transition">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+      </button>
+      <input id="chatInput" type="text" placeholder="Type a message..." class="flex-1 bg-[#0f172a] rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-red-500/50 focus:outline-none transition" onkeypress="if(event.key==='Enter')sendChatMessage()">
+      <button onclick="sendChatMessage()" class="bg-red-500 hover:bg-red-400 text-white font-bold px-4 rounded-xl transition action-btn">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- GROUP CHAT MODAL -->
+<div id="groupChatModal" class="fixed inset-0 z-50 hidden flex-col bg-[#0f172a]">
+  <div class="bg-[#1e293b] border-b border-white/8 px-4 py-3 flex items-center gap-3">
+    <button onclick="closeGroupChatModal()" class="p-2 -ml-2 rounded-full hover:bg-white/5 transition">
+      <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="w-9 h-9 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/30">
+      <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+    </div>
+    <div class="flex-1 min-w-0">
+      <h3 id="groupChatName" class="font-bold text-white text-sm truncate"></h3>
+      <p id="groupChatMembers" class="text-gray-400 text-[11px]"></p>
+    </div>
+    <button onclick="openGroupInfo()" class="p-2 rounded-full hover:bg-white/5 transition">
+      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    </button>
+  </div>
+  <div id="groupChatMessages" class="flex-1 overflow-y-auto px-4 py-4 space-y-3"></div>
+  <div class="bg-[#1e293b] border-t border-white/8 px-4 py-3">
+    <div id="groupVoiceRecorder" class="hidden items-center gap-3 mb-3 bg-red-500/10 rounded-xl px-4 py-2 border border-red-500/20">
+      <div class="recording-wave"><span></span><span></span><span></span><span></span><span></span></div>
+      <span class="text-red-400 text-sm font-medium flex-1">Recording... 0:00</span>
+      <button onclick="stopGroupRecording()" class="text-red-400 hover:text-red-300"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="openGroupFileShare()" class="p-2.5 rounded-xl bg-[#0f172a] border border-white/8 hover:bg-white/5 transition">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+      </button>
+      <button onclick="startGroupRecording()" class="p-2.5 rounded-xl bg-[#0f172a] border border-white/8 hover:bg-white/5 transition">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+      </button>
+      <input id="groupChatInput" type="text" placeholder="Type a message..." class="flex-1 bg-[#0f172a] rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-red-500/50 focus:outline-none transition" onkeypress="if(event.key==='Enter')sendGroupChatMessage()">
+      <button onclick="sendGroupChatMessage()" class="bg-red-500 hover:bg-red-400 text-white font-bold px-4 rounded-xl transition action-btn">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CALL UI MODAL -->
+<div id="callModal" class="fixed inset-0 z-[60] hidden flex-col items-center justify-center bg-[#0f172a]">
+  <div class="absolute inset-0 bg-gradient-to-b from-red-500/10 to-transparent"></div>
+  <div class="relative z-10 text-center">
+    <div class="relative inline-block mb-6">
+      <img id="callAvatar" src="" class="w-24 h-24 rounded-full object-cover border-4 border-red-500/30 call-pulse">
+      <div class="absolute inset-0 rounded-full border-4 border-red-500/20 call-pulse" style="animation-delay:0.5s"></div>
+    </div>
+    <h3 id="callName" class="text-2xl font-bold text-white mb-1"></h3>
+    <p id="callType" class="text-red-400 text-sm font-medium"></p>
+    <p id="callTimer" class="text-gray-500 text-sm mt-1">00:00</p>
+    <div class="flex items-center justify-center gap-6 mt-10">
+      <button onclick="toggleMute()" id="muteBtn" class="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+      </button>
+      <button onclick="endCall()" class="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center hover:bg-red-600 transition">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z"/></svg>
+      </button>
+      <button onclick="toggleSpeaker()" id="speakerBtn" class="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE STUDY GROUP MODAL -->
+<div id="createGroupModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeCreateGroupModal()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up max-h-[85vh] overflow-y-auto">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6">
+      <h3 class="text-xl font-bold text-white mb-4">Create Study Group</h3>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs text-gray-400 font-medium mb-1.5 block">Group Name</label>
+          <input type="text" id="newGroupName" placeholder="e.g. CHM 301 Study Squad" class="w-full bg-[#0f172a] rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-red-500/50 focus:outline-none transition">
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-medium mb-1.5 block">Subject / Course</label>
+          <input type="text" id="newGroupSubject" placeholder="e.g. Organic Chemistry" class="w-full bg-[#0f172a] rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-red-500/50 focus:outline-none transition">
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-medium mb-1.5 block">Add Buddies</label>
+          <div class="space-y-2 max-h-40 overflow-y-auto" id="buddyPicker"></div>
+        </div>
+        <button onclick="createStudyGroup()" class="w-full bg-red-500 hover:bg-red-400 text-white font-bold py-3 rounded-2xl text-sm transition action-btn">Create Group</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GROUP INFO MODAL -->
+<div id="groupInfoModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeGroupInfo()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up max-h-[85vh] overflow-y-auto">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6">
+      <h3 id="groupInfoName" class="text-xl font-bold text-white mb-4"></h3>
+      <div class="mb-4">
+        <p class="text-xs text-gray-400 font-medium mb-2">Members</p>
+        <div id="groupInfoMembers" class="space-y-2"></div>
+      </div>
+      <div class="mb-4">
+        <p class="text-xs text-gray-400 font-medium mb-2">Shared Files</p>
+        <div id="groupInfoFiles" class="flex gap-2 overflow-x-auto pb-1"></div>
+      </div>
+      <button onclick="leaveGroup()" class="w-full bg-red-500/20 hover:bg-red-500/30 text-red-400 font-bold py-3 rounded-2xl text-sm transition border border-red-500/30 action-btn">Leave Group</button>
+    </div>
+  </div>
+</div>
+
+<!-- FILE SHARE MODAL -->
+<div id="fileShareModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeFileShare()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6">
+      <h3 class="text-xl font-bold text-white mb-4">Share a File</h3>
+      <div class="border-2 border-dashed border-white/15 rounded-2xl p-8 text-center mb-4 hover:border-red-500/40 transition cursor-pointer" onclick="simulateFileShare()">
+        <svg class="w-10 h-10 text-gray-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        <p class="text-sm text-gray-400">Tap to share PDFs, images, slides, Word, Excel</p>
+        <p class="text-xs text-gray-600 mt-1">Max 25MB</p>
+      </div>
+      <div id="fileSharePreview" class="hidden mb-4">
+        <div class="flex items-center gap-3 bg-[#0f172a] rounded-xl p-3 border border-white/8">
+          <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p id="fileShareName" class="text-sm text-white truncate">document.pdf</p>
+            <p class="text-xs text-gray-500">2.4 MB</p>
+          </div>
+          <button onclick="confirmFileShare()" class="bg-red-500 hover:bg-red-400 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition">Share</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER MODAL -->
+<div id="filterModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeFilterModal()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6">
+      <h3 class="text-xl font-bold text-white mb-4">Filter Buddies</h3>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs text-gray-400 font-medium mb-2 block">Faculty</label>
+          <div class="flex flex-wrap gap-2" id="filterFaculty"></div>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-medium mb-2 block">Level</label>
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="setLevelFilter('all')" id="level-all" class="filter-level px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">All</button>
+            <button onclick="setLevelFilter('100')" id="level-100" class="filter-level px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">100L</button>
+            <button onclick="setLevelFilter('200')" id="level-200" class="filter-level px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">200L</button>
+            <button onclick="setLevelFilter('300')" id="level-300" class="filter-level px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">300L</button>
+            <button onclick="setLevelFilter('400')" id="level-400" class="filter-level px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">400L</button>
+            <button onclick="setLevelFilter('500')" id="level-500" class="filter-level px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">500L</button>
+          </div>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-medium mb-2 block">Study Preference</label>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="togglePref(this, 'morning')" class="filter-pref px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">Morning</button>
+            <button onclick="togglePref(this, 'afternoon')" class="filter-pref px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">Afternoon</button>
+            <button onclick="togglePref(this, 'evening')" class="filter-pref px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">Evening</button>
+            <button onclick="togglePref(this, 'night')" class="filter-pref px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">Night Owl</button>
+            <button onclick="togglePref(this, 'weekend')" class="filter-pref px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">Weekends</button>
+            <button onclick="togglePref(this, 'library')" class="filter-pref px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">Library</button>
+            <button onclick="togglePref(this, 'online')" class="filter-pref px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">Online</button>
+          </div>
+        </div>
+        <button onclick="applyFilters()" class="w-full bg-red-500 hover:bg-red-400 text-white font-bold py-3 rounded-2xl text-sm transition action-btn">Apply Filters</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 bg-[#1e293b] text-white px-5 py-3 rounded-2xl shadow-2xl border border-white/8 flex items-center gap-2.5 text-sm font-semibold opacity-0 pointer-events-none transition-all duration-300 z-50 -translate-y-2">
+  <svg id="toastIcon" class="w-5 h-5 text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<script>
+
+const FACULTIES = [
+  { id: 'all', label: 'All' },
+  { id: 'science', label: 'Science' },
+  { id: 'arts', label: 'Arts' },
+  { id: 'social', label: 'Social Sciences' },
+  { id: 'law', label: 'Law' },
+  { id: 'education', label: 'Education' },
+  { id: 'management', label: 'Management' },
+  { id: 'engineering', label: 'Engineering' },
+  { id: 'lasucom', label: 'LASUCOM' },
+  { id: 'agric', label: 'Agricultural Sciences' }
+];
+
+let BUDDIES = [
+  { id: 1, name: 'Adebola Oluwaseun', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=adebola', faculty: 'science', level: '300', dept: 'Chemistry', gpa: '4.32', studyHours: 15, buddies: 12, online: true, status: 'available', bio: 'Passionate about organic chemistry and research. Looking for dedicated study partners for CHM 301.', tags: ['Organic Chemistry', 'Evening Study', 'Library'], prefs: ['evening', 'library'] },
+  { id: 2, name: 'Chioma Nwosu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chioma', faculty: 'science', level: '200', dept: 'Biochemistry', gpa: '4.15', studyHours: 20, buddies: 8, online: true, status: 'available', bio: 'Biochemistry major who loves group study sessions. Available most evenings at the library.', tags: ['Biochemistry', 'Group Study', 'Library'], prefs: ['evening', 'library', 'weekend'] },
+  { id: 3, name: 'Tunde Bakare', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=tunde', faculty: 'engineering', level: '400', dept: 'Mechanical Engineering', gpa: '3.89', studyHours: 10, buddies: 5, online: false, status: 'busy', bio: 'Final year mechanical engineering student. Focused on my project but happy to help juniors.', tags: ['Mechanics', 'Weekend Study', 'Online'], prefs: ['weekend', 'online'] },
+  { id: 4, name: 'Fatima Abdullahi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=fatima', faculty: 'lasucom', level: '500', dept: 'Medicine & Surgery', gpa: '4.50', studyHours: 25, buddies: 20, online: true, status: 'available', bio: 'Medical student looking for anatomy study buddies. I create detailed notes and flashcards.', tags: ['Anatomy', 'Early Morning', 'Library'], prefs: ['morning', 'library'] },
+  { id: 5, name: 'Emeka Okonkwo', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=emeka', faculty: 'law', level: '300', dept: 'Law', gpa: '4.05', studyHours: 12, buddies: 6, online: true, status: 'available', bio: 'Law student specializing in constitutional law. Looking for moot court practice partners.', tags: ['Constitutional Law', 'Afternoon', 'Group Study'], prefs: ['afternoon'] },
+  { id: 6, name: 'Amina Kazeem', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=amina', faculty: 'agric', level: '200', dept: 'Crop Science', gpa: '3.95', studyHours: 18, buddies: 4, online: false, status: 'available', bio: 'Agricultural science enthusiast. Love field work and practical sessions.', tags: ['Crop Science', 'Morning', 'Field Work'], prefs: ['morning'] },
+  { id: 7, name: 'David Eze', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=david', faculty: 'management', level: '100', dept: 'Accounting', gpa: '3.75', studyHours: 8, buddies: 3, online: true, status: 'available', bio: 'Freshman looking for study buddies to survive ACC 101 together!', tags: ['Accounting', 'Evening', 'Online'], prefs: ['evening', 'online'] },
+  { id: 8, name: 'Blessing Ibe', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=blessing', faculty: 'social', level: '400', dept: 'Psychology', gpa: '4.20', studyHours: 14, buddies: 10, online: true, status: 'available', bio: 'Psychology major. Great at explaining concepts. Looking for research partners.', tags: ['Psychology', 'Night Owl', 'Library'], prefs: ['night', 'library'] },
+  { id: 9, name: 'Oluwaseyi Ade', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=seyi', faculty: 'arts', level: '300', dept: 'English', gpa: '3.88', studyHours: 11, buddies: 7, online: false, status: 'busy', bio: 'Literature lover and poet. Looking for creative writing study circles.', tags: ['Literature', 'Weekend', 'Cafe Study'], prefs: ['weekend'] },
+  { id: 10, name: 'Ngozi Uche', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ngozi', faculty: 'education', level: '200', dept: 'Educational Technology', gpa: '4.00', studyHours: 16, buddies: 9, online: true, status: 'available', bio: 'EdTech student. Tech-savvy study buddy who loves virtual study sessions.', tags: ['EdTech', 'Online', 'Evening'], prefs: ['evening', 'online'] },
+  { id: 11, name: 'Ibrahim Musa', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ibrahim', faculty: 'lasucom', level: '400', dept: 'Nursing', gpa: '4.10', studyHours: 22, buddies: 15, online: true, status: 'available', bio: 'Nursing student. Experienced in clinical rotations. Happy to mentor juniors.', tags: ['Nursing', 'Morning', 'Clinical'], prefs: ['morning'] },
+  { id: 12, name: 'Grace Ojo', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=grace', faculty: 'agric', level: '300', dept: 'Animal Science', gpa: '3.92', studyHours: 13, buddies: 5, online: true, status: 'available', bio: 'Animal science major. Looking for lab partners and study groups.', tags: ['Animal Science', 'Afternoon', 'Lab'], prefs: ['afternoon'] }
+];
+
+let REQUESTS = [
+  { id: 101, from: { name: 'Samuel Ade', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=samuel', faculty: 'science', level: '300', dept: 'Physics' }, message: 'Hey! I saw you are also taking PHY 301. Want to study together?', time: '10m ago' },
+  { id: 102, from: { name: 'Joy Etim', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=joy', faculty: 'science', level: '200', dept: 'Mathematics' }, message: 'Hi! Looking for a math study group. Interested?', time: '1h ago' },
+  { id: 103, from: { name: 'Peter Nnamdi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=peter', faculty: 'engineering', level: '400', dept: 'Electrical' }, message: 'Need help with circuit theory. Can we pair up?', time: '3h ago' }
+];
+
+let MY_BUDDIES = [
+  { id: 201, name: 'Maryam Bello', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=maryam', faculty: 'science', level: '300', dept: 'Chemistry', online: true, lastActive: 'Active now' },
+  { id: 202, name: 'John Okafor', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=john', faculty: 'management', level: '200', dept: 'Business Admin', online: false, lastActive: '2h ago' }
+];
+
+let STUDY_GROUPS = [
+  { id: 301, name: 'CHM 301 Study Squad', subject: 'Organic Chemistry', members: [201, 202, 1], messages: [
+    { user: 'Maryam Bello', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=maryam', text: 'Who is ready for tomorrow test?', time: '2h ago', type: 'text' },
+    { user: 'You', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=official', text: 'I am! I have been reviewing Chapter 5.', time: '1h ago', type: 'text' }
+  ], files: [{ name: 'Chapter_5_Notes.pdf', size: '1.8 MB', type: 'pdf' }] },
+  { id: 302, name: 'PHY 102 Group', subject: 'General Physics', members: [202, 2], messages: [
+    { user: 'Chioma Nwosu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chioma', text: 'Does anyone understand electric fields?', time: '30m ago', type: 'text' }
+  ], files: [] }
+];
+
+let currentTab = 'discover';
+let currentBuddy = null;
+let currentChatBuddy = null;
+let currentGroup = null;
+let myStatus = 'available';
+let activeFilters = { faculty: 'all', level: 'all', prefs: [] };
+let selectedGroupBuddies = [];
+let tempFile = null;
+let isGroupChat = false;
+
+const DEMO_CHAT = [
+  { sender: 'them', text: 'Hey! I saw your profile. Are you still looking for study partners for Organic Chemistry?', time: 'Yesterday' },
+  { sender: 'me', text: 'Yes I am! Are you taking CHM 301 too?', time: 'Yesterday' },
+  { sender: 'them', text: 'Exactly! I have been struggling with the reaction mechanisms. Do you understand SN1 vs SN2?', time: 'Yesterday' },
+  { sender: 'me', text: 'Somewhat! I have some notes I can share. When are you free to study?', time: '2h ago' },
+  { sender: 'them', text: 'I am usually free in the evenings. How about the library at 6pm?', time: '1h ago' }
+];
+
+function init() {
+  renderBuddies();
+  renderFilterFaculty();
+}
+
+function setTab(tab) {
+  currentTab = tab;
+  ['discover', 'requests', 'mybuddies', 'mygroups'].forEach(t => {
+    const btn = document.getElementById('tab-' + t);
+    if (t === tab) {
+      btn.className = 'tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-red-500 text-white relative';
+    } else {
+      btn.className = 'tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 relative';
+    }
+  });
+  renderBuddies();
+}
+
+function filterBuddies(query) {
+  renderBuddies(query.toLowerCase());
+}
+
+function renderBuddies(searchQuery = '') {
+  const grid = document.getElementById('buddiesGrid');
+  const empty = document.getElementById('emptyState');
+
+  if (currentTab === 'requests') {
+    if (REQUESTS.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); empty.classList.add('flex'); return; }
+    empty.classList.add('hidden'); empty.classList.remove('flex');
+    grid.innerHTML = REQUESTS.map(req => `
+      <div class="buddy-card bg-[#1e293b] rounded-2xl border border-white/6 p-4">
+        <div class="flex items-start gap-3">
+          <div class="relative shrink-0"><img src="${req.from.avatar}" class="w-12 h-12 rounded-full object-cover"></div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-white text-[15px]">${req.from.name}</h3>
+              <span class="shrink-0 px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[10px] rounded-full font-bold border border-amber-500/30">${req.from.level}L</span>
+            </div>
+            <p class="text-gray-400 text-xs mt-0.5">${req.from.dept} &bull; ${FACULTIES.find(f => f.id === req.from.faculty)?.label || req.from.faculty}</p>
+            <p class="text-gray-300 text-sm mt-2 leading-relaxed">"${req.message}"</p>
+            <p class="text-gray-600 text-[11px] mt-1">${req.time}</p>
+            <div class="flex gap-2 mt-3">
+              <button onclick="acceptRequest(${req.id})" class="flex-1 bg-green-500 hover:bg-green-400 text-black font-bold py-2 rounded-xl text-xs transition action-btn">Accept</button>
+              <button onclick="declineRequest(${req.id})" class="flex-1 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-bold py-2 rounded-xl text-xs transition border border-red-500/30 action-btn">Decline</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+    return;
+  }
+
+  if (currentTab === 'mybuddies') {
+    if (MY_BUDDIES.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); empty.classList.add('flex'); empty.querySelector('h3').textContent = 'No buddies yet'; empty.querySelector('p').textContent = 'Accept requests to build your study circle'; return; }
+    empty.classList.add('hidden'); empty.classList.remove('flex');
+    grid.innerHTML = MY_BUDDIES.map(buddy => `
+      <div class="buddy-card bg-[#1e293b] rounded-2xl border border-white/6 p-4">
+        <div class="flex items-center gap-3">
+          <div class="relative shrink-0"><img src="${buddy.avatar}" class="w-12 h-12 rounded-full object-cover ${buddy.online ? 'online-dot' : ''}"></div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-white text-[15px]">${buddy.name}</h3>
+              ${buddy.online ? '<span class="shrink-0 w-2 h-2 bg-green-500 rounded-full"></span>' : ''}
+            </div>
+            <p class="text-gray-400 text-xs mt-0.5">${buddy.dept} &bull; ${FACULTIES.find(f => f.id === buddy.faculty)?.label || buddy.faculty}</p>
+            <p class="text-gray-500 text-[11px] mt-1">${buddy.lastActive}</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="openChatWithBuddy(${buddy.id})" class="p-2 bg-[#0f172a] rounded-xl border border-white/8 hover:bg-white/5 transition">
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            </button>
+            <button onclick="removeBuddy(${buddy.id})" class="p-2 bg-red-500/10 rounded-xl border border-red-500/20 hover:bg-red-500/20 transition">
+              <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('') + `
+      <button onclick="openCreateGroupModal()" class="w-full bg-red-500/20 hover:bg-red-500/30 text-red-400 font-bold py-3 rounded-2xl text-sm transition border border-red-500/30 border-dashed action-btn flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        Create Study Group from Buddies
+      </button>
+    `;
+    return;
+  }
+
+  if (currentTab === 'mygroups') {
+    if (STUDY_GROUPS.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); empty.classList.add('flex'); empty.querySelector('h3').textContent = 'No study groups'; empty.querySelector('p').textContent = 'Create a group from your buddies'; return; }
+    empty.classList.add('hidden'); empty.classList.remove('flex');
+    grid.innerHTML = STUDY_GROUPS.map(group => {
+      const memberCount = group.members.length;
+      return `<button onclick="openGroupChat(${group.id})" class="buddy-card w-full text-left bg-[#1e293b] rounded-2xl border border-white/6 p-4 hover:border-red-500/30">
+        <div class="flex items-start gap-3">
+          <div class="w-12 h-12 bg-red-500/20 rounded-2xl flex items-center justify-center border border-red-500/30 shrink-0">
+            <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-bold text-white text-[15px]">${group.name}</h3>
+            <p class="text-red-400 text-xs font-semibold mt-0.5">${group.subject}</p>
+            <p class="text-gray-400 text-[12px] mt-1">${memberCount} members &bull; ${group.messages.length} messages</p>
+            ${group.files.length > 0 ? `<p class="text-gray-500 text-[11px] mt-1 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>${group.files.length} files shared</p>` : ''}
+          </div>
+        </div>
+      </button>`;
+    }).join('');
+    return;
+  }
+
+  let filtered = BUDDIES.filter(b => b.id !== 0);
+  if (activeFilters.faculty !== 'all') filtered = filtered.filter(b => b.faculty === activeFilters.faculty);
+  if (activeFilters.level !== 'all') filtered = filtered.filter(b => b.level === activeFilters.level);
+  if (activeFilters.prefs.length > 0) filtered = filtered.filter(b => activeFilters.prefs.some(p => b.prefs.includes(p)));
+  if (searchQuery) filtered = filtered.filter(b => b.name.toLowerCase().includes(searchQuery) || b.dept.toLowerCase().includes(searchQuery) || b.tags.some(t => t.toLowerCase().includes(searchQuery)));
+
+  if (filtered.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); empty.classList.add('flex'); return; }
+  empty.classList.add('hidden'); empty.classList.remove('flex');
+
+  grid.innerHTML = filtered.map(buddy => {
+    return `<button onclick="openBuddy(${buddy.id})" class="buddy-card w-full text-left bg-[#1e293b] rounded-2xl border border-white/6 p-4 hover:border-red-500/30">
+      <div class="flex items-start gap-3">
+        <div class="relative shrink-0"><img src="${buddy.avatar}" class="w-12 h-12 rounded-full object-cover ${buddy.online ? 'online-dot' : ''}"></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <h3 class="font-bold text-white text-[15px] truncate">${buddy.name}</h3>
+            <span class="shrink-0 px-2 py-0.5 ${buddy.status === 'available' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-gray-500/20 text-gray-400 border-gray-500/30'} text-[10px] rounded-full font-bold border">${buddy.status === 'available' ? 'Available' : 'Busy'}</span>
+          </div>
+          <p class="text-red-400 text-xs font-semibold mt-0.5">${buddy.dept} &bull; ${buddy.level}L</p>
+          <p class="text-gray-400 text-[12px] mt-1 line-clamp-2 leading-relaxed">${buddy.bio}</p>
+          <div class="flex flex-wrap gap-1.5 mt-2.5">
+            ${buddy.tags.map(tag => `<span class="px-2 py-0.5 bg-[#0f172a] rounded-md text-[10px] text-gray-400 border border-white/6">${tag}</span>`).join('')}
+          </div>
+          <div class="flex items-center gap-3 mt-2.5 text-[11px] text-gray-500">
+            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>GPA ${buddy.gpa}</span>
+            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>${buddy.studyHours}h/wk</span>
+            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>${buddy.buddies} buddies</span>
+          </div>
+        </div>
+      </div>
+    </button>`;
+  }).join('');
+}
+
+function openBuddy(id) {
+  currentBuddy = BUDDIES.find(b => b.id === id);
+  if (!currentBuddy) return;
+  const isBuddy = MY_BUDDIES.some(mb => mb.name === currentBuddy.name);
+  const isRequested = REQUESTS.some(r => r.from.name === currentBuddy.name);
+
+  document.getElementById('buddyAvatar').src = currentBuddy.avatar;
+  document.getElementById('buddyOnline').style.display = currentBuddy.online ? 'block' : 'none';
+  document.getElementById('buddyName').textContent = currentBuddy.name;
+  document.getElementById('buddyInfo').textContent = `${currentBuddy.dept} &bull; ${currentBuddy.level}L &bull; ${FACULTIES.find(f => f.id === currentBuddy.faculty)?.label || currentBuddy.faculty}`;
+  document.getElementById('buddyBio').textContent = currentBuddy.bio;
+  document.getElementById('buddyGPA').textContent = currentBuddy.gpa;
+  document.getElementById('buddyStudyHours').textContent = currentBuddy.studyHours;
+  document.getElementById('buddyBuddies').textContent = currentBuddy.buddies;
+  document.getElementById('buddyTags').innerHTML = currentBuddy.tags.map(tag => `<span class="px-3 py-1 bg-[#0f172a] rounded-lg text-xs text-gray-300 border border-white/8">${tag}</span>`).join('');
+
+  const btn = document.getElementById('buddyActionBtn');
+  if (isBuddy) {
+    btn.textContent = 'Already Buddies';
+    btn.className = 'request-btn flex-1 bg-green-500/20 text-green-400 font-bold py-3 rounded-2xl text-sm transition border border-green-500/30';
+    btn.onclick = null;
+  } else if (isRequested) {
+    btn.textContent = 'Request Pending';
+    btn.className = 'request-btn flex-1 bg-amber-500/20 text-amber-400 font-bold py-3 rounded-2xl text-sm transition border border-amber-500/30';
+    btn.onclick = null;
+  } else {
+    btn.textContent = 'Send Buddy Request';
+    btn.className = 'request-btn flex-1 bg-red-500 hover:bg-red-400 text-white font-bold py-3 rounded-2xl text-sm transition';
+    btn.onclick = sendBuddyRequest;
+  }
+
+  document.getElementById('buddyModal').classList.remove('hidden');
+  document.getElementById('buddyModal').classList.add('flex');
+}
+
+function closeBuddyModal() {
+  document.getElementById('buddyModal').classList.add('hidden');
+  document.getElementById('buddyModal').classList.remove('flex');
+  currentBuddy = null;
+}
+
+function sendBuddyRequest() {
+  if (!currentBuddy) return;
+  REQUESTS.unshift({
+    id: Date.now(),
+    from: { name: currentBuddy.name, avatar: currentBuddy.avatar, faculty: currentBuddy.faculty, level: currentBuddy.level, dept: currentBuddy.dept },
+    message: `Hi! I would love to study ${currentBuddy.tags[0]} with you. Are you available?`,
+    time: 'Just now'
+  });
+  closeBuddyModal();
+  showToast('Buddy request sent!');
+  document.getElementById('requestBadge').textContent = REQUESTS.length;
+}
+
+function acceptRequest(id) {
+  const req = REQUESTS.find(r => r.id === id);
+  if (!req) return;
+  MY_BUDDIES.push({
+    id: Date.now(),
+    name: req.from.name,
+    avatar: req.from.avatar,
+    faculty: req.from.faculty,
+    level: req.from.level,
+    dept: req.from.dept,
+    online: true,
+    lastActive: 'Active now'
+  });
+  REQUESTS = REQUESTS.filter(r => r.id !== id);
+  document.getElementById('requestBadge').textContent = REQUESTS.length;
+  renderBuddies();
+  showToast(`${req.from.name} is now your study buddy!`);
+}
+
+function declineRequest(id) {
+  REQUESTS = REQUESTS.filter(r => r.id !== id);
+  document.getElementById('requestBadge').textContent = REQUESTS.length;
+  renderBuddies();
+  showToast('Request declined', 'info');
+}
+
+function removeBuddy(id) {
+  MY_BUDDIES = MY_BUDDIES.filter(b => b.id !== id);
+  renderBuddies();
+  showToast('Buddy removed', 'info');
+}
+
+function toggleMyStatus() {
+  myStatus = myStatus === 'available' ? 'busy' : 'available';
+  const btn = document.getElementById('myStatusBtn');
+  if (myStatus === 'available') {
+    btn.textContent = 'Available';
+    btn.className = 'status-pill px-3 py-1.5 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30';
+  } else {
+    btn.textContent = 'Busy';
+    btn.className = 'status-pill px-3 py-1.5 rounded-full text-xs font-bold bg-gray-500/20 text-gray-400 border border-gray-500/30';
+  }
+}
+
+// ONE-ON-ONE CHAT
+function openOneOnOneChat() {
+  if (!currentBuddy) return;
+  currentChatBuddy = currentBuddy;
+  isGroupChat = false;
+  document.getElementById('chatAvatar').src = currentBuddy.avatar;
+  document.getElementById('chatOnline').style.display = currentBuddy.online ? 'block' : 'none';
+  document.getElementById('chatName').textContent = currentBuddy.name;
+  document.getElementById('chatStatus').textContent = currentBuddy.online ? 'Online' : 'Offline';
+  renderChatMessages();
+  document.getElementById('chatModal').classList.remove('hidden');
+  document.getElementById('chatModal').classList.add('flex');
+  closeBuddyModal();
+}
+
+function openChatWithBuddy(id) {
+  const buddy = MY_BUDDIES.find(b => b.id === id);
+  if (!buddy) return;
+  currentChatBuddy = buddy;
+  isGroupChat = false;
+  document.getElementById('chatAvatar').src = buddy.avatar;
+  document.getElementById('chatOnline').style.display = buddy.online ? 'block' : 'none';
+  document.getElementById('chatName').textContent = buddy.name;
+  document.getElementById('chatStatus').textContent = buddy.online ? 'Online' : buddy.lastActive;
+  renderChatMessages();
+  document.getElementById('chatModal').classList.remove('hidden');
+  document.getElementById('chatModal').classList.add('flex');
+}
+
+function closeChatModal() {
+  document.getElementById('chatModal').classList.add('hidden');
+  document.getElementById('chatModal').classList.remove('flex');
+  currentChatBuddy = null;
+}
+
+function renderChatMessages() {
+  const container = document.getElementById('chatMessages');
+  container.innerHTML = DEMO_CHAT.map(msg => `
+    <div class="flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}">
+      <div class="chat-bubble ${msg.sender === 'me' ? 'chat-bubble-sent text-white' : 'chat-bubble-received text-gray-300'} px-4 py-2.5 text-sm">
+        <p>${msg.text}</p>
+        <p class="text-[10px] ${msg.sender === 'me' ? 'text-red-200' : 'text-gray-500'} mt-1">${msg.time}</p>
+      </div>
+    </div>
+  `).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  if (!input.value.trim()) return;
+  DEMO_CHAT.push({ sender: 'me', text: input.value, time: 'Just now' });
+  input.value = '';
+  renderChatMessages();
+  setTimeout(() => {
+    DEMO_CHAT.push({ sender: 'them', text: 'Great! I will be there. See you at 6pm!', time: 'Just now' });
+    renderChatMessages();
+  }, 2000);
+}
+
+function startRecording() {
+  document.getElementById('voiceRecorder').classList.remove('hidden');
+  document.getElementById('voiceRecorder').classList.add('flex');
+}
+
+function stopRecording() {
+  document.getElementById('voiceRecorder').classList.add('hidden');
+  document.getElementById('voiceRecorder').classList.remove('flex');
+  showToast('Voice note sent!');
+}
+
+// GROUP CHAT
+function openGroupChat(id) {
+  currentGroup = STUDY_GROUPS.find(g => g.id === id);
+  if (!currentGroup) return;
+  isGroupChat = true;
+  document.getElementById('groupChatName').textContent = currentGroup.name;
+  document.getElementById('groupChatMembers').textContent = `${currentGroup.members.length} members`;
+  renderGroupChatMessages();
+  document.getElementById('groupChatModal').classList.remove('hidden');
+  document.getElementById('groupChatModal').classList.add('flex');
+}
+
+function closeGroupChatModal() {
+  document.getElementById('groupChatModal').classList.add('hidden');
+  document.getElementById('groupChatModal').classList.remove('flex');
+  currentGroup = null;
+}
+
+function renderGroupChatMessages() {
+  const container = document.getElementById('groupChatMessages');
+  if (!currentGroup) return;
+  container.innerHTML = currentGroup.messages.map(msg => `
+    <div class="flex ${msg.user === 'You' ? 'justify-end' : 'justify-start'}">
+      <div class="chat-bubble ${msg.user === 'You' ? 'chat-bubble-sent text-white' : 'chat-bubble-received text-gray-300'} px-4 py-2.5 text-sm">
+        ${msg.user !== 'You' ? `<p class="text-[10px] text-red-400 font-semibold mb-1">${msg.user}</p>` : ''}
+        <p>${msg.text}</p>
+        <p class="text-[10px] ${msg.user === 'You' ? 'text-red-200' : 'text-gray-500'} mt-1">${msg.time}</p>
+      </div>
+    </div>
+  `).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendGroupChatMessage() {
+  const input = document.getElementById('groupChatInput');
+  if (!input.value.trim() || !currentGroup) return;
+  currentGroup.messages.push({ user: 'You', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=official', text: input.value, time: 'Just now', type: 'text' });
+  input.value = '';
+  renderGroupChatMessages();
+  setTimeout(() => {
+    currentGroup.messages.push({ user: 'Maryam Bello', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=maryam', text: 'Nice one! I am also preparing.', time: 'Just now', type: 'text' });
+    renderGroupChatMessages();
+  }, 2000);
+}
+
+function startGroupRecording() {
+  document.getElementById('groupVoiceRecorder').classList.remove('hidden');
+  document.getElementById('groupVoiceRecorder').classList.add('flex');
+}
+
+function stopGroupRecording() {
+  document.getElementById('groupVoiceRecorder').classList.add('hidden');
+  document.getElementById('groupVoiceRecorder').classList.remove('flex');
+  showToast('Voice note sent to group!');
+}
+
+// CREATE STUDY GROUP
+function openCreateGroupModal() {
+  const picker = document.getElementById('buddyPicker');
+  selectedGroupBuddies = [];
+  picker.innerHTML = MY_BUDDIES.map(b => `
+    <label class="flex items-center gap-3 p-2 bg-[#0f172a] rounded-xl border border-white/6 cursor-pointer">
+      <input type="checkbox" onchange="toggleGroupBuddy(${b.id}, this.checked)" class="w-4 h-4 accent-red-500">
+      <img src="${b.avatar}" class="w-8 h-8 rounded-full object-cover">
+      <span class="text-sm text-white">${b.name}</span>
+    </label>
+  `).join('');
+  document.getElementById('createGroupModal').classList.remove('hidden');
+  document.getElementById('createGroupModal').classList.add('flex');
+}
+
+function closeCreateGroupModal() {
+  document.getElementById('createGroupModal').classList.add('hidden');
+  document.getElementById('createGroupModal').classList.remove('flex');
+  selectedGroupBuddies = [];
+  document.getElementById('newGroupName').value = '';
+  document.getElementById('newGroupSubject').value = '';
+}
+
+function toggleGroupBuddy(id, checked) {
+  if (checked) selectedGroupBuddies.push(id);
+  else selectedGroupBuddies = selectedGroupBuddies.filter(bid => bid !== id);
+}
+
+function createStudyGroup() {
+  const name = document.getElementById('newGroupName').value.trim();
+  const subject = document.getElementById('newGroupSubject').value.trim();
+  if (!name || !subject || selectedGroupBuddies.length === 0) { showToast('Fill all fields and select buddies', 'error'); return; }
+  const newId = Math.max(...STUDY_GROUPS.map(g => g.id)) + 1;
+  STUDY_GROUPS.push({
+    id: newId,
+    name: name,
+    subject: subject,
+    members: [...selectedGroupBuddies, 0],
+    messages: [{ user: 'You', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=official', text: `Welcome to ${name}! Let us study together.`, time: 'Just now', type: 'text' }],
+    files: []
+  });
+  document.getElementById('groupBadge').textContent = STUDY_GROUPS.length;
+  closeCreateGroupModal();
+  showToast('Study group created!');
+  setTab('mygroups');
+}
+
+// GROUP INFO
+function openGroupInfo() {
+  if (!currentGroup) return;
+  document.getElementById('groupInfoName').textContent = currentGroup.name;
+  document.getElementById('groupInfoMembers').innerHTML = currentGroup.members.map(mid => {
+    const buddy = [...MY_BUDDIES, ...BUDDIES].find(b => b.id === mid) || { name: 'You', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=official' };
+    return `<div class="flex items-center gap-3 p-2 bg-[#0f172a] rounded-xl border border-white/6">
+      <img src="${buddy.avatar}" class="w-8 h-8 rounded-full object-cover">
+      <span class="text-sm text-white">${buddy.name}</span>
+    </div>`;
+  }).join('');
+  const fileIcons = { pdf: '&#128196;', doc: '&#128221;', img: '&#127748;', ppt: '&#128200;', xls: '&#128202;' };
+  document.getElementById('groupInfoFiles').innerHTML = currentGroup.files.map(f => `
+    <div class="shrink-0 flex items-center gap-2 bg-[#0f172a] rounded-xl px-3 py-2 border border-white/8 cursor-pointer" onclick="showToast('Opening ${f.name}...')">
+      <span class="text-lg">${fileIcons[f.type] || '&#128196;'}</span>
+      <div><p class="text-xs text-white font-medium truncate max-w-[100px]">${f.name}</p><p class="text-[10px] text-gray-500">${f.size}</p></div>
+    </div>
+  `).join('') || '<p class="text-gray-500 text-xs">No files shared yet</p>';
+  document.getElementById('groupInfoModal').classList.remove('hidden');
+  document.getElementById('groupInfoModal').classList.add('flex');
+}
+
+function closeGroupInfo() {
+  document.getElementById('groupInfoModal').classList.add('hidden');
+  document.getElementById('groupInfoModal').classList.remove('flex');
+}
+
+function leaveGroup() {
+  if (!currentGroup) return;
+  STUDY_GROUPS = STUDY_GROUPS.filter(g => g.id !== currentGroup.id);
+  document.getElementById('groupBadge').textContent = STUDY_GROUPS.length;
+  closeGroupInfo();
+  closeGroupChatModal();
+  renderBuddies();
+  showToast('Left the group', 'info');
+}
+
+// FILE SHARE
+function openFileShare() {
+  isGroupChat = false;
+  document.getElementById('fileShareModal').classList.remove('hidden');
+  document.getElementById('fileShareModal').classList.add('flex');
+  document.getElementById('fileSharePreview').classList.add('hidden');
+  tempFile = null;
+}
+
+function openGroupFileShare() {
+  isGroupChat = true;
+  document.getElementById('fileShareModal').classList.remove('hidden');
+  document.getElementById('fileShareModal').classList.add('flex');
+  document.getElementById('fileSharePreview').classList.add('hidden');
+  tempFile = null;
+}
+
+function closeFileShare() {
+  document.getElementById('fileShareModal').classList.add('hidden');
+  document.getElementById('fileShareModal').classList.remove('flex');
+  tempFile = null;
+}
+
+function simulateFileShare() {
+  const files = [
+    { name: 'Lecture_Notes_Ch5.pdf', size: '1.8 MB', type: 'pdf' },
+    { name: 'Tutorial_Slides.pptx', size: '4.2 MB', type: 'ppt' },
+    { name: 'Assignment_2.docx', size: '956 KB', type: 'doc' },
+    { name: 'Lab_Results.png', size: '2.1 MB', type: 'img' },
+    { name: 'Grade_Sheet.xlsx', size: '856 KB', type: 'xls' }
+  ];
+  tempFile = files[Math.floor(Math.random() * files.length)];
+  document.getElementById('fileShareName').textContent = tempFile.name;
+  document.getElementById('fileSharePreview').classList.remove('hidden');
+}
+
+function confirmFileShare() {
+  if (!tempFile) return;
+  if (isGroupChat && currentGroup) {
+    currentGroup.files.push(tempFile);
+    currentGroup.messages.push({ user: 'You', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=official', text: `Shared: ${tempFile.name}`, time: 'Just now', type: 'file' });
+    renderGroupChatMessages();
+  }
+  closeFileShare();
+  showToast(`Shared ${tempFile.name}!`);
+}
+
+// CALL UI
+function openCallUI(type) {
+  const buddy = currentChatBuddy || currentBuddy;
+  if (!buddy) return;
+  document.getElementById('callAvatar').src = buddy.avatar;
+  document.getElementById('callName').textContent = buddy.name;
+  document.getElementById('callType').textContent = type === 'voice' ? 'Voice Call' : 'Video Call';
+  document.getElementById('callModal').classList.remove('hidden');
+  document.getElementById('callModal').classList.add('flex');
+  let seconds = 0;
+  window.callTimer = setInterval(() => {
+    seconds++;
+    const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const secs = (seconds % 60).toString().padStart(2, '0');
+    document.getElementById('callTimer').textContent = `${mins}:${secs}`;
+  }, 1000);
+}
+
+function endCall() {
+  clearInterval(window.callTimer);
+  document.getElementById('callModal').classList.add('hidden');
+  document.getElementById('callModal').classList.remove('flex');
+  document.getElementById('callTimer').textContent = '00:00';
+}
+
+function toggleMute() {
+  const btn = document.getElementById('muteBtn');
+  btn.classList.toggle('bg-red-500');
+  btn.classList.toggle('bg-white/10');
+  showToast(btn.classList.contains('bg-red-500') ? 'Muted' : 'Unmuted', 'info');
+}
+
+function toggleSpeaker() {
+  const btn = document.getElementById('speakerBtn');
+  btn.classList.toggle('bg-red-500');
+  btn.classList.toggle('bg-white/10');
+  showToast(btn.classList.contains('bg-red-500') ? 'Speaker on' : 'Speaker off', 'info');
+}
+
+// FILTER
+function openFilterModal() {
+  document.getElementById('filterModal').classList.remove('hidden');
+  document.getElementById('filterModal').classList.add('flex');
+}
+
+function closeFilterModal() {
+  document.getElementById('filterModal').classList.add('hidden');
+  document.getElementById('filterModal').classList.remove('flex');
+}
+
+function renderFilterFaculty() {
+  const container = document.getElementById('filterFaculty');
+  container.innerHTML = FACULTIES.map(f => `
+    <button onclick="setFacultyFilter('${f.id}')" id="filter-fac-${f.id}" class="filter-fac px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition">${f.label}</button>
+  `).join('');
+  setFacultyFilter('all');
+}
+
+function setFacultyFilter(faculty) {
+  activeFilters.faculty = faculty;
+  document.querySelectorAll('.filter-fac').forEach(btn => {
+    btn.className = 'filter-fac px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition';
+  });
+  const active = document.getElementById('filter-fac-' + faculty);
+  if (active) active.className = 'filter-fac px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500 text-white border border-red-500 transition';
+}
+
+function setLevelFilter(level) {
+  activeFilters.level = activeFilters.level === level ? 'all' : level;
+  document.querySelectorAll('.filter-level').forEach(btn => {
+    btn.className = 'filter-level px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition';
+  });
+  if (activeFilters.level !== 'all') {
+    const active = document.getElementById('level-' + activeFilters.level);
+    if (active) active.className = 'filter-level px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500 text-white border border-red-500 transition';
+  }
+}
+
+function togglePref(btn, pref) {
+  const idx = activeFilters.prefs.indexOf(pref);
+  if (idx > -1) {
+    activeFilters.prefs.splice(idx, 1);
+    btn.className = 'filter-pref px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0f172a] border border-white/8 text-gray-400 hover:text-white transition';
+  } else {
+    activeFilters.prefs.push(pref);
+    btn.className = 'filter-pref px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500 text-white border border-red-500 transition';
+  }
+}
+
+function applyFilters() {
+  closeFilterModal();
+  renderBuddies();
+  showToast('Filters applied!');
+}
+
+// TOAST
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  const icon = document.getElementById('toastIcon');
+  const text = document.getElementById('toastMsg');
+  text.textContent = msg;
+  if (type === 'error') {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>';
+    icon.className = 'w-5 h-5 text-red-400 shrink-0';
+  } else if (type === 'info') {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+    icon.className = 'w-5 h-5 text-amber-400 shrink-0';
+  } else {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>';
+    icon.className = 'w-5 h-5 text-green-400 shrink-0';
+  }
+  toast.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
+  toast.classList.add('opacity-100', 'translate-y-0');
+  setTimeout(() => {
+    toast.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+    toast.classList.remove('opacity-100', 'translate-y-0');
+  }, 2500);
+}
+
+function openProfile() {
+  showToast('Profile page coming soon', 'info');
+}
+
+init();
+</script>
+</body>
+</html>
