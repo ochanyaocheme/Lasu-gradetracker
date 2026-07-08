@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LASU GradeTracker - Course Corners</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+body{background-color:#0f172a;color:#fff}
+::-webkit-scrollbar{width:0;height:0}
+@keyframes slide-up{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fade-in{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+.animate-slide-up{animation:slide-up .35s cubic-bezier(.16,1,.3,1)}
+.animate-fade-in{animation:fade-in .2s ease-out}
+.animate-pop{animation:pop .2s ease}
+.course-card{transition:all .2s ease}
+.course-card:hover{transform:translateY(-2px)}
+.course-card:active{transform:scale(.98)}
+.action-btn{transition:all .15s ease}
+.action-btn:active{transform:scale(.92)}
+.file-chip{transition:all .15s ease}
+.file-chip:hover{background:rgba(245,158,11,.15)}
+.member-avatar{transition:all .2s ease}
+.member-avatar:hover{transform:scale(1.1);box-shadow:0 0 0 2px rgba(245,158,11,.5)}
+.tab-pill{transition:all .2s ease}
+.tab-pill:active{transform:scale(.95)}
+</style>
+</head>
+<body class="min-h-screen bg-[#0f172a] text-white antialiased relative">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 bg-[#0f172a]/95 backdrop-blur-md border-b border-white/8 px-4 py-3 flex items-center gap-3">
+  <button class="p-2 -ml-2 rounded-full hover:bg-white/5 active:bg-white/10 transition" onclick="showToast('Back to Home')">
+    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+  </button>
+  <img src="your-logo.png" class="w-10 h-10 rounded-xl object-cover shrink-0" alt="LASU GradeTracker" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+  <div class="hidden w-10 h-10 bg-amber-500 rounded-xl items-center justify-center shrink-0"><span class="text-[#0f172a] font-extrabold text-[10px]">LASU</span></div>
+  <h1 class="text-[17px] font-bold leading-tight tracking-tight"><span class="text-amber-400">LASU</span> <span class="text-white">GradeTracker</span></h1>
+  <div class="ml-auto flex items-center gap-3">
+    <button class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition" onclick="showToast('No new notifications')">
+      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <span class="absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0f172a]"></span>
+    </button>
+    <button onclick="openProfile()" class="rounded-full">
+      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-9 h-9 rounded-full border-2 border-amber-500/50 cursor-pointer object-cover" alt="My Profile">
+    </button>
+  </div>
+</header>
+
+<!-- PAGE TITLE -->
+<div class="px-4 pt-6 pb-1 text-center">
+  <div class="flex items-center justify-center gap-2.5 mb-2">
+    <div class="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center">
+      <svg class="w-5 h-5 text-[#0f172a]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+    </div>
+    <h2 class="text-[26px] font-extrabold text-amber-400 tracking-tight">Course Corners</h2>
+  </div>
+  <p class="text-gray-400 text-[14px] mt-1">Discuss courses, share files & study together</p>
+</div>
+
+<!-- SEARCH + CREATE -->
+<div class="mx-4 mt-5 flex gap-2">
+  <div class="relative flex-1">
+    <svg class="w-5 h-5 text-gray-500 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    <input type="text" id="searchInput" placeholder="Search courses, topics, or questions..." class="w-full bg-[#1e293b] rounded-2xl pl-12 pr-4 py-3.5 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none transition" oninput="filterCourses(this.value)">
+  </div>
+  <button onclick="openCreateGroup()" class="shrink-0 bg-amber-500 hover:bg-amber-400 text-black font-bold px-4 rounded-2xl transition flex items-center gap-1.5 action-btn">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+    <span class="hidden sm:inline">New</span>
+  </button>
+</div>
+
+<!-- FACULTY TABS -->
+<div class="mx-4 mt-4 flex gap-2 overflow-x-auto pb-1 scrollbar-hide" id="facultyTabs"></div>
+
+<!-- COURSES GRID -->
+<div id="coursesGrid" class="mx-4 mt-4 pb-24 grid grid-cols-1 gap-3"></div>
+
+<!-- EMPTY STATE -->
+<div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center">
+  <div class="w-16 h-16 bg-amber-500/20 rounded-2xl flex items-center justify-center mb-5">
+    <svg class="w-8 h-8 text-amber-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+  </div>
+  <h3 class="text-lg font-bold text-white">No courses found</h3>
+  <p class="text-gray-500 text-sm mt-1.5">Try a different search or create a new group</p>
+  <button onclick="openCreateGroup()" class="mt-4 bg-amber-500 hover:bg-amber-400 text-black font-bold px-5 py-2.5 rounded-xl text-sm transition">Create a Group</button>
+</div>
+
+<!-- COURSE DETAIL MODAL -->
+<div id="courseModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeCourseModal()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up max-h-[90vh] overflow-y-auto">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6">
+      <div class="flex items-start gap-3 mb-4">
+        <div id="courseIcon" class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shrink-0"></div>
+        <div class="flex-1">
+          <h3 id="courseTitle" class="text-xl font-bold text-white"></h3>
+          <p id="courseCode" class="text-amber-400 text-sm font-medium mt-0.5"></p>
+          <p id="courseFaculty" class="text-gray-400 text-xs mt-1"></p>
+        </div>
+      </div>
+      <p id="courseDesc" class="text-gray-300 text-sm leading-relaxed mb-4"></p>
+
+      <div class="flex items-center gap-4 mb-4 text-sm">
+        <div class="flex items-center gap-1.5 text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span id="courseMembers">0</span> members
+        </div>
+        <div class="flex items-center gap-1.5 text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          <span id="courseDiscussions">0</span> discussions
+        </div>
+      </div>
+
+      <button onclick="joinCourse()" id="joinBtn" class="w-full font-bold py-3 rounded-2xl text-sm transition mb-4 action-btn"></button>
+
+      <!-- MEMBERS SECTION -->
+      <div class="border-t border-white/8 pt-4 mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-sm font-semibold text-white">Members</h4>
+          <button onclick="openAddMember()" class="text-amber-400 text-xs font-semibold hover:text-amber-300 transition">+ Add Member</button>
+        </div>
+        <div id="membersList" class="flex -space-x-2 overflow-x-auto pb-1"></div>
+      </div>
+
+      <!-- SHARED FILES SECTION -->
+      <div class="border-t border-white/8 pt-4 mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-sm font-semibold text-white">Shared Files</h4>
+          <button onclick="openFileUpload()" class="text-amber-400 text-xs font-semibold hover:text-amber-300 transition">+ Share File</button>
+        </div>
+        <div id="filesList" class="flex gap-2 overflow-x-auto pb-1"></div>
+      </div>
+
+      <!-- DISCUSSIONS -->
+      <div class="border-t border-white/8 pt-4">
+        <h4 class="text-sm font-semibold text-white mb-3">Recent Discussions</h4>
+        <div id="courseDiscussionsList" class="space-y-3"></div>
+      </div>
+
+      <!-- START DISCUSSION -->
+      <div class="mt-4 pt-4 border-t border-white/8">
+        <h4 class="text-sm font-semibold text-white mb-3">Start a Discussion</h4>
+        <div class="flex gap-2">
+          <input id="discussionInput" type="text" placeholder="Ask a question or share something..." class="flex-1 bg-[#0f172a] rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none transition">
+          <button onclick="postDiscussion()" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-4 rounded-xl transition action-btn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE GROUP MODAL -->
+<div id="createGroupModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeCreateGroup()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up max-h-[85vh] overflow-y-auto">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6">
+      <h3 class="text-xl font-bold text-white mb-4">Create New Group</h3>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs text-gray-400 font-medium mb-1.5 block">Group Name</label>
+          <input type="text" id="newGroupName" placeholder="e.g. Advanced Organic Chemistry" class="w-full bg-[#0f172a] rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none transition">
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-medium mb-1.5 block">Course Code</label>
+          <input type="text" id="newGroupCode" placeholder="e.g. CHM 401" class="w-full bg-[#0f172a] rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none transition">
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-medium mb-1.5 block">Faculty</label>
+          <select id="newGroupFaculty" class="w-full bg-[#0f172a] rounded-xl px-4 py-3 text-sm text-white border border-white/8 focus:border-amber-500/50 focus:outline-none transition appearance-none">
+            <option value="science">Science</option>
+            <option value="arts">Arts</option>
+            <option value="social">Social Sciences</option>
+            <option value="law">Law</option>
+            <option value="education">Education</option>
+            <option value="management">Management</option>
+            <option value="engineering">Engineering</option>
+            <option value="lasucom">LASUCOM (Medical)</option>
+            <option value="agric">Agricultural Sciences</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-medium mb-1.5 block">Description</label>
+          <textarea id="newGroupDesc" rows="3" placeholder="What is this group about?" class="w-full bg-[#0f172a] rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none transition resize-none"></textarea>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-medium mb-1.5 block">Pick an Icon</label>
+          <div class="flex gap-2 flex-wrap" id="iconPicker"></div>
+        </div>
+        <button onclick="createGroup()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-2xl text-sm transition action-btn">Create Group</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD MEMBER MODAL -->
+<div id="addMemberModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeAddMember()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up max-h-[85vh] overflow-y-auto">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6">
+      <h3 class="text-xl font-bold text-white mb-4">Add Member</h3>
+      <p class="text-gray-400 text-sm mb-4">Invite fellow students to join this group</p>
+      <div class="space-y-3" id="addMemberList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FILE UPLOAD MODAL -->
+<div id="fileUploadModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeFileUpload()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6">
+      <h3 class="text-xl font-bold text-white mb-4">Share a File</h3>
+      <div class="border-2 border-dashed border-white/15 rounded-2xl p-8 text-center mb-4 hover:border-amber-500/40 transition cursor-pointer" onclick="simulateFileUpload()">
+        <svg class="w-10 h-10 text-gray-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        <p class="text-sm text-gray-400">Tap to upload images, PDFs, slides, or Word docs</p>
+        <p class="text-xs text-gray-600 mt-1">Max 25MB</p>
+      </div>
+      <div id="uploadPreview" class="hidden mb-4">
+        <div class="flex items-center gap-3 bg-[#0f172a] rounded-xl p-3 border border-white/8">
+          <div class="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p id="uploadFileName" class="text-sm text-white truncate">document.pdf</p>
+            <p class="text-xs text-gray-500">2.4 MB</p>
+          </div>
+          <button onclick="confirmFileUpload()" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-3 py-1.5 rounded-lg text-xs transition">Share</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 bg-[#1e293b] text-white px-5 py-3 rounded-2xl shadow-2xl border border-white/8 flex items-center gap-2.5 text-sm font-semibold opacity-0 pointer-events-none transition-all duration-300 z-50 -translate-y-2">
+  <svg id="toastIcon" class="w-5 h-5 text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<script>
+const FACULTIES = [
+  { id: 'all', label: 'All' },
+  { id: 'science', label: 'Science' },
+  { id: 'arts', label: 'Arts' },
+  { id: 'social', label: 'Social Sciences' },
+  { id: 'law', label: 'Law' },
+  { id: 'education', label: 'Education' },
+  { id: 'management', label: 'Management' },
+  { id: 'engineering', label: 'Engineering' },
+  { id: 'lasucom', label: 'LASUCOM' },
+  { id: 'agric', label: 'Agricultural Sciences' }
+];
+
+const ICONS = ['&#129514;', '&#9889;', '&#128300;', '&#129518;', '&#9878;', '&#128196;', '&#129504;', '&#128200;', '&#128101;', '&#128218;', '&#127757;', '&#127891;', '&#128221;', '&#128176;', '&#128188;', '&#128295;', '&#129656;', '&#127793;', '&#128137;', '&#129656;'];
+
+const FACULTY_STYLES = {
+  science: { color: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/20' },
+  arts: { color: 'bg-indigo-500/20', text: 'text-indigo-400', border: 'border-indigo-500/20' },
+  social: { color: 'bg-pink-500/20', text: 'text-pink-400', border: 'border-pink-500/20' },
+  law: { color: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/20' },
+  education: { color: 'bg-teal-500/20', text: 'text-teal-400', border: 'border-teal-500/20' },
+  management: { color: 'bg-emerald-600/20', text: 'text-emerald-500', border: 'border-emerald-600/20' },
+  engineering: { color: 'bg-orange-500/20', text: 'text-orange-400', border: 'border-orange-500/20' },
+  lasucom: { color: 'bg-cyan-600/20', text: 'text-cyan-400', border: 'border-cyan-600/20' },
+  agric: { color: 'bg-lime-600/20', text: 'text-lime-500', border: 'border-lime-600/20' }
+};
+
+let COURSES = [
+  { id: 1, title: 'Organic Chemistry I', code: 'CHM 201', faculty: 'science', icon: '&#129514;', desc: 'Study of carbon compounds, functional groups, reaction mechanisms, and stereochemistry.', members: 234, discussions: 45, joined: false, files: [], membersList: [] },
+  { id: 2, title: 'General Physics II', code: 'PHY 102', faculty: 'science', icon: '&#9889;', desc: 'Electricity, magnetism, optics, and modern physics concepts.', members: 189, discussions: 32, joined: false, files: [], membersList: [] },
+  { id: 3, title: 'Cell Biology', code: 'BIO 201', faculty: 'science', icon: '&#128300;', desc: 'Structure and function of cells, organelles, cell division, and molecular biology.', members: 156, discussions: 28, joined: false, files: [], membersList: [] },
+  { id: 4, title: 'Calculus II', code: 'MTH 102', faculty: 'science', icon: '&#129518;', desc: 'Integration techniques, sequences and series, multivariable calculus.', members: 312, discussions: 67, joined: false, files: [], membersList: [] },
+  { id: 5, title: 'Nigerian Legal System', code: 'LAW 101', faculty: 'law', icon: '&#9878;', desc: 'Introduction to Nigerian law, court hierarchy, legal precedents, and constitutional law.', members: 98, discussions: 19, joined: false, files: [], membersList: [] },
+  { id: 6, title: 'Contract Law', code: 'LAW 202', faculty: 'law', icon: '&#128196;', desc: 'Formation of contracts, terms, breach, remedies, and discharge of contracts.', members: 87, discussions: 15, joined: false, files: [], membersList: [] },
+  { id: 7, title: 'Introduction to Psychology', code: 'PSY 101', faculty: 'social', icon: '&#129504;', desc: 'Human behavior, cognition, personality, development, and mental processes.', members: 267, discussions: 54, joined: false, files: [], membersList: [] },
+  { id: 8, title: 'Principles of Economics', code: 'ECO 101', faculty: 'social', icon: '&#128200;', desc: 'Micro and macroeconomics, supply and demand, market structures, fiscal policy.', members: 298, discussions: 61, joined: false, files: [], membersList: [] },
+  { id: 9, title: 'Sociological Theory', code: 'SOC 201', faculty: 'social', icon: '&#128101;', desc: 'Classical and contemporary sociological theories, social structures, and institutions.', members: 134, discussions: 22, joined: false, files: [], membersList: [] },
+  { id: 10, title: 'English Literature', code: 'ENG 101', faculty: 'arts', icon: '&#128218;', desc: 'Analysis of prose, poetry, and drama. Critical approaches to literary texts.', members: 178, discussions: 34, joined: false, files: [], membersList: [] },
+  { id: 11, title: 'History of Nigeria', code: 'HIS 101', faculty: 'arts', icon: '&#127757;', desc: 'Pre-colonial, colonial, and post-colonial Nigerian history.', members: 145, discussions: 27, joined: false, files: [], membersList: [] },
+  { id: 12, title: 'Philosophy & Logic', code: 'PHL 101', faculty: 'arts', icon: '&#129504;', desc: 'Critical thinking, argumentation, fallacies, and philosophical inquiry.', members: 112, discussions: 18, joined: false, files: [], membersList: [] },
+  { id: 13, title: 'Educational Psychology', code: 'EDU 201', faculty: 'education', icon: '&#127891;', desc: 'Learning theories, motivation, classroom management, and assessment.', members: 156, discussions: 31, joined: false, files: [], membersList: [] },
+  { id: 14, title: 'Curriculum Development', code: 'EDU 301', faculty: 'education', icon: '&#128221;', desc: 'Design, implementation, and evaluation of educational curricula.', members: 89, discussions: 14, joined: false, files: [], membersList: [] },
+  { id: 15, title: 'Financial Accounting', code: 'ACC 101', faculty: 'management', icon: '&#128176;', desc: 'Accounting principles, financial statements, bookkeeping, and reporting.', members: 245, discussions: 48, joined: false, files: [], membersList: [] },
+  { id: 16, title: 'Business Management', code: 'BUS 101', faculty: 'management', icon: '&#128188;', desc: 'Planning, organizing, leading, and controlling business operations.', members: 198, discussions: 39, joined: false, files: [], membersList: [] },
+  { id: 17, title: 'Mechanics of Materials', code: 'MEE 201', faculty: 'engineering', icon: '&#128295;', desc: 'Stress, strain, material properties, beam theory, and structural analysis.', members: 76, discussions: 12, joined: false, files: [], membersList: [] },
+  { id: 18, title: 'Circuit Theory', code: 'EEE 201', faculty: 'engineering', icon: '&#9889;', desc: 'DC/AC circuits, network theorems, transient analysis, and resonance.', members: 89, discussions: 16, joined: false, files: [], membersList: [] },
+  // LASUCOM courses
+  { id: 19, title: 'Human Anatomy I', code: 'ANA 101', faculty: 'lasucom', icon: '&#129656;', desc: 'Gross anatomy of the human body, body systems, and dissection techniques.', members: 45, discussions: 8, joined: false, files: [], membersList: [] },
+  { id: 20, title: 'Medical Biochemistry', code: 'BCH 201', faculty: 'lasucom', icon: '&#129514;', desc: 'Biochemical processes in health and disease, metabolism, and clinical chemistry.', members: 52, discussions: 11, joined: false, files: [], membersList: [] },
+  { id: 21, title: 'Medical Laboratory Technology', code: 'MLT 301', faculty: 'lasucom', icon: '&#128300;', desc: 'Laboratory diagnostics, hematology, microbiology, and clinical pathology.', members: 38, discussions: 6, joined: false, files: [], membersList: [] },
+  { id: 22, title: 'Nursing Fundamentals', code: 'NUR 101', faculty: 'lasucom', icon: '&#128137;', desc: 'Basic nursing care, patient assessment, and clinical skills development.', members: 67, discussions: 14, joined: false, files: [], membersList: [] },
+  // Agricultural Sciences courses
+  { id: 23, title: 'Crop Science', code: 'AGR 201', faculty: 'agric', icon: '&#127793;', desc: 'Crop production, plant breeding, agronomy, and sustainable farming practices.', members: 89, discussions: 17, joined: false, files: [], membersList: [] },
+  { id: 24, title: 'Animal Husbandry', code: 'AGR 301', faculty: 'agric', icon: '&#128004;', desc: 'Livestock management, animal nutrition, breeding, and veterinary basics.', members: 72, discussions: 13, joined: false, files: [], membersList: [] },
+  { id: 25, title: 'Soil Science', code: 'AGR 101', faculty: 'agric', icon: '&#127795;', desc: 'Soil properties, fertility, conservation, and land management techniques.', members: 56, discussions: 9, joined: false, files: [], membersList: [] },
+  { id: 26, title: 'Agricultural Economics', code: 'AGR 401', faculty: 'agric', icon: '&#128200;', desc: 'Farm management, agricultural policy, rural development, and food economics.', members: 43, discussions: 7, joined: false, files: [], membersList: [] }
+];
+
+let currentFaculty = 'all';
+let currentCourse = null;
+let joinedCourses = [];
+let selectedIcon = ICONS[0];
+let tempFile = null;
+
+const DEMO_DISCUSSIONS = [
+  { user: 'Adebola Oluwaseun', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=adebola', time: '2h ago', content: 'Can someone explain the mechanism for nucleophilic substitution in alkyl halides? I am confused about SN1 vs SN2.', likes: 12, replies: 4 },
+  { user: 'Chioma Nwosu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chioma', time: '4h ago', content: 'Here is a summary I made for Chapter 3 - Stereochemistry. Hope it helps! Link in bio.', likes: 28, replies: 7 },
+  { user: 'Tunde Bakare', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=tunde', time: '6h ago', content: 'When is the next test? I heard it is next week but I am not sure.', likes: 5, replies: 11 }
+];
+
+const DEMO_MEMBERS = [
+  { name: 'Adebola O.', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=adebola', seed: 'adebola' },
+  { name: 'Chioma N.', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chioma', seed: 'chioma' },
+  { name: 'Tunde B.', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=tunde', seed: 'tunde' },
+  { name: 'Fatima A.', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=fatima', seed: 'fatima' },
+  { name: 'Emeka O.', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=emeka', seed: 'emeka' },
+  { name: 'Amina K.', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=amina', seed: 'amina' },
+  { name: 'David E.', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=david', seed: 'david' },
+  { name: 'Blessing I.', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=blessing', seed: 'blessing' }
+];
+
+const DEMO_FILES = [
+  { name: 'Lecture_Slides_Week3.pdf', size: '2.4 MB', type: 'pdf' },
+  { name: 'Past_Questions_2024.docx', size: '1.1 MB', type: 'doc' },
+  { name: 'Diagram_Cell_Structure.png', size: '856 KB', type: 'img' },
+  { name: 'Study_Group_Notes.pptx', size: '3.2 MB', type: 'ppt' }
+];
+
+function init() {
+  renderFacultyTabs();
+  renderCourses();
+  renderIconPicker();
+}
+
+function renderFacultyTabs() {
+  const container = document.getElementById('facultyTabs');
+  container.innerHTML = FACULTIES.map(f => {
+    const isActive = f.id === currentFaculty;
+    return `<button onclick="setFaculty('${f.id}')" id="faculty-${f.id}" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${isActive ? 'bg-amber-500 text-black' : 'text-gray-400 hover:text-white hover:bg-white/5'}">${f.label}</button>`;
+  }).join('');
+}
+
+function setFaculty(faculty) {
+  currentFaculty = faculty;
+  renderFacultyTabs();
+  renderCourses();
+}
+
+function filterCourses(query) {
+  renderCourses(query.toLowerCase());
+}
+
+function renderCourses(searchQuery = '') {
+  const grid = document.getElementById('coursesGrid');
+  const empty = document.getElementById('emptyState');
+  let filtered = COURSES;
+  if (currentFaculty !== 'all') filtered = filtered.filter(c => c.faculty === currentFaculty);
+  if (searchQuery) filtered = filtered.filter(c => c.title.toLowerCase().includes(searchQuery) || c.code.toLowerCase().includes(searchQuery) || c.desc.toLowerCase().includes(searchQuery));
+  if (filtered.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); empty.classList.add('flex'); return; }
+  empty.classList.add('hidden'); empty.classList.remove('flex');
+  grid.innerHTML = filtered.map(course => {
+    const style = FACULTY_STYLES[course.faculty] || FACULTY_STYLES.science;
+    const isJoined = joinedCourses.includes(course.id);
+    return `<button onclick="openCourse(${course.id})" class="course-card w-full text-left bg-[#1e293b] rounded-2xl border border-white/6 p-4 ${style.border} hover:border-opacity-40">
+      <div class="flex items-start gap-3">
+        <div class="w-12 h-12 ${style.color} rounded-2xl flex items-center justify-center text-2xl shrink-0 border ${style.border}">
+          ${course.icon}
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <h3 class="font-bold text-white text-[15px] truncate">${course.title}</h3>
+            ${isJoined ? '<span class="shrink-0 px-2 py-0.5 bg-green-500/20 text-green-400 text-[10px] rounded-full font-bold border border-green-500/30">Joined</span>' : ''}
+          </div>
+          <p class="text-amber-400 text-xs font-semibold mt-0.5">${course.code}</p>
+          <p class="text-gray-400 text-[12px] mt-1 line-clamp-2 leading-relaxed">${course.desc}</p>
+          <div class="flex items-center gap-3 mt-2.5 text-[11px] text-gray-500">
+            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>${course.members}</span>
+            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>${course.discussions}</span>
+            ${course.files && course.files.length > 0 ? `<span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>${course.files.length}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    </button>`;
+  }).join('');
+}
+
+function openCourse(id) {
+  currentCourse = COURSES.find(c => c.id === id);
+  if (!currentCourse) return;
+  const style = FACULTY_STYLES[currentCourse.faculty] || FACULTY_STYLES.science;
+  const facultyLabel = FACULTIES.find(f => f.id === currentCourse.faculty)?.label || currentCourse.faculty;
+  document.getElementById('courseIcon').className = `w-12 h-12 ${style.color} rounded-2xl flex items-center justify-center text-2xl shrink-0 border ${style.border}`;
+  document.getElementById('courseIcon').innerHTML = currentCourse.icon;
+  document.getElementById('courseTitle').textContent = currentCourse.title;
+  document.getElementById('courseCode').textContent = currentCourse.code;
+  document.getElementById('courseFaculty').textContent = facultyLabel;
+  document.getElementById('courseDesc').textContent = currentCourse.desc;
+  document.getElementById('courseMembers').textContent = currentCourse.members;
+  document.getElementById('courseDiscussions').textContent = currentCourse.discussions;
+  const joinBtn = document.getElementById('joinBtn');
+  const isJoined = joinedCourses.includes(currentCourse.id);
+  joinBtn.textContent = isJoined ? 'Leave Group' : 'Join Course Corner';
+  joinBtn.className = `w-full font-bold py-3 rounded-2xl text-sm transition mb-4 action-btn ${isJoined ? 'bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30' : 'bg-amber-500 hover:bg-amber-400 text-black'}`;
+  renderMembers();
+  renderFiles();
+  renderDiscussions();
+  document.getElementById('courseModal').classList.remove('hidden');
+  document.getElementById('courseModal').classList.add('flex');
+}
+
+function closeCourseModal() {
+  document.getElementById('courseModal').classList.add('hidden');
+  document.getElementById('courseModal').classList.remove('flex');
+  currentCourse = null;
+}
+
+function joinCourse() {
+  if (!currentCourse) return;
+  const idx = joinedCourses.indexOf(currentCourse.id);
+  if (idx > -1) {
+    joinedCourses.splice(idx, 1);
+    currentCourse.members--;
+    showToast('Left the group', 'info');
+  } else {
+    joinedCourses.push(currentCourse.id);
+    currentCourse.members++;
+    showToast('Joined successfully!');
+  }
+  openCourse(currentCourse.id);
+  renderCourses(document.getElementById('searchInput').value.toLowerCase());
+}
+
+function renderMembers() {
+  const container = document.getElementById('membersList');
+  const members = currentCourse.membersList.length > 0 ? currentCourse.membersList : DEMO_MEMBERS.slice(0, 5);
+  container.innerHTML = members.map((m, i) => `
+    <img src="${m.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + m.seed}" class="w-8 h-8 rounded-full border-2 border-[#1e293b] member-avatar cursor-pointer object-cover" title="${m.name}" onclick="showToast('${m.name}')">
+  `).join('') + `
+    <div class="w-8 h-8 rounded-full bg-white/10 border-2 border-[#1e293b] flex items-center justify-center text-[10px] text-gray-400 font-bold">+${Math.max(0, currentCourse.members - members.length)}</div>
+  `;
+}
+
+function renderFiles() {
+  const container = document.getElementById('filesList');
+  const files = currentCourse.files.length > 0 ? currentCourse.files : DEMO_FILES.slice(0, 3);
+  const fileIcons = { pdf: '&#128196;', doc: '&#128221;', img: '&#127748;', ppt: '&#128200;' };
+  container.innerHTML = files.map(f => `
+    <div class="file-chip shrink-0 flex items-center gap-2 bg-[#0f172a] rounded-xl px-3 py-2 border border-white/8 cursor-pointer" onclick="showToast('Opening ${f.name}...')">
+      <span class="text-lg">${fileIcons[f.type] || '&#128196;'}</span>
+      <div>
+        <p class="text-xs text-white font-medium truncate max-w-[100px]">${f.name}</p>
+        <p class="text-[10px] text-gray-500">${f.size}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderDiscussions() {
+  const container = document.getElementById('courseDiscussionsList');
+  container.innerHTML = DEMO_DISCUSSIONS.map(d => `
+    <div class="flex gap-3 p-3 bg-[#0f172a] rounded-xl border border-white/6">
+      <img src="${d.avatar}" class="w-9 h-9 rounded-full object-cover shrink-0">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-semibold text-white">${d.user}</span>
+          <span class="text-[10px] text-gray-500">${d.time}</span>
+        </div>
+        <p class="text-sm text-gray-300 mt-1 leading-relaxed">${d.content}</p>
+        <div class="flex items-center gap-4 mt-2 text-[11px] text-gray-500">
+          <button class="flex items-center gap-1 hover:text-amber-400 transition" onclick="this.classList.toggle('text-amber-400'); showToast('Liked!')">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            ${d.likes}
+          </button>
+          <button class="flex items-center gap-1 hover:text-amber-400 transition" onclick="showToast('Reply feature coming soon')">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            ${d.replies}
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function postDiscussion() {
+  const input = document.getElementById('discussionInput');
+  if (!input.value.trim()) { showToast('Type something first', 'error'); return; }
+  DEMO_DISCUSSIONS.unshift({
+    user: 'You',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=official',
+    time: 'Just now',
+    content: input.value,
+    likes: 0,
+    replies: 0
+  });
+  currentCourse.discussions++;
+  input.value = '';
+  renderDiscussions();
+  renderCourses(document.getElementById('searchInput').value.toLowerCase());
+  showToast('Posted!');
+}
+
+// CREATE GROUP
+function openCreateGroup() {
+  document.getElementById('createGroupModal').classList.remove('hidden');
+  document.getElementById('createGroupModal').classList.add('flex');
+}
+
+function closeCreateGroup() {
+  document.getElementById('createGroupModal').classList.add('hidden');
+  document.getElementById('createGroupModal').classList.remove('flex');
+  selectedIcon = ICONS[0];
+  document.getElementById('newGroupName').value = '';
+  document.getElementById('newGroupCode').value = '';
+  document.getElementById('newGroupDesc').value = '';
+  renderIconPicker();
+}
+
+function renderIconPicker() {
+  const container = document.getElementById('iconPicker');
+  container.innerHTML = ICONS.map((icon, i) => `
+    <button onclick="selectIcon(${i})" class="w-10 h-10 rounded-xl flex items-center justify-center text-xl transition ${selectedIcon === icon ? 'bg-amber-500/30 border-2 border-amber-500' : 'bg-[#0f172a] border border-white/8 hover:border-amber-500/30'}">${icon}</button>
+  `).join('');
+}
+
+function selectIcon(idx) {
+  selectedIcon = ICONS[idx];
+  renderIconPicker();
+}
+
+function createGroup() {
+  const name = document.getElementById('newGroupName').value.trim();
+  const code = document.getElementById('newGroupCode').value.trim();
+  const faculty = document.getElementById('newGroupFaculty').value;
+  const desc = document.getElementById('newGroupDesc').value.trim();
+  if (!name || !code || !desc) { showToast('Fill all fields', 'error'); return; }
+  const newId = Math.max(...COURSES.map(c => c.id)) + 1;
+  COURSES.push({
+    id: newId,
+    title: name,
+    code: code,
+    faculty: faculty,
+    icon: selectedIcon,
+    desc: desc,
+    members: 1,
+    discussions: 0,
+    joined: true,
+    files: [],
+    membersList: [{ name: 'You', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=official', seed: 'official' }]
+  });
+  joinedCourses.push(newId);
+  closeCreateGroup();
+  showToast('Group created!');
+  renderCourses();
+}
+
+// ADD MEMBER
+function openAddMember() {
+  const container = document.getElementById('addMemberList');
+  const existing = currentCourse.membersList.map(m => m.seed);
+  const available = DEMO_MEMBERS.filter(m => !existing.includes(m.seed));
+  container.innerHTML = available.map(m => `
+    <div class="flex items-center gap-3 p-3 bg-[#0f172a] rounded-xl border border-white/6">
+      <img src="${m.avatar}" class="w-10 h-10 rounded-full object-cover">
+      <div class="flex-1">
+        <p class="text-sm font-semibold text-white">${m.name}</p>
+        <p class="text-xs text-gray-500">${FACULTIES.find(f => f.id === currentCourse.faculty)?.label || ''}</p>
+      </div>
+      <button onclick="addMember('${m.seed}', '${m.name}', '${m.avatar}')" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-3 py-1.5 rounded-lg text-xs transition action-btn">Add</button>
+    </div>
+  `).join('');
+  document.getElementById('addMemberModal').classList.remove('hidden');
+  document.getElementById('addMemberModal').classList.add('flex');
+}
+
+function closeAddMember() {
+  document.getElementById('addMemberModal').classList.add('hidden');
+  document.getElementById('addMemberModal').classList.remove('flex');
+}
+
+function addMember(seed, name, avatar) {
+  if (!currentCourse.membersList.find(m => m.seed === seed)) {
+    currentCourse.membersList.push({ name, avatar, seed });
+    currentCourse.members++;
+  }
+  closeAddMember();
+  openCourse(currentCourse.id);
+  renderCourses();
+  showToast(`${name} added!`);
+}
+
+// FILE UPLOAD
+function openFileUpload() {
+  document.getElementById('fileUploadModal').classList.remove('hidden');
+  document.getElementById('fileUploadModal').classList.add('flex');
+  document.getElementById('uploadPreview').classList.add('hidden');
+  tempFile = null;
+}
+
+function closeFileUpload() {
+  document.getElementById('fileUploadModal').classList.add('hidden');
+  document.getElementById('fileUploadModal').classList.remove('flex');
+  tempFile = null;
+}
+
+function simulateFileUpload() {
+  const files = [
+    { name: 'Lecture_Notes_Ch5.pdf', size: '1.8 MB', type: 'pdf' },
+    { name: 'Tutorial_Slides.pptx', size: '4.2 MB', type: 'ppt' },
+    { name: 'Assignment_2.docx', size: '956 KB', type: 'doc' },
+    { name: 'Lab_Results.png', size: '2.1 MB', type: 'img' }
+  ];
+  tempFile = files[Math.floor(Math.random() * files.length)];
+  document.getElementById('uploadFileName').textContent = tempFile.name;
+  document.getElementById('uploadPreview').classList.remove('hidden');
+}
+
+function confirmFileUpload() {
+  if (!tempFile) return;
+  currentCourse.files.push(tempFile);
+  closeFileUpload();
+  openCourse(currentCourse.id);
+  renderCourses();
+  showToast('File shared!');
+}
+
+// TOAST
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  const icon = document.getElementById('toastIcon');
+  const text = document.getElementById('toastMsg');
+  text.textContent = msg;
+  if (type === 'error') {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>';
+    icon.className = 'w-5 h-5 text-red-400 shrink-0';
+  } else if (type === 'info') {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+    icon.className = 'w-5 h-5 text-amber-400 shrink-0';
+  } else {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>';
+    icon.className = 'w-5 h-5 text-green-400 shrink-0';
+  }
+  toast.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
+  toast.classList.add('opacity-100', 'translate-y-0');
+  setTimeout(() => {
+    toast.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+    toast.classList.remove('opacity-100', 'translate-y-0');
+  }, 2500);
+}
+
+function openProfile() {
+  showToast('Profile page coming soon', 'info');
+}
+
+init();
+</script>
+</body>
+</html>
