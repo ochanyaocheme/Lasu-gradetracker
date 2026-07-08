@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Weekly Challenges - LASU GradeTracker</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+body{background-color:#0f172a;color:#fff}
+::-webkit-scrollbar{width:0;height:0}
+@keyframes slide-up{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fade-in{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse-soft{0%,100%{opacity:1}50%{opacity:.7}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes trophy-shine{0%{transform:translateX(-100%) rotate(25deg)}100%{transform:translateX(200%) rotate(25deg)}}
+@keyframes progress-fill{from{width:0}to{width:var(--target-width)}}
+.animate-slide-up{animation:slide-up .35s cubic-bezier(.16,1,.3,1)}
+.animate-fade-in{animation:fade-in .2s ease-out}
+.animate-pulse-soft{animation:pulse-soft 2s ease-in-out infinite}
+.animate-float{animation:float 3s ease-in-out infinite}
+.challenge-card{transition:all .2s ease}
+.challenge-card:hover{transform:translateY(-2px)}
+.challenge-card:active{transform:scale(.98)}
+.action-btn{transition:all .15s ease}
+.action-btn:active{transform:scale(.92)}
+.tab-pill{transition:all .2s ease}
+.tab-pill:active{transform:scale(.95)}
+.badge-card{transition:all .2s ease}
+.badge-card:hover{transform:translateY(-2px) scale(1.02)}
+.leaderboard-row{transition:all .15s ease}
+.leaderboard-row:hover{background:rgba(255,255,255,.03)}
+.progress-bar{transition:width .8s cubic-bezier(.4,0,.2,1)}
+.shimmer{background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);background-size:200% 100%;animation:shimmer 1.5s infinite}
+.trophy-shine{position:relative;overflow:hidden}
+.trophy-shine::after{content:'';position:absolute;top:0;left:0;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);animation:trophy-shine 3s infinite}
+</style>
+</head>
+<body class="min-h-screen bg-[#0f172a] text-white antialiased relative">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 bg-[#0f172a]/95 backdrop-blur-md border-b border-white/8 px-4 py-3 flex items-center gap-3">
+  <button class="p-2 -ml-2 rounded-full hover:bg-white/5 active:bg-white/10 transition" onclick="showToast('Back to Home')">
+    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+  </button>
+  <img src="your-logo.png" class="w-10 h-10 rounded-xl object-cover shrink-0" alt="LASU GradeTracker" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+  <div class="hidden w-10 h-10 bg-amber-500 rounded-xl items-center justify-center shrink-0"><span class="text-[#0f172a] font-extrabold text-[10px]">LASU</span></div>
+  <h1 class="text-[17px] font-bold leading-tight tracking-tight"><span class="text-amber-400">LASU</span> <span class="text-white">GradeTracker</span></h1>
+  <div class="ml-auto flex items-center gap-3">
+    <button class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition" onclick="showToast('No new notifications')">
+      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <span class="absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0f172a]"></span>
+    </button>
+    <button onclick="openProfile()" class="rounded-full">
+      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-9 h-9 rounded-full border-2 border-amber-500/50 cursor-pointer object-cover" alt="My Profile">
+    </button>
+  </div>
+</header>
+
+<!-- PAGE TITLE -->
+<div class="px-4 pt-6 pb-1 text-center">
+  <div class="flex items-center justify-center gap-2.5 mb-2">
+    <div class="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center animate-float trophy-shine">
+      <span class="text-2xl">🏆</span>
+    </div>
+    <h2 class="text-[26px] font-extrabold text-amber-400 tracking-tight">Weekly Challenges</h2>
+  </div>
+  <p class="text-gray-400 text-[14px] mt-1">Compete, level up, and earn badges. Stay motivated!</p>
+</div>
+
+<!-- MY STATS BAR -->
+<div class="mx-4 mt-5">
+  <div class="bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-2xl border border-amber-500/20 p-4">
+    <div class="flex items-center gap-4">
+      <div class="relative">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-14 h-14 rounded-full object-cover border-2 border-amber-500">
+        <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center border-2 border-[#0f172a]">
+          <span class="text-[10px] font-bold text-black">12</span>
+        </div>
+      </div>
+      <div class="flex-1">
+        <h3 class="font-bold text-white text-[15px]">You</h3>
+        <p class="text-amber-400 text-xs font-semibold">Gold Challenger</p>
+        <div class="flex items-center gap-3 mt-1.5">
+          <div class="flex items-center gap-1">
+            <span class="text-sm">⭐</span>
+            <span class="text-white text-sm font-bold">2,450</span>
+            <span class="text-gray-500 text-[10px]">XP</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="text-sm">🏅</span>
+            <span class="text-white text-sm font-bold">8</span>
+            <span class="text-gray-500 text-[10px]">Badges</span>
+          </div>
+        </div>
+      </div>
+      <div class="text-right">
+        <p class="text-gray-400 text-[10px]">Next Level</p>
+        <p class="text-amber-400 font-bold text-sm">2,550 XP</p>
+      </div>
+    </div>
+    <div class="mt-3">
+      <div class="flex justify-between text-[10px] text-gray-400 mb-1">
+        <span>Level 12</span>
+        <span>Level 13</span>
+      </div>
+      <div class="h-2 bg-[#0f172a] rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width:81%"></div>
+      </div>
+      <p class="text-gray-500 text-[10px] mt-1 text-center">100 XP to next level</p>
+    </div>
+  </div>
+</div>
+
+<!-- THIS WEEK'S CHALLENGES -->
+<div class="mx-4 mt-5">
+  <div class="flex items-center justify-between mb-3">
+    <h3 class="font-bold text-white text-[15px]">This Week's Challenges</h3>
+    <span class="text-amber-400 text-xs font-semibold">Resets in 3 days</span>
+  </div>
+  <div id="challengesList" class="space-y-3"></div>
+</div>
+
+<!-- CATEGORY FILTERS -->
+<div class="mx-4 mt-5">
+  <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-hide" id="categoryTabs">
+    <button onclick="setCategory('all')" id="cat-all" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-amber-500 text-white">All</button>
+    <button onclick="setCategory('study')" id="cat-study" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5">
+      <span>📚</span> Study
+    </button>
+    <button onclick="setCategory('wellness')" id="cat-wellness" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5">
+      <span>💪</span> Wellness
+    </button>
+    <button onclick="setCategory('social')" id="cat-social" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5">
+      <span>🤝</span> Social
+    </button>
+    <button onclick="setCategory('academic')" id="cat-academic" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5">
+      <span>🎓</span> Academic
+    </button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="mx-4 mt-4 flex gap-2 overflow-x-auto pb-1 scrollbar-hide" id="mainTabs">
+  <button onclick="setMainTab('challenges')" id="mtab-challenges" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-amber-500 text-white flex items-center gap-1.5">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    Active
+  </button>
+  <button onclick="setMainTab('badges')" id="mtab-badges" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+    Badges
+  </button>
+  <button onclick="setMainTab('leaderboard')" id="mtab-leaderboard" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+    Leaderboard
+  </button>
+</div>
+
+<!-- CONTENT AREA -->
+<div id="contentArea" class="mx-4 mt-4 pb-24"></div>
+
+<!-- BADGE DETAIL MODAL -->
+<div id="badgeModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeBadgeModal()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up max-h-[85vh] overflow-y-auto">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6 text-center">
+      <div class="w-20 h-20 bg-amber-500/20 rounded-2xl flex items-center justify-center border border-amber-500/30 mx-auto mb-4" id="badgeIconContainer">
+        <span class="text-4xl" id="badgeModalIcon">🏆</span>
+      </div>
+      <h3 class="text-xl font-bold text-white mb-1" id="badgeModalName">Badge Name</h3>
+      <p class="text-amber-400 text-sm font-medium mb-3" id="badgeModalTier">Gold Tier</p>
+      <p class="text-gray-400 text-sm leading-relaxed mb-4" id="badgeModalDesc">Description</p>
+      <div class="bg-[#0f172a] rounded-xl p-3 border border-white/6 mb-4">
+        <p class="text-gray-500 text-[11px] mb-1">Earned on</p>
+        <p class="text-white text-sm font-semibold" id="badgeModalDate">July 5, 2026</p>
+      </div>
+      <div class="bg-[#0f172a] rounded-xl p-3 border border-white/6">
+        <p class="text-gray-500 text-[11px] mb-1">XP Reward</p>
+        <p class="text-amber-400 text-sm font-bold" id="badgeModalXP">+250 XP</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHALLENGE DETAIL MODAL -->
+<div id="challengeModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeChallengeModal()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up max-h-[85vh] overflow-y-auto">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center border border-amber-500/30" id="challengeModalIcon">
+          <span class="text-2xl">📚</span>
+        </div>
+        <div class="flex-1">
+          <h3 class="text-lg font-bold text-white" id="challengeModalTitle">Challenge Title</h3>
+          <p class="text-amber-400 text-xs font-semibold" id="challengeModalCategory">Study</p>
+        </div>
+      </div>
+      <p class="text-gray-300 text-sm leading-relaxed mb-4" id="challengeModalDesc">Description</p>
+      <div class="bg-[#0f172a] rounded-xl p-4 border border-white/6 mb-4">
+        <div class="flex justify-between text-sm mb-2">
+          <span class="text-gray-400">Progress</span>
+          <span class="text-white font-bold" id="challengeModalProgress">3/5</span>
+        </div>
+        <div class="h-3 bg-[#1e293b] rounded-full overflow-hidden border border-white/6">
+          <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" id="challengeModalBar" style="width:60%"></div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div class="bg-[#0f172a] rounded-xl p-3 border border-white/6 text-center">
+          <p class="text-gray-500 text-[10px]">XP Reward</p>
+          <p class="text-amber-400 font-bold text-lg" id="challengeModalXP">150</p>
+        </div>
+        <div class="bg-[#0f172a] rounded-xl p-3 border border-white/6 text-center">
+          <p class="text-gray-500 text-[10px]">Time Left</p>
+          <p class="text-white font-bold text-lg" id="challengeModalTime">3 days</p>
+        </div>
+      </div>
+      <button onclick="claimChallenge()" id="claimBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-3.5 rounded-2xl text-sm transition action-btn">
+        Mark as Complete
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 bg-[#1e293b] text-white px-5 py-3 rounded-2xl shadow-2xl border border-white/8 flex items-center gap-2.5 text-sm font-semibold opacity-0 pointer-events-none transition-all duration-300 z-50 -translate-y-2">
+  <svg id="toastIcon" class="w-5 h-5 text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<script>
+const CATEGORIES = {
+  study:    { label: 'Study',    icon: '📚', color: 'blue',   bg: 'bg-blue-500/20',    text: 'text-blue-400',    border: 'border-blue-500/30' },
+  wellness: { label: 'Wellness', icon: '💪', color: 'green',  bg: 'bg-green-500/20',   text: 'text-green-400',   border: 'border-green-500/30' },
+  social:   { label: 'Social',   icon: '🤝', color: 'purple', bg: 'bg-purple-500/20',  text: 'text-purple-400',  border: 'border-purple-500/30' },
+  academic: { label: 'Academic', icon: '🎓', color: 'amber',  bg: 'bg-amber-500/20',   text: 'text-amber-400',   border: 'border-amber-500/30' }
+};
+
+const TIERS = {
+  bronze:  { label: 'Bronze',  color: 'text-orange-400',  bg: 'bg-orange-500/20',  border: 'border-orange-500/30' },
+  silver:  { label: 'Silver',  color: 'text-gray-300',    bg: 'bg-gray-500/20',    border: 'border-gray-500/30' },
+  gold:    { label: 'Gold',    color: 'text-amber-400',   bg: 'bg-amber-500/20',   border: 'border-amber-500/30' },
+  platinum:{ label: 'Platinum',color: 'text-cyan-400',    bg: 'bg-cyan-500/20',    border: 'border-cyan-500/30' }
+};
+
+let CHALLENGES = [
+  {
+    id: 1,
+    title: "Study Marathon",
+    desc: "Study for at least 2 hours every day for 5 days straight. No distractions, no excuses!",
+    category: "study",
+    progress: 3,
+    target: 5,
+    xp: 150,
+    timeLeft: "3 days",
+    icon: "📚"
+  },
+  {
+    id: 2,
+    title: "Early Bird",
+    desc: "Attend all your 8am lectures this week without being late. Set that alarm!",
+    category: "academic",
+    progress: 2,
+    target: 5,
+    xp: 100,
+    timeLeft: "3 days",
+    icon: "🌅"
+  },
+  {
+    id: 3,
+    title: "Hydration Hero",
+    desc: "Drink at least 2 liters of water every day for 7 days. Your brain needs it!",
+    category: "wellness",
+    progress: 5,
+    target: 7,
+    xp: 120,
+    timeLeft: "3 days",
+    icon: "💧"
+  },
+  {
+    id: 4,
+    title: "Study Buddy",
+    desc: "Form or join a study group and have at least 3 group study sessions this week.",
+    category: "social",
+    progress: 1,
+    target: 3,
+    xp: 200,
+    timeLeft: "3 days",
+    icon: "👥"
+  },
+  {
+    id: 5,
+    title: "Assignment Ace",
+    desc: "Submit all assignments due this week at least 24 hours before the deadline.",
+    category: "academic",
+    progress: 0,
+    target: 3,
+    xp: 180,
+    timeLeft: "3 days",
+    icon: "✅"
+  },
+  {
+    id: 6,
+    title: "Sleep Champion",
+    desc: "Get 7+ hours of sleep for 5 nights this week. Rest is part of the grind!",
+    category: "wellness",
+    progress: 4,
+    target: 5,
+    xp: 130,
+    timeLeft: "3 days",
+    icon: "😴"
+  },
+  {
+    id: 7,
+    title: "Library Regular",
+    desc: "Spend at least 10 hours in the library this week. Make it your second home.",
+    category: "study",
+    progress: 6,
+    target: 10,
+    xp: 160,
+    timeLeft: "3 days",
+    icon: "📖"
+  },
+  {
+    id: 8,
+    title: "Help a Friend",
+    desc: "Help at least 2 classmates with their coursework or explain a difficult topic.",
+    category: "social",
+    progress: 1,
+    target: 2,
+    xp: 140,
+    timeLeft: "3 days",
+    icon: "🤝"
+  }
+];
+
+let BADGES = [
+  { id: 1, name: "First Steps",      desc: "Complete your first challenge",           icon: "👣", tier: "bronze",   earned: "2026-06-15", xp: 50 },
+  { id: 2, name: "Study Grinder",    desc: "Complete 5 study challenges",           icon: "📚", tier: "silver",   earned: "2026-06-22", xp: 150 },
+  { id: 3, name: "Wellness Warrior", desc: "Complete 3 wellness challenges",          icon: "💪", tier: "bronze",   earned: "2026-06-28", xp: 75 },
+  { id: 4, name: "Social Butterfly", desc: "Complete 3 social challenges",          icon: "🦋", tier: "bronze",   earned: "2026-07-01", xp: 75 },
+  { id: 5, name: "Perfect Week",     desc: "Complete all challenges in one week",   icon: "⭐", tier: "gold",     earned: "2026-07-05", xp: 300 },
+  { id: 6, name: "Early Bird",       desc: "Never miss an 8am lecture for a month", icon: "🌅", tier: "silver",   earned: "2026-07-02", xp: 200 },
+  { id: 7, name: "Hydration Master", desc: "Drink 2L water daily for 30 days",       icon: "💧", tier: "gold",     earned: "2026-07-03", xp: 250 },
+  { id: 8, name: "LASU Legend",      desc: "Reach Level 20",                        icon: "👑", tier: "platinum", earned: null,       xp: 500 }
+];
+
+let LEADERBOARD = [
+  { rank: 1, name: "Chioma N.",    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=chioma",  level: 18, xp: 3850, badges: 15, streak: 12 },
+  { rank: 2, name: "Tunde B.",     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=tunde",   level: 16, xp: 3420, badges: 13, streak: 8 },
+  { rank: 3, name: "Fatima A.",    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=fatima",  level: 15, xp: 3100, badges: 12, streak: 10 },
+  { rank: 4, name: "You",          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=official", level: 12, xp: 2450, badges: 8,  streak: 5, isMe: true },
+  { rank: 5, name: "Emeka O.",     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=emeka",   level: 11, xp: 2280, badges: 7,  streak: 4 },
+  { rank: 6, name: "Amina K.",     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=amina",   level: 10, xp: 1950, badges: 6,  streak: 3 },
+  { rank: 7, name: "David E.",     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=david",   level: 9,  xp: 1720, badges: 5,  streak: 2 },
+  { rank: 8, name: "Blessing I.",  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=blessing",level: 8,  xp: 1500, badges: 5,  streak: 1 }
+];
+
+let currentCategory = 'all';
+let currentMainTab = 'challenges';
+let currentChallenge = null;
+let currentBadge = null;
+
+function init() {
+  renderChallengesList();
+  renderContent();
+}
+
+function renderChallengesList() {
+  const container = document.getElementById('challengesList');
+  let filtered = CHALLENGES;
+  if (currentCategory !== 'all') {
+    filtered = CHALLENGES.filter(c => c.category === currentCategory);
+  }
+
+  container.innerHTML = filtered.map(c => {
+    const pct = Math.round((c.progress / c.target) * 100);
+    const cat = CATEGORIES[c.category];
+    const isComplete = c.progress >= c.target;
+
+    return '<div class="challenge-card bg-[#1e293b] rounded-2xl border border-white/6 p-4 ' + (isComplete ? 'border-amber-500/30' : '') + '">' +
+      '<div class="flex items-start gap-3">' +
+        '<div class="w-10 h-10 ' + cat.bg + ' rounded-xl flex items-center justify-center border ' + cat.border + ' shrink-0">' +
+          '<span class="text-lg">' + c.icon + '</span>' +
+        '</div>' +
+        '<div class="flex-1 min-w-0">' +
+          '<div class="flex items-center justify-between">' +
+            '<h4 class="font-bold text-white text-sm">' + c.title + '</h4>' +
+            (isComplete ? '<span class="text-amber-400 text-lg">🏆</span>' : '') +
+          '</div>' +
+          '<p class="text-gray-400 text-[11px] mt-0.5">' + cat.label + ' &bull; ' + c.timeLeft + ' left</p>' +
+          '<div class="mt-2">' +
+            '<div class="flex justify-between text-[10px] mb-1">' +
+              '<span class="text-gray-500">' + c.progress + '/' + c.target + '</span>' +
+              '<span class="text-amber-400 font-bold">+' + c.xp + ' XP</span>' +
+            '</div>' +
+            '<div class="h-2 bg-[#0f172a] rounded-full overflow-hidden border border-white/6">' +
+              '<div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full progress-bar" style="width:' + pct + '%"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<button onclick="openChallengeModal(' + c.id + ')" class="w-full mt-3 text-amber-400 text-xs font-semibold hover:text-amber-300 transition text-center">' +
+        (isComplete ? 'Claim Reward' : 'View Details') +
+      '</button>' +
+    '</div>';
+  }).join('');
+}
+
+function setCategory(cat) {
+  currentCategory = cat;
+  ['all','study','wellness','social','academic'].forEach(c => {
+    const btn = document.getElementById('cat-' + c);
+    if (c === cat) {
+      btn.className = 'tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-amber-500 text-white flex items-center gap-1.5';
+    } else {
+      btn.className = 'tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5';
+    }
+  });
+  renderChallengesList();
+}
+
+function setMainTab(tab) {
+  currentMainTab = tab;
+  ['challenges','badges','leaderboard'].forEach(t => {
+    const btn = document.getElementById('mtab-' + t);
+    if (t === tab) {
+      btn.className = 'tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-amber-500 text-white flex items-center gap-1.5';
+    } else {
+      btn.className = 'tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5';
+    }
+  });
+  renderContent();
+}
+
+function renderContent() {
+  const container = document.getElementById('contentArea');
+
+  if (currentMainTab === 'challenges') {
+    renderChallengesList();
+    container.innerHTML = '';
+  } else if (currentMainTab === 'badges') {
+    renderBadges(container);
+  } else if (currentMainTab === 'leaderboard') {
+    renderLeaderboard(container);
+  }
+}
+
+function renderBadges(container) {
+  const earned = BADGES.filter(b => b.earned);
+  const locked = BADGES.filter(b => !b.earned);
+
+  let html = '<div class="space-y-4">';
+
+  html += '<div class="bg-[#1e293b] rounded-2xl border border-white/6 p-4">' +
+    '<h4 class="text-white font-bold text-sm mb-3">Earned Badges (' + earned.length + ')</h4>' +
+    '<div class="grid grid-cols-4 gap-3">' +
+    earned.map(b => {
+      const tier = TIERS[b.tier];
+      return '<button onclick="openBadgeModal(' + b.id + ')" class="badge-card flex flex-col items-center gap-2 p-3 ' + tier.bg + ' rounded-xl border ' + tier.border + '">' +
+        '<span class="text-2xl">' + b.icon + '</span>' +
+        '<span class="text-white text-[10px] font-semibold text-center leading-tight">' + b.name + '</span>' +
+        '<span class="text-[9px] ' + tier.color + '">' + tier.label + '</span>' +
+      '</button>';
+    }).join('') +
+    '</div>' +
+  '</div>';
+
+  if (locked.length > 0) {
+    html += '<div class="bg-[#1e293b] rounded-2xl border border-white/6 p-4">' +
+      '<h4 class="text-white font-bold text-sm mb-3">Locked Badges (' + locked.length + ')</h4>' +
+      '<div class="grid grid-cols-4 gap-3">' +
+      locked.map(b => {
+        const tier = TIERS[b.tier];
+        return '<div class="flex flex-col items-center gap-2 p-3 bg-[#0f172a] rounded-xl border border-white/6 opacity-50">' +
+          '<span class="text-2xl grayscale">' + b.icon + '</span>' +
+          '<span class="text-gray-500 text-[10px] font-semibold text-center leading-tight">' + b.name + '</span>' +
+          '<span class="text-[9px] text-gray-600">' + tier.label + '</span>' +
+        '</div>';
+      }).join('') +
+      '</div>' +
+    '</div>';
+  }
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function renderLeaderboard(container) {
+  let html = '<div class="bg-[#1e293b] rounded-2xl border border-white/6 overflow-hidden">';
+
+  // Top 3 podium
+  const top3 = LEADERBOARD.slice(0, 3);
+  html += '<div class="flex items-end justify-center gap-4 py-6 px-4 border-b border-white/6">' +
+    '<div class="flex flex-col items-center">' +
+      '<div class="w-12 h-12 rounded-full border-2 border-gray-400 overflow-hidden mb-2">' +
+        '<img src="' + top3[1].avatar + '" class="w-full h-full object-cover">' +
+      '</div>' +
+      '<span class="text-2xl">🥈</span>' +
+      '<p class="text-white text-xs font-bold mt-1">' + top3[1].name + '</p>' +
+      '<p class="text-gray-500 text-[10px]">Lvl ' + top3[1].level + '</p>' +
+    '</div>' +
+    '<div class="flex flex-col items-center -mt-4">' +
+      '<div class="w-14 h-14 rounded-full border-2 border-amber-400 overflow-hidden mb-2">' +
+        '<img src="' + top3[0].avatar + '" class="w-full h-full object-cover">' +
+      '</div>' +
+      '<span class="text-3xl">🥇</span>' +
+      '<p class="text-white text-sm font-bold mt-1">' + top3[0].name + '</p>' +
+      '<p class="text-amber-400 text-[10px]">Lvl ' + top3[0].level + '</p>' +
+    '</div>' +
+    '<div class="flex flex-col items-center">' +
+      '<div class="w-12 h-12 rounded-full border-2 border-orange-600 overflow-hidden mb-2">' +
+        '<img src="' + top3[2].avatar + '" class="w-full h-full object-cover">' +
+      '</div>' +
+      '<span class="text-2xl">🥉</span>' +
+      '<p class="text-white text-xs font-bold mt-1">' + top3[2].name + '</p>' +
+      '<p class="text-gray-500 text-[10px]">Lvl ' + top3[2].level + '</p>' +
+    '</div>' +
+  '</div>';
+
+  // Full list
+  html += '<div class="divide-y divide-white/6">';
+  LEADERBOARD.forEach(user => {
+    const isMe = user.isMe;
+    html += '<div class="leaderboard-row flex items-center gap-3 px-4 py-3 ' + (isMe ? 'bg-amber-500/10' : '') + '">' +
+      '<span class="text-gray-500 text-sm font-bold w-5 text-center">' + user.rank + '</span>' +
+      '<img src="' + user.avatar + '" class="w-9 h-9 rounded-full object-cover border ' + (isMe ? 'border-amber-500' : 'border-white/10') + '">' +
+      '<div class="flex-1 min-w-0">' +
+        '<p class="text-white text-sm font-semibold ' + (isMe ? 'text-amber-400' : '') + '">' + user.name + (isMe ? ' (You)' : '') + '</p>' +
+        '<p class="text-gray-500 text-[10px]">Lvl ' + user.level + ' &bull; ' + user.badges + ' badges</p>' +
+      '</div>' +
+      '<div class="text-right">' +
+        '<p class="text-white text-sm font-bold">' + user.xp.toLocaleString() + '</p>' +
+        '<p class="text-gray-500 text-[10px]">XP</p>' +
+      '</div>' +
+    '</div>';
+  });
+  html += '</div></div>';
+
+  container.innerHTML = html;
+}
+
+function openChallengeModal(id) {
+  currentChallenge = CHALLENGES.find(c => c.id === id);
+  if (!currentChallenge) return;
+
+  const cat = CATEGORIES[currentChallenge.category];
+  const pct = Math.round((currentChallenge.progress / currentChallenge.target) * 100);
+  const isComplete = currentChallenge.progress >= currentChallenge.target;
+
+  document.getElementById('challengeModalIcon').innerHTML = '<span class="text-2xl">' + currentChallenge.icon + '</span>';
+  document.getElementById('challengeModalIcon').className = 'w-12 h-12 ' + cat.bg + ' rounded-xl flex items-center justify-center border ' + cat.border;
+  document.getElementById('challengeModalTitle').textContent = currentChallenge.title;
+  document.getElementById('challengeModalCategory').textContent = cat.label;
+  document.getElementById('challengeModalCategory').className = 'text-xs font-semibold ' + cat.text;
+  document.getElementById('challengeModalDesc').textContent = currentChallenge.desc;
+  document.getElementById('challengeModalProgress').textContent = currentChallenge.progress + '/' + currentChallenge.target;
+  document.getElementById('challengeModalBar').style.width = pct + '%';
+  document.getElementById('challengeModalXP').textContent = currentChallenge.xp;
+  document.getElementById('challengeModalTime').textContent = currentChallenge.timeLeft;
+
+  const claimBtn = document.getElementById('claimBtn');
+  if (isComplete) {
+    claimBtn.textContent = 'Claim ' + currentChallenge.xp + ' XP';
+    claimBtn.className = 'w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-3.5 rounded-2xl text-sm transition action-btn';
+    claimBtn.disabled = false;
+  } else {
+    claimBtn.textContent = 'Keep Going!';
+    claimBtn.className = 'w-full bg-white/5 text-gray-500 font-bold py-3.5 rounded-2xl text-sm transition cursor-not-allowed';
+    claimBtn.disabled = true;
+  }
+
+  document.getElementById('challengeModal').classList.remove('hidden');
+  document.getElementById('challengeModal').classList.add('flex');
+}
+
+function closeChallengeModal() {
+  document.getElementById('challengeModal').classList.add('hidden');
+  document.getElementById('challengeModal').classList.remove('flex');
+  currentChallenge = null;
+}
+
+function claimChallenge() {
+  if (!currentChallenge || currentChallenge.progress < currentChallenge.target) return;
+  closeChallengeModal();
+  showToast('+' + currentChallenge.xp + ' XP earned! 🎉');
+}
+
+function openBadgeModal(id) {
+  currentBadge = BADGES.find(b => b.id === id);
+  if (!currentBadge || !currentBadge.earned) return;
+
+  const tier = TIERS[currentBadge.tier];
+  document.getElementById('badgeModalIcon').textContent = currentBadge.icon;
+  document.getElementById('badgeIconContainer').className = 'w-20 h-20 ' + tier.bg + ' rounded-2xl flex items-center justify-center border ' + tier.border + ' mx-auto mb-4';
+  document.getElementById('badgeModalName').textContent = currentBadge.name;
+  document.getElementById('badgeModalTier').textContent = tier.label + ' Tier';
+  document.getElementById('badgeModalTier').className = 'text-sm font-medium mb-3 ' + tier.color;
+  document.getElementById('badgeModalDesc').textContent = currentBadge.desc;
+  document.getElementById('badgeModalDate').textContent = new Date(currentBadge.earned).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('badgeModalXP').textContent = '+' + currentBadge.xp + ' XP';
+
+  document.getElementById('badgeModal').classList.remove('hidden');
+  document.getElementById('badgeModal').classList.add('flex');
+}
+
+function closeBadgeModal() {
+  document.getElementById('badgeModal').classList.add('hidden');
+  document.getElementById('badgeModal').classList.remove('flex');
+  currentBadge = null;
+}
+
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  const icon = document.getElementById('toastIcon');
+  const text = document.getElementById('toastMsg');
+  text.textContent = msg;
+  if (type === 'error') {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>';
+    icon.className = 'w-5 h-5 text-red-400 shrink-0';
+  } else if (type === 'info') {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+    icon.className = 'w-5 h-5 text-amber-400 shrink-0';
+  } else {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>';
+    icon.className = 'w-5 h-5 text-green-400 shrink-0';
+  }
+  toast.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
+  toast.classList.add('opacity-100', 'translate-y-0');
+  setTimeout(() => {
+    toast.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+    toast.classList.remove('opacity-100', 'translate-y-0');
+  }, 2500);
+}
+
+function openProfile() {
+  showToast('Profile page coming soon', 'info');
+}
+
+init();
+</script>
+</body>
+</html>
