@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>My Diary - LASU GradeTracker</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+body{background-color:#0f172a;color:#fff}
+::-webkit-scrollbar{width:0;height:0}
+@keyframes slide-up{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fade-in{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse-soft{0%,100%{opacity:1}50%{opacity:.7}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.animate-slide-up{animation:slide-up .35s cubic-bezier(.16,1,.3,1)}
+.animate-fade-in{animation:fade-in .2s ease-out}
+.animate-pulse-soft{animation:pulse-soft 2s ease-in-out infinite}
+.animate-float{animation:float 3s ease-in-out infinite}
+.diary-card{transition:all .2s ease}
+.diary-card:hover{transform:translateY(-2px)}
+.diary-card:active{transform:scale(.98)}
+.action-btn{transition:all .15s ease}
+.action-btn:active{transform:scale(.92)}
+.tab-pill{transition:all .2s ease}
+.tab-pill:active{transform:scale(.95)}
+.mood-btn{transition:all .2s cubic-bezier(.34,1.56,.64,1)}
+.mood-btn:active{transform:scale(.85)}
+.mood-btn.selected{transform:scale(1.1);box-shadow:0 0 20px rgba(0,0,0,.3)}
+.calendar-day{transition:all .15s ease}
+.calendar-day:active{transform:scale(.9)}
+.line-clamp-3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+</style>
+</head>
+<body class="min-h-screen bg-[#0f172a] text-white antialiased relative">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 bg-[#0f172a]/95 backdrop-blur-md border-b border-white/8 px-4 py-3 flex items-center gap-3">
+  <button class="p-2 -ml-2 rounded-full hover:bg-white/5 active:bg-white/10 transition" onclick="showToast('Back to Home')">
+    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+  </button>
+  <img src="your-logo.png" class="w-10 h-10 rounded-xl object-cover shrink-0" alt="LASU GradeTracker" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+  <div class="hidden w-10 h-10 bg-amber-500 rounded-xl items-center justify-center shrink-0"><span class="text-[#0f172a] font-extrabold text-[10px]">LASU</span></div>
+  <h1 class="text-[17px] font-bold leading-tight tracking-tight"><span class="text-amber-400">LASU</span> <span class="text-white">GradeTracker</span></h1>
+  <div class="ml-auto flex items-center gap-3">
+    <button class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition" onclick="showToast('No new notifications')">
+      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <span class="absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0f172a]"></span>
+    </button>
+    <button onclick="openProfile()" class="rounded-full">
+      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-9 h-9 rounded-full border-2 border-amber-500/50 cursor-pointer object-cover" alt="My Profile">
+    </button>
+  </div>
+</header>
+
+<!-- PAGE TITLE -->
+<div class="px-4 pt-6 pb-1 text-center">
+  <div class="flex items-center justify-center gap-2.5 mb-2">
+    <div class="w-10 h-10 bg-pink-500 rounded-xl flex items-center justify-center animate-float">
+      <span class="text-2xl">💜</span>
+    </div>
+    <h2 class="text-[26px] font-extrabold text-pink-400 tracking-tight">My Diary</h2>
+  </div>
+  <p class="text-gray-400 text-[14px] mt-1">Private thoughts. Your safe space. No one else sees this.</p>
+</div>
+
+<!-- TODAY'S MOOD CHECK-IN -->
+<div class="mx-4 mt-5">
+  <div class="bg-gradient-to-r from-pink-500/20 to-rose-500/20 rounded-2xl border border-pink-500/20 p-4">
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <h3 class="font-bold text-white text-[15px]">How are you feeling today?</h3>
+        <p class="text-gray-400 text-xs" id="todayDate"></p>
+      </div>
+      <div class="w-8 h-8 bg-pink-500/20 rounded-full flex items-center justify-center">
+        <span class="text-sm animate-pulse-soft">✨</span>
+      </div>
+    </div>
+    <div class="flex justify-between gap-2">
+      <button onclick="selectMood('amazing')" id="mood-amazing" class="mood-btn flex-1 bg-[#0f172a]/60 rounded-2xl py-3 border border-white/6 flex flex-col items-center gap-1">
+        <span class="text-2xl">🤩</span>
+        <span class="text-[10px] text-gray-400 font-medium">Amazing</span>
+      </button>
+      <button onclick="selectMood('good')" id="mood-good" class="mood-btn flex-1 bg-[#0f172a]/60 rounded-2xl py-3 border border-white/6 flex flex-col items-center gap-1">
+        <span class="text-2xl">🙂</span>
+        <span class="text-[10px] text-gray-400 font-medium">Good</span>
+      </button>
+      <button onclick="selectMood('okay')" id="mood-okay" class="mood-btn flex-1 bg-[#0f172a]/60 rounded-2xl py-3 border border-white/6 flex flex-col items-center gap-1">
+        <span class="text-2xl">😐</span>
+        <span class="text-[10px] text-gray-400 font-medium">Okay</span>
+      </button>
+      <button onclick="selectMood('bad')" id="mood-bad" class="mood-btn flex-1 bg-[#0f172a]/60 rounded-2xl py-3 border border-white/6 flex flex-col items-center gap-1">
+        <span class="text-2xl">😔</span>
+        <span class="text-[10px] text-gray-400 font-medium">Bad</span>
+      </button>
+      <button onclick="selectMood('terrible')" id="mood-terrible" class="mood-btn flex-1 bg-[#0f172a]/60 rounded-2xl py-3 border border-white/6 flex flex-col items-center gap-1">
+        <span class="text-2xl">😭</span>
+        <span class="text-[10px] text-gray-400 font-medium">Terrible</span>
+      </button>
+    </div>
+    <button onclick="openWriteEntryModal()" class="w-full mt-3 bg-pink-500 hover:bg-pink-400 text-white font-bold py-3 rounded-2xl text-sm transition action-btn flex items-center justify-center gap-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+      Write Today's Entry
+    </button>
+  </div>
+</div>
+
+<!-- MOOD CALENDAR -->
+<div class="mx-4 mt-4">
+  <div class="flex items-center justify-between mb-3">
+    <h3 class="font-bold text-white text-[15px]">Mood Calendar</h3>
+    <div class="flex items-center gap-2">
+      <button onclick="changeMonth(-1)" class="p-1.5 rounded-lg hover:bg-white/5 transition">
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="text-sm text-white font-semibold" id="calendarMonth">July 2026</span>
+      <button onclick="changeMonth(1)" class="p-1.5 rounded-lg hover:bg-white/5 transition">
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="bg-[#1e293b] rounded-2xl border border-white/6 p-3">
+    <div class="grid grid-cols-7 gap-1 mb-2">
+      <div class="text-center text-[10px] text-gray-500 font-medium py-1">Sun</div>
+      <div class="text-center text-[10px] text-gray-500 font-medium py-1">Mon</div>
+      <div class="text-center text-[10px] text-gray-500 font-medium py-1">Tue</div>
+      <div class="text-center text-[10px] text-gray-500 font-medium py-1">Wed</div>
+      <div class="text-center text-[10px] text-gray-500 font-medium py-1">Thu</div>
+      <div class="text-center text-[10px] text-gray-500 font-medium py-1">Fri</div>
+      <div class="text-center text-[10px] text-gray-500 font-medium py-1">Sat</div>
+    </div>
+    <div id="calendarGrid" class="grid grid-cols-7 gap-1"></div>
+  </div>
+  <div class="flex items-center justify-center gap-3 mt-2 flex-wrap">
+    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-emerald-500"></div><span class="text-[10px] text-gray-500">Amazing</span></div>
+    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-green-500"></div><span class="text-[10px] text-gray-500">Good</span></div>
+    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-yellow-500"></div><span class="text-[10px] text-gray-500">Okay</span></div>
+    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-orange-500"></div><span class="text-[10px] text-gray-500">Bad</span></div>
+    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><span class="text-[10px] text-gray-500">Terrible</span></div>
+  </div>
+</div>
+
+<!-- MOOD INSIGHTS -->
+<div class="mx-4 mt-5">
+  <h3 class="font-bold text-white text-[15px] mb-3">Mood Insights</h3>
+  <div class="grid grid-cols-2 gap-3">
+    <div class="bg-[#1e293b] rounded-2xl border border-white/6 p-4">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-8 h-8 bg-pink-500/20 rounded-lg flex items-center justify-center"><span class="text-sm">📊</span></div>
+        <p class="text-gray-400 text-xs">This Week</p>
+      </div>
+      <p class="text-white font-bold text-lg" id="weekMood">Good</p>
+      <p class="text-gray-500 text-[11px] mt-0.5">Most common mood</p>
+      <div class="flex items-end gap-1 mt-2 h-8" id="weekBars"></div>
+    </div>
+    <div class="bg-[#1e293b] rounded-2xl border border-white/6 p-4">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center"><span class="text-sm">🔥</span></div>
+        <p class="text-gray-400 text-xs">Streak</p>
+      </div>
+      <p class="text-white font-bold text-lg" id="streakCount">5 days</p>
+      <p class="text-gray-500 text-[11px] mt-0.5">Logging consistently</p>
+      <div class="flex gap-1 mt-2" id="streakDots"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DAILY PROMPT -->
+<div class="mx-4 mt-4">
+  <div class="bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-2xl border border-amber-500/20 p-4">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="text-lg">💭</span>
+      <h3 class="font-bold text-amber-400 text-sm">Today's Prompt</h3>
+    </div>
+    <p class="text-white text-sm leading-relaxed" id="dailyPrompt">What is one thing you are grateful for today, no matter how small?</p>
+    <button onclick="openWriteEntryModal(true)" class="mt-3 text-amber-400 text-xs font-semibold hover:text-amber-300 transition flex items-center gap-1">
+      Write about this
+      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="mx-4 mt-5 flex gap-2 overflow-x-auto pb-1 scrollbar-hide" id="diaryTabs">
+  <button onclick="setTab('entries')" id="tab-entries" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-pink-500 text-white flex items-center gap-1.5">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+    Entries
+  </button>
+  <button onclick="setTab('favorites')" id="tab-favorites" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+    Favorites
+  </button>
+  <button onclick="setTab('stats')" id="tab-stats" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+    Stats
+  </button>
+</div>
+
+<!-- ENTRIES FEED -->
+<div id="entriesFeed" class="mx-4 mt-4 pb-24 space-y-3"></div>
+
+<!-- EMPTY STATE -->
+<div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center">
+  <div class="w-16 h-16 bg-pink-500/20 rounded-2xl flex items-center justify-center mb-5">
+    <span class="text-3xl">📔</span>
+  </div>
+  <h3 class="text-lg font-bold text-white">No entries yet</h3>
+  <p class="text-gray-500 text-sm mt-1.5">Start writing to see your diary grow</p>
+</div>
+
+<!-- WRITE ENTRY MODAL -->
+<div id="writeModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeWriteModal()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up max-h-[90vh] overflow-y-auto">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-xl font-bold text-white" id="writeModalTitle">New Entry</h3>
+          <p class="text-gray-400 text-xs" id="writeModalDate"></p>
+        </div>
+        <button onclick="closeWriteModal()" class="p-2 rounded-full hover:bg-white/5 transition">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="bg-pink-500/10 rounded-xl p-3 mb-4 border border-pink-500/20">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🔒</span>
+          <div>
+            <p class="text-pink-300 text-xs font-semibold">100% Private</p>
+            <p class="text-gray-400 text-[11px]">Only you can see this. Stored on your device.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="text-xs text-gray-400 font-medium mb-1.5 block">Title (optional)</label>
+        <input type="text" id="entryTitle" placeholder="How was your day?" class="w-full bg-[#0f172a] rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-pink-500/50 focus:outline-none transition">
+      </div>
+
+      <div class="mb-4">
+        <label class="text-xs text-gray-400 font-medium mb-1.5 block">Your Thoughts</label>
+        <textarea id="entryText" rows="6" placeholder="Write freely. This is your safe space..." class="w-full bg-[#0f172a] rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-pink-500/50 focus:outline-none transition resize-none" maxlength="5000" oninput="updateEntryCharCount()"></textarea>
+        <div class="flex justify-between mt-1.5">
+          <p class="text-[11px] text-gray-500" id="entryCharCount">0 / 5000</p>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="text-xs text-gray-400 font-medium mb-2 block">Today's Mood</label>
+        <div class="flex justify-between gap-2">
+          <button onclick="selectEntryMood('amazing')" id="entry-mood-amazing" class="entry-mood-btn flex-1 bg-[#0f172a] rounded-xl py-2 border border-white/8 flex flex-col items-center gap-1">
+            <span class="text-xl">🤩</span>
+            <span class="text-[10px] text-gray-400">Amazing</span>
+          </button>
+          <button onclick="selectEntryMood('good')" id="entry-mood-good" class="entry-mood-btn flex-1 bg-[#0f172a] rounded-xl py-2 border border-white/8 flex flex-col items-center gap-1">
+            <span class="text-xl">🙂</span>
+            <span class="text-[10px] text-gray-400">Good</span>
+          </button>
+          <button onclick="selectEntryMood('okay')" id="entry-mood-okay" class="entry-mood-btn flex-1 bg-[#0f172a] rounded-xl py-2 border border-white/8 flex flex-col items-center gap-1">
+            <span class="text-xl">😐</span>
+            <span class="text-[10px] text-gray-400">Okay</span>
+          </button>
+          <button onclick="selectEntryMood('bad')" id="entry-mood-bad" class="entry-mood-btn flex-1 bg-[#0f172a] rounded-xl py-2 border border-white/8 flex flex-col items-center gap-1">
+            <span class="text-xl">😔</span>
+            <span class="text-[10px] text-gray-400">Bad</span>
+          </button>
+          <button onclick="selectEntryMood('terrible')" id="entry-mood-terrible" class="entry-mood-btn flex-1 bg-[#0f172a] rounded-xl py-2 border border-white/8 flex flex-col items-center gap-1">
+            <span class="text-xl">😭</span>
+            <span class="text-[10px] text-gray-400">Terrible</span>
+          </button>
+        </div>
+      </div>
+
+      <button onclick="submitEntry()" class="w-full bg-pink-500 hover:bg-pink-400 text-white font-bold py-3.5 rounded-2xl text-sm transition action-btn flex items-center justify-center gap-2">
+        <span id="entrySubmitText">Save Entry</span>
+        <svg id="entrySubmitSpinner" class="hidden w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ENTRY DETAIL MODAL -->
+<div id="detailModal" class="fixed inset-0 z-50 hidden flex-col bg-[#0f172a]" onclick="if(event.target===this)closeDetailModal()">
+  <div class="bg-[#1e293b] border-b border-white/8 px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
+    <button onclick="closeDetailModal()" class="p-2 -ml-2 rounded-full hover:bg-white/5 transition">
+      <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="flex-1 min-w-0">
+      <h3 class="font-bold text-white text-sm truncate" id="detailTitle"></h3>
+      <p class="text-gray-400 text-[11px]" id="detailDate"></p>
+    </div>
+    <button onclick="toggleFavoriteFromDetail()" id="detailFavoriteBtn" class="p-2 rounded-full hover:bg-white/5 transition">
+      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+    </button>
+    <button onclick="deleteEntryFromDetail()" class="p-2 rounded-full hover:bg-white/5 transition">
+      <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+    </button>
+  </div>
+  <div class="flex-1 overflow-y-auto p-4">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="text-2xl" id="detailMoodEmoji"></span>
+      <span class="text-sm font-medium" id="detailMoodText"></span>
+    </div>
+    <p class="text-white text-[15px] leading-relaxed whitespace-pre-wrap" id="detailText"></p>
+  </div>
+</div>
+
+<!-- STATS VIEW -->
+<div id="statsView" class="hidden mx-4 mt-4 pb-24 space-y-4">
+  <div class="bg-[#1e293b] rounded-2xl border border-white/6 p-4">
+    <h4 class="text-white font-bold text-sm mb-3">Mood Distribution</h4>
+    <div class="space-y-3" id="moodDistribution"></div>
+  </div>
+  <div class="bg-[#1e293b] rounded-2xl border border-white/6 p-4">
+    <h4 class="text-white font-bold text-sm mb-3">Writing Stats</h4>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="text-center p-3 bg-[#0f172a] rounded-xl border border-white/6">
+        <p class="text-pink-400 font-bold text-xl" id="totalEntries">0</p>
+        <p class="text-gray-500 text-[11px]">Total Entries</p>
+      </div>
+      <div class="text-center p-3 bg-[#0f172a] rounded-xl border border-white/6">
+        <p class="text-amber-400 font-bold text-xl" id="totalWords">0</p>
+        <p class="text-gray-500 text-[11px]">Words Written</p>
+      </div>
+      <div class="text-center p-3 bg-[#0f172a] rounded-xl border border-white/6">
+        <p class="text-green-400 font-bold text-xl" id="currentStreak">0</p>
+        <p class="text-gray-500 text-[11px]">Day Streak</p>
+      </div>
+      <div class="text-center p-3 bg-[#0f172a] rounded-xl border border-white/6">
+        <p class="text-blue-400 font-bold text-xl" id="avgMood">Good</p>
+        <p class="text-gray-500 text-[11px]">Average Mood</p>
+      </div>
+    </div>
+  </div>
+  <div class="bg-[#1e293b] rounded-2xl border border-white/6 p-4">
+    <h4 class="text-white font-bold text-sm mb-3">Weekly Mood Trend</h4>
+    <div class="flex items-end justify-between gap-1 h-24" id="weeklyTrend"></div>
+    <div class="flex justify-between mt-2">
+      <span class="text-[10px] text-gray-500">Mon</span>
+      <span class="text-[10px] text-gray-500">Tue</span>
+      <span class="text-[10px] text-gray-500">Wed</span>
+      <span class="text-[10px] text-gray-500">Thu</span>
+      <span class="text-[10px] text-gray-500">Fri</span>
+      <span class="text-[10px] text-gray-500">Sat</span>
+      <span class="text-[10px] text-gray-500">Sun</span>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div id="deleteModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/70 backdrop-blur-sm" onclick="if(event.target===this)closeDeleteModal()">
+  <div class="bg-[#1e293b] w-full max-w-sm mx-4 rounded-3xl border border-white/8 p-6 animate-fade-in">
+    <div class="w-14 h-14 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+      <svg class="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+    </div>
+    <h3 class="text-lg font-bold text-white text-center mb-2">Delete Entry?</h3>
+    <p class="text-gray-400 text-sm text-center mb-6">This cannot be undone. Your entry will be permanently removed.</p>
+    <div class="flex gap-3">
+      <button onclick="closeDeleteModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-gray-300 font-bold py-3 rounded-2xl text-sm transition border border-white/8">Cancel</button>
+      <button onclick="confirmDelete()" class="flex-1 bg-red-500 hover:bg-red-400 text-white font-bold py-3 rounded-2xl text-sm transition action-btn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 bg-[#1e293b] text-white px-5 py-3 rounded-2xl shadow-2xl border border-white/8 flex items-center gap-2.5 text-sm font-semibold opacity-0 pointer-events-none transition-all duration-300 z-50 -translate-y-2">
+  <svg id="toastIcon" class="w-5 h-5 text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<script>
+const MOODS = {
+  amazing:  { emoji: '🤩', label: 'Amazing', color: 'emerald', score: 5, bg: 'bg-emerald-500/20', text: 'text-emerald-400', border: 'border-emerald-500/30' },
+  good:     { emoji: '🙂', label: 'Good', color: 'green', score: 4, bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' },
+  okay:     { emoji: '😐', label: 'Okay', color: 'yellow', score: 3, bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30' },
+  bad:      { emoji: '😔', label: 'Bad', color: 'orange', score: 2, bg: 'bg-orange-500/20', text: 'text-orange-400', border: 'border-orange-500/30' },
+  terrible: { emoji: '😭', label: 'Terrible', color: 'red', score: 1, bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30' }
+};
+
+const PROMPTS = [
+  "What is one thing you are grateful for today, no matter how small?",
+  "Describe a moment today that made you smile.",
+  "What is something you learned about yourself this week?",
+  "If you could give your past self one piece of advice, what would it be?",
+  "What are you most looking forward to right now?",
+  "Describe your ideal study environment. What makes it perfect?",
+  "What is a challenge you overcame recently? How did you do it?",
+  "Write about someone who inspires you and why.",
+  "What does success look like to you this semester?",
+  "If you could change one thing about campus life, what would it be?",
+  "What is your favorite memory from LASU so far?",
+  "Describe how you want to feel by the end of this week."
+];
+
+let ENTRIES = [
+  {
+    id: 1,
+    title: "First Day of 400L",
+    text: "Today was overwhelming but exciting. Walking into the faculty building as a final year student hit different. Everyone looks so focused now. The pressure is real but I am determined to finish strong. My CHM 401 lecturer seems strict but fair. I need to start my project research ASAP. No more procrastination!",
+    mood: "good",
+    date: "2026-07-01",
+    time: "8:30 PM",
+    favorite: true
+  },
+  {
+    id: 2,
+    title: "Midweek Meltdown",
+    text: "I am so tired. Three assignments due this week and I have not started any of them. Why do lecturers coordinate like this? I barely slept last night because I was up studying for a test I probably failed anyway. I need to get my life together but I do not even know where to start. Maybe tomorrow will be better.",
+    mood: "bad",
+    date: "2026-07-03",
+    time: "11:45 PM",
+    favorite: false
+  },
+  {
+    id: 3,
+    title: "Small Wins",
+    text: "Got my CHM 301 test result back today — 85%! I have been grinding so hard for this and it finally paid off. My study group was actually helpful for once. We celebrated with small chops at the cafeteria. Moments like these remind me why I chose Chemistry. I CAN do this. One test at a time.",
+    mood: "amazing",
+    date: "2026-07-05",
+    time: "6:15 PM",
+    favorite: true
+  },
+  {
+    id: 4,
+    title: "Just Another Day",
+    text: "Nothing special happened today. Classes, library, home. The usual routine. I am getting used to this rhythm though. Sometimes boring is good. At least there was no drama or stress. I should probably use this calm period to get ahead on readings before things get crazy again.",
+    mood: "okay",
+    date: "2026-07-06",
+    time: "9:00 PM",
+    favorite: false
+  },
+  {
+    id: 5,
+    title: "Homesick",
+    text: "I miss home so much today. My mom called and I almost cried on the phone. Lagos traffic, school stress, and everything just feels like too much right now. I want to go home for the weekend but I have a lab report due Monday. Being an adult is hard. I just want my mom's cooking and my own bed.",
+    mood: "terrible",
+    date: "2026-07-07",
+    time: "10:30 PM",
+    favorite: false
+  }
+];
+
+let MOOD_LOG = {
+  "2026-07-01": "good",
+  "2026-07-02": "okay",
+  "2026-07-03": "bad",
+  "2026-07-04": "good",
+  "2026-07-05": "amazing",
+  "2026-07-06": "okay",
+  "2026-07-07": "terrible",
+  "2026-07-08": "good"
+};
+
+let currentTab = 'entries';
+let currentEntry = null;
+let entryToDelete = null;
+let selectedEntryMood = null;
+let currentMonth = new Date(2026, 6, 1);
+let nextId = 6;
+
+function init() {
+  setTodayDate();
+  setDailyPrompt();
+  renderCalendar();
+  updateInsights();
+  renderEntries();
+  highlightTodayMood();
+}
+
+function setTodayDate() {
+  const now = new Date();
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('todayDate').textContent = now.toLocaleDateString('en-US', options);
+}
+
+function setDailyPrompt() {
+  const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+  document.getElementById('dailyPrompt').textContent = PROMPTS[dayOfYear % PROMPTS.length];
+}
+
+function highlightTodayMood() {
+  const today = new Date().toISOString().split('T')[0];
+  const mood = MOOD_LOG[today];
+  if (mood) {
+    selectMood(mood, false);
+  }
+}
+
+function selectMood(mood, openWrite) {
+  document.querySelectorAll('.mood-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.style.background = '';
+    btn.style.borderColor = '';
+  });
+  const btn = document.getElementById('mood-' + mood);
+  if (btn) {
+    btn.classList.add('selected');
+    btn.style.background = 'rgba(236,72,153,0.3)';
+    btn.style.borderColor = 'rgba(236,72,153,0.6)';
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  MOOD_LOG[today] = mood;
+  renderCalendar();
+  updateInsights();
+
+  if (openWrite !== false) {
+    selectedEntryMood = mood;
+    setTimeout(() => openWriteEntryModal(), 300);
+  }
+}
+
+function renderCalendar() {
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('calendarMonth').textContent = monthNames[month] + ' ' + year;
+
+  let html = '';
+  for (let i = 0; i < firstDay; i++) {
+    html += '<div class="calendar-day aspect-square"></div>';
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+    const mood = MOOD_LOG[dateStr];
+    const isToday = dateStr === today;
+
+    let bgClass = 'bg-[#0f172a]';
+    let borderClass = 'border-white/6';
+    if (mood) {
+      bgClass = MOODS[mood].bg;
+      borderClass = MOODS[mood].border;
+    }
+    if (isToday) {
+      borderClass = 'border-pink-500';
+    }
+
+    html += '<div class="calendar-day aspect-square ' + bgClass + ' rounded-lg border ' + borderClass + ' flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showMoodForDate(\'' + dateStr + '\')">' +
+      '<span class="text-xs font-medium ' + (mood ? MOODS[mood].text : 'text-gray-500') + '">' + day + '</span>' +
+    '</div>';
+  }
+
+  document.getElementById('calendarGrid').innerHTML = html;
+}
+
+function changeMonth(delta) {
+  currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + delta, 1);
+  renderCalendar();
+}
+
+function showMoodForDate(dateStr) {
+  const mood = MOOD_LOG[dateStr];
+  if (mood) {
+    showToast(dateStr + ': Feeling ' + MOODS[mood].label + ' ' + MOODS[mood].emoji, 'info');
+  } else {
+    showToast(dateStr + ': No mood logged', 'info');
+  }
+}
+
+function updateInsights() {
+  const weekDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const today = new Date();
+  let barsHtml = '';
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    const mood = MOOD_LOG[dateStr];
+    const height = mood ? (MOODS[mood].score * 20) + '%' : '4px';
+    const color = mood ? MOODS[mood].color : 'gray';
+    barsHtml += '<div class="flex-1 flex flex-col items-center gap-1">' +
+      '<div class="w-full rounded-t-md bg-' + color + '-500" style="height:' + height + ';min-height:4px"></div>' +
+      '<span class="text-[9px] text-gray-600">' + weekDays[6-i] + '</span>' +
+    '</div>';
+  }
+  document.getElementById('weekBars').innerHTML = barsHtml;
+
+  const streak = calculateStreak();
+  document.getElementById('streakCount').textContent = streak + ' day' + (streak !== 1 ? 's' : '');
+  let dotsHtml = '';
+  for (let i = 0; i < 7; i++) {
+    dotsHtml += '<div class="w-2 h-2 rounded-full ' + (i < streak ? 'bg-amber-500' : 'bg-white/10') + '"></div>';
+  }
+  document.getElementById('streakDots').innerHTML = dotsHtml;
+
+  const weekMoods = {};
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    if (MOOD_LOG[dateStr]) {
+      weekMoods[MOOD_LOG[dateStr]] = (weekMoods[MOOD_LOG[dateStr]] || 0) + 1;
+    }
+  }
+  const topMood = Object.entries(weekMoods).sort((a, b) => b[1] - a[1])[0];
+  document.getElementById('weekMood').textContent = topMood ? MOODS[topMood[0]].label : '—';
+}
+
+function calculateStreak() {
+  let streak = 0;
+  const today = new Date();
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    if (MOOD_LOG[dateStr]) {
+      streak++;
+    } else if (i > 0) {
+      break;
+    }
+  }
+  return streak;
+}
+
+function setTab(tab) {
+  currentTab = tab;
+  ['entries', 'favorites', 'stats'].forEach(t => {
+    const btn = document.getElementById('tab-' + t);
+    if (t === tab) {
+      btn.className = 'tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-pink-500 text-white flex items-center gap-1.5';
+    } else {
+      btn.className = 'tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5';
+    }
+  });
+
+  document.getElementById('entriesFeed').classList.add('hidden');
+  document.getElementById('statsView').classList.add('hidden');
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('emptyState').classList.remove('flex');
+
+  if (tab === 'entries' || tab === 'favorites') {
+    renderEntries();
+  } else if (tab === 'stats') {
+    renderStats();
+    document.getElementById('statsView').classList.remove('hidden');
+  }
+}
+
+function renderEntries() {
+  const feed = document.getElementById('entriesFeed');
+  const empty = document.getElementById('emptyState');
+
+  let list = [...ENTRIES];
+  list.sort((a, b) => new Date(b.date + 'T' + b.time) - new Date(a.date + 'T' + a.time));
+
+  if (currentTab === 'favorites') {
+    list = list.filter(e => e.favorite);
+  }
+
+  if (list.length === 0) {
+    feed.innerHTML = '';
+    feed.classList.add('hidden');
+    empty.classList.remove('hidden');
+    empty.classList.add('flex');
+    if (currentTab === 'favorites') {
+      empty.querySelector('h3').textContent = 'No favorites yet';
+      empty.querySelector('p').textContent = 'Star entries you want to revisit';
+    }
+    return;
+  }
+
+  feed.classList.remove('hidden');
+  empty.classList.add('hidden');
+  empty.classList.remove('flex');
+
+  feed.innerHTML = list.map(entry => {
+    const mood = MOODS[entry.mood];
+    const isExpanded = entry.text.length < 150;
+
+    return '<div class="diary-card bg-[#1e293b] rounded-2xl border border-white/6 overflow-hidden">' +
+      '<button onclick="openEntryDetail(' + entry.id + ')" class="w-full text-left p-4">' +
+        '<div class="flex items-start gap-3">' +
+          '<div class="w-10 h-10 ' + mood.bg + ' rounded-xl flex items-center justify-center border ' + mood.border + ' shrink-0">' +
+            '<span class="text-lg">' + mood.emoji + '</span>' +
+          '</div>' +
+          '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center gap-2">' +
+              '<h3 class="font-bold text-white text-[15px] truncate">' + (entry.title || 'Untitled Entry') + '</h3>' +
+              (entry.favorite ? '<span class="text-amber-400 text-sm">★</span>' : '') +
+            '</div>' +
+            '<p class="text-gray-500 text-[11px] mt-0.5">' + formatDate(entry.date) + ' &bull; ' + entry.time + '</p>' +
+            '<p class="text-gray-300 text-sm mt-2 leading-relaxed ' + (isExpanded ? '' : 'line-clamp-3') + '">' + escapeHtml(entry.text) + '</p>' +
+            (!isExpanded ? '<p class="text-pink-400 text-xs font-medium mt-2">Read more...</p>' : '') +
+          '</div>' +
+        '</div>' +
+      '</button>' +
+      '<div class="px-4 pb-3 flex items-center justify-between">' +
+        '<div class="flex items-center gap-2">' +
+          '<span class="px-2 py-0.5 ' + mood.bg + ' rounded-full text-[10px] font-bold border ' + mood.border + ' ' + mood.text + '">' + mood.label + '</span>' +
+        '</div>' +
+        '<div class="flex items-center gap-2">' +
+          '<button onclick="event.stopPropagation(); toggleFavorite(' + entry.id + ')" class="p-2 rounded-full hover:bg-white/5 transition">' +
+            '<svg class="w-4 h-4 ' + (entry.favorite ? 'text-amber-400 fill-amber-400' : 'text-gray-500') + '" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>' +
+          '</button>' +
+          '<button onclick="event.stopPropagation(); confirmDeleteEntry(' + entry.id + ')" class="p-2 rounded-full hover:bg-white/5 transition">' +
+            '<svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>' +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diff = Math.floor((now - d) / (1000 * 60 * 60 * 24));
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Yesterday';
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function toggleFavorite(id) {
+  const entry = ENTRIES.find(e => e.id === id);
+  if (!entry) return;
+  entry.favorite = !entry.favorite;
+  renderEntries();
+  showToast(entry.favorite ? 'Added to favorites' : 'Removed from favorites');
+}
+
+function openEntryDetail(id) {
+  currentEntry = ENTRIES.find(e => e.id === id);
+  if (!currentEntry) return;
+
+  const mood = MOODS[currentEntry.mood];
+  document.getElementById('detailTitle').textContent = currentEntry.title || 'Untitled Entry';
+  document.getElementById('detailDate').textContent = formatDate(currentEntry.date) + ' at ' + currentEntry.time;
+  document.getElementById('detailMoodEmoji').textContent = mood.emoji;
+  document.getElementById('detailMoodText').textContent = mood.label;
+  document.getElementById('detailMoodText').className = 'text-sm font-medium ' + mood.text;
+  document.getElementById('detailText').textContent = currentEntry.text;
+
+  const favBtn = document.getElementById('detailFavoriteBtn');
+  favBtn.innerHTML = '<svg class="w-5 h-5 ' + (currentEntry.favorite ? 'text-amber-400 fill-amber-400' : 'text-gray-400') + '" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>';
+
+  document.getElementById('detailModal').classList.remove('hidden');
+  document.getElementById('detailModal').classList.add('flex');
+  document.body.style.overflow = 'hidden';
+}
+
+function toggleFavoriteFromDetail() {
+  if (!currentEntry) return;
+  toggleFavorite(currentEntry.id);
+  openEntryDetail(currentEntry.id);
+}
+
+function closeDetailModal() {
+  document.getElementById('detailModal').classList.add('hidden');
+  document.getElementById('detailModal').classList.remove('flex');
+  document.body.style.overflow = '';
+  currentEntry = null;
+}
+
+function deleteEntryFromDetail() {
+  if (!currentEntry) return;
+  confirmDeleteEntry(currentEntry.id);
+}
+
+function confirmDeleteEntry(id) {
+  entryToDelete = id;
+  document.getElementById('deleteModal').classList.remove('hidden');
+  document.getElementById('deleteModal').classList.add('flex');
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.add('hidden');
+  document.getElementById('deleteModal').classList.remove('flex');
+  entryToDelete = null;
+}
+
+function confirmDelete() {
+  if (!entryToDelete) return;
+  ENTRIES = ENTRIES.filter(e => e.id !== entryToDelete);
+  closeDeleteModal();
+  closeDetailModal();
+  renderEntries();
+  updateInsights();
+  renderCalendar();
+  showToast('Entry deleted', 'info');
+}
+
+function openWriteEntryModal(usePrompt) {
+  const now = new Date();
+  document.getElementById('writeModalDate').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  if (usePrompt) {
+    document.getElementById('writeModalTitle').textContent = "Write About Today's Prompt";
+  } else {
+    document.getElementById('writeModalTitle').textContent = 'New Entry';
+  }
+
+  document.getElementById('writeModal').classList.remove('hidden');
+  document.getElementById('writeModal').classList.add('flex');
+
+  if (selectedEntryMood) {
+    selectEntryMood(selectedEntryMood);
+  }
+
+  setTimeout(() => document.getElementById('entryTitle').focus(), 100);
+}
+
+function closeWriteModal() {
+  document.getElementById('writeModal').classList.add('hidden');
+  document.getElementById('writeModal').classList.remove('flex');
+  document.getElementById('entryTitle').value = '';
+  document.getElementById('entryText').value = '';
+  document.getElementById('entryCharCount').textContent = '0 / 5000';
+  selectedEntryMood = null;
+  document.querySelectorAll('.entry-mood-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.style.background = '';
+    btn.style.borderColor = '';
+  });
+}
+
+function selectEntryMood(mood) {
+  document.querySelectorAll('.entry-mood-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.style.background = '';
+    btn.style.borderColor = '';
+  });
+  const btn = document.getElementById('entry-mood-' + mood);
+  if (btn) {
+    btn.classList.add('selected');
+    btn.style.background = 'rgba(236,72,153,0.2)';
+    btn.style.borderColor = 'rgba(236,72,153,0.5)';
+  }
+  selectedEntryMood = mood;
+}
+
+function updateEntryCharCount() {
+  const len = document.getElementById('entryText').value.length;
+  document.getElementById('entryCharCount').textContent = len + ' / 5000';
+}
+
+function submitEntry() {
+  const title = document.getElementById('entryTitle').value.trim();
+  const text = document.getElementById('entryText').value.trim();
+
+  if (!text) { showToast('Write something first!', 'error'); return; }
+  if (!selectedEntryMood) { showToast('Select your mood!', 'error'); return; }
+
+  const btnText = document.getElementById('entrySubmitText');
+  const spinner = document.getElementById('entrySubmitSpinner');
+  btnText.textContent = 'Saving...';
+  spinner.classList.remove('hidden');
+
+  setTimeout(() => {
+    const now = new Date();
+    ENTRIES.unshift({
+      id: nextId++,
+      title: title || 'Untitled Entry',
+      text: text,
+      mood: selectedEntryMood,
+      date: now.toISOString().split('T')[0],
+      time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+      favorite: false
+    });
+
+    const dateStr = now.toISOString().split('T')[0];
+    MOOD_LOG[dateStr] = selectedEntryMood;
+
+    btnText.textContent = 'Save Entry';
+    spinner.classList.add('hidden');
+    closeWriteModal();
+    updateInsights();
+    renderCalendar();
+    setTab('entries');
+    showToast('Entry saved! 💜');
+  }, 800);
+}
+
+function renderStats() {
+  document.getElementById('totalEntries').textContent = ENTRIES.length;
+
+  let totalWords = 0;
+  ENTRIES.forEach(e => totalWords += e.text.split(/\s+/).length);
+  document.getElementById('totalWords').textContent = totalWords.toLocaleString();
+
+  document.getElementById('currentStreak').textContent = calculateStreak();
+
+  const moodScores = ENTRIES.map(e => MOODS[e.mood].score);
+  const avg = moodScores.reduce((a, b) => a + b, 0) / moodScores.length;
+  let avgLabel = 'Okay';
+  if (avg >= 4.5) avgLabel = 'Amazing';
+  else if (avg >= 3.5) avgLabel = 'Good';
+  else if (avg >= 2.5) avgLabel = 'Okay';
+  else if (avg >= 1.5) avgLabel = 'Bad';
+  else avgLabel = 'Terrible';
+  document.getElementById('avgMood').textContent = avgLabel;
+
+  const counts = {};
+  ENTRIES.forEach(e => counts[e.mood] = (counts[e.mood] || 0) + 1);
+  const total = ENTRIES.length;
+
+  let distHtml = '';
+  Object.entries(MOODS).forEach(([key, mood]) => {
+    const count = counts[key] || 0;
+    const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+    distHtml += '<div class="flex items-center gap-3">' +
+      '<span class="text-lg w-6">' + mood.emoji + '</span>' +
+      '<div class="flex-1">' +
+        '<div class="flex items-center justify-between mb-1">' +
+          '<span class="text-xs text-gray-400">' + mood.label + '</span>' +
+          '<span class="text-xs text-gray-500">' + count + ' (' + pct + '%)</span>' +
+        '</div>' +
+        '<div class="h-2 bg-[#0f172a] rounded-full overflow-hidden">' +
+          '<div class="h-full bg-' + mood.color + '-500 rounded-full transition-all duration-500" style="width:' + pct + '%"></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  });
+  document.getElementById('moodDistribution').innerHTML = distHtml;
+
+  const weekDays = [];
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    weekDays.push(d.toISOString().split('T')[0]);
+  }
+
+  let trendHtml = '';
+  weekDays.forEach(dateStr => {
+    const mood = MOOD_LOG[dateStr];
+    const height = mood ? (MOODS[mood].score * 16) + '%' : '8px';
+    const color = mood ? MOODS[mood].color : 'gray';
+    trendHtml += '<div class="flex-1 flex flex-col items-center justify-end">' +
+      '<div class="w-full max-w-[32px] rounded-t-lg bg-' + color + '-500 transition-all duration-500" style="height:' + height + ';min-height:8px"></div>' +
+    '</div>';
+  });
+  document.getElementById('weeklyTrend').innerHTML = trendHtml;
+}
+
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  const icon = document.getElementById('toastIcon');
+  const text = document.getElementById('toastMsg');
+  text.textContent = msg;
+  if (type === 'error') {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>';
+    icon.className = 'w-5 h-5 text-red-400 shrink-0';
+  } else if (type === 'info') {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+    icon.className = 'w-5 h-5 text-amber-400 shrink-0';
+  } else {
+    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>';
+    icon.className = 'w-5 h-5 text-green-400 shrink-0';
+  }
+  toast.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
+  toast.classList.add('opacity-100', 'translate-y-0');
+  setTimeout(() => {
+    toast.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+    toast.classList.remove('opacity-100', 'translate-y-0');
+  }, 2500);
+}
+
+function openProfile() {
+  showToast('Profile page coming soon', 'info');
+}
+
+init();
+</script>
+</body>
+</html>
