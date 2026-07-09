@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ochanya's Corner - Your Voice</title>
+    <style>
+        :root {
+            --bg-dark: #12223c;
+            --header-dark: #1a2f4c;
+            --text-white: #ffffff;
+            --text-muted: #9aaaba;
+            --accent-orange: #f39c12;
+            --color-success: #1abc9c;
+            --color-danger: #e63946;
+            --color-info: #3a86ff;
+            --color-wish: #f1c40f;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #09111e; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: var(--text-white); }
+        .mobile-container { width: 100%; max-width: 412px; background-color: var(--bg-dark); min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-bottom: 30px; }
+        .brand-header { background-color: var(--header-dark); display: flex; align-items: center; padding: 15px 20px; gap: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .brand-logo { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; background: linear-gradient(135deg, #f39c12, #e67e22); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .brand-title { font-size: 22px; font-weight: 700; }
+        .brand-title span { color: var(--accent-orange); }
+        .content-area { padding: 25px 20px; }
+        .back-link { color: var(--accent-orange); text-decoration: none; font-size: 15px; font-weight: 600; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 6px; }
+        .page-header { text-align: center; margin-bottom: 25px; }
+        .page-title { font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+        .page-subtitle { font-size: 14px; color: var(--text-muted); }
+
+        /* Tab Navigation */
+        .tab-nav { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 20px; scrollbar-width: none; }
+        .tab-nav::-webkit-scrollbar { display: none; }
+        .tab-btn { background-color: var(--header-dark); color: var(--text-muted); padding: 10px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; white-space: nowrap; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: all 0.2s ease; }
+        .tab-btn.active { background-color: var(--accent-orange); color: #000; }
+        .tab-btn:hover { background-color: rgba(243, 156, 18, 0.2); }
+
+        /* Tab Content */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Section Cards */
+        .section-card { background-color: var(--header-dark); border-radius: 16px; padding: 20px; margin-bottom: 16px; border-left: 5px solid transparent; }
+        .section-card.rate-card { border-left-color: var(--color-success); }
+        .section-card.review-card { border-left-color: var(--color-info); }
+        .section-card.wish-card { border-left-color: var(--color-wish); }
+        .section-card.bug-card { border-left-color: var(--color-danger); }
+
+        .section-icon { font-size: 24px; margin-bottom: 10px; }
+        .section-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+        .section-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
+
+        /* Star Rating */
+        .star-rating { display: flex; gap: 6px; margin-bottom: 12px; }
+        .star { font-size: 28px; color: rgba(255,255,255,0.15); cursor: pointer; transition: color 0.2s ease, transform 0.1s ease; }
+        .star:hover, .star.active { color: var(--accent-orange); }
+        .star:active { transform: scale(1.2); }
+        .rating-label { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+
+        /* Tool List for Rating */
+        .tool-list { display: flex; flex-direction: column; gap: 12px; }
+        .tool-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: rgba(0,0,0,0.15); border-radius: 12px; }
+        .tool-name { font-size: 14px; font-weight: 600; }
+        .tool-stars { display: flex; gap: 3px; }
+        .tool-stars .star { font-size: 18px; }
+
+        /* Textarea */
+        .feedback-textarea { width: 100%; min-height: 100px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; color: var(--text-white); font-size: 14px; resize: vertical; margin-bottom: 12px; }
+        .feedback-textarea::placeholder { color: rgba(255,255,255,0.3); }
+        .feedback-textarea:focus { outline: none; border-color: var(--accent-orange); }
+
+        /* Submit Button */
+        .submit-btn { width: 100%; padding: 14px; background: var(--accent-orange); color: #000; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
+        .submit-btn:hover { background: #e67e22; }
+        .submit-btn:active { transform: scale(0.98); }
+
+        /* Success Message */
+        .success-msg { display: none; text-align: center; padding: 20px; }
+        .success-msg.show { display: block; }
+        .success-icon { font-size: 48px; margin-bottom: 12px; }
+        .success-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+        .success-text { font-size: 14px; color: var(--text-muted); }
+
+        /* Recent Feedback Preview */
+        .recent-feed { margin-top: 20px; }
+        .recent-header { font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .recent-item { background: rgba(0,0,0,0.15); border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+        .recent-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .recent-type { font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 3px 10px; border-radius: 8px; }
+        .type-review { background: rgba(58, 134, 255, 0.15); color: var(--color-info); }
+        .type-wish { background: rgba(241, 196, 15, 0.15); color: var(--color-wish); }
+        .type-bug { background: rgba(230, 57, 70, 0.15); color: var(--color-danger); }
+        .recent-time { font-size: 11px; color: var(--text-muted); }
+        .recent-text { font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.85); }
+        .recent-stars { color: var(--accent-orange); font-size: 12px; margin-top: 4px; }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <header class="brand-header">
+            <img src="your-logo.png" alt="LASU GradeTracker" class="brand-logo">
+            <h1 class="brand-title">LASU <span>GradeTracker</span></h1>
+        </header>
+        <main class="content-area">
+            <a href="ochanyas-corner.html" class="back-link">← Back to Corner</a>
+            <div class="page-header">
+                <h2 class="page-title">📢 Your Voice</h2>
+                <p class="page-subtitle">Help me make GradeTracker better for every Lasuite</p>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('rate')">⭐ Rate Tools</button>
+                <button class="tab-btn" onclick="switchTab('review')">📝 Reviews</button>
+                <button class="tab-btn" onclick="switchTab('wish')">💡 Feature Request</button>
+                <button class="tab-btn" onclick="switchTab('bug')">🐛 Bug Report</button>
+            </div>
+
+            <!-- Tab 1: Rate Tools -->
+            <div id="tab-rate" class="tab-content active">
+                <div class="section-card rate-card">
+                    <div class="section-icon">⭐</div>
+                    <div class="section-title">Rate Our Tools</div>
+                    <div class="section-desc">How useful are these features? Your ratings help me prioritize improvements.</div>
+                    <div class="tool-list">
+                        <div class="tool-item">
+                            <span class="tool-name">📊 CGPA Calculator</span>
+                            <div class="tool-stars" data-tool="cgpa">
+                                <span class="star" onclick="rateTool(this, 1)">★</span>
+                                <span class="star" onclick="rateTool(this, 2)">★</span>
+                                <span class="star" onclick="rateTool(this, 3)">★</span>
+                                <span class="star" onclick="rateTool(this, 4)">★</span>
+                                <span class="star" onclick="rateTool(this, 5)">★</span>
+                            </div>
+                        </div>
+                        <div class="tool-item">
+                            <span class="tool-name">📋 Semester Planner</span>
+                            <div class="tool-stars" data-tool="planner">
+                                <span class="star" onclick="rateTool(this, 1)">★</span>
+                                <span class="star" onclick="rateTool(this, 2)">★</span>
+                                <span class="star" onclick="rateTool(this, 3)">★</span>
+                                <span class="star" onclick="rateTool(this, 4)">★</span>
+                                <span class="star" onclick="rateTool(this, 5)">★</span>
+                            </div>
+                        </div>
+                        <div class="tool-item">
+                            <span class="tool-name">📈 Grade Predictor</span>
+                            <div class="tool-stars" data-tool="predictor">
+                                <span class="star" onclick="rateTool(this, 1)">★</span>
+                                <span class="star" onclick="rateTool(this, 2)">★</span>
+                                <span class="star" onclick="rateTool(this, 3)">★</span>
+                                <span class="star" onclick="rateTool(this, 4)">★</span>
+                                <span class="star" onclick="rateTool(this, 5)">★</span>
+                            </div>
+                        </div>
+                        <div class="tool-item">
+                            <span class="tool-name">🎯 Target Grade</span>
+                            <div class="tool-stars" data-tool="target">
+                                <span class="star" onclick="rateTool(this, 1)">★</span>
+                                <span class="star" onclick="rateTool(this, 2)">★</span>
+                                <span class="star" onclick="rateTool(this, 3)">★</span>
+                                <span class="star" onclick="rateTool(this, 4)">★</span>
+                                <span class="star" onclick="rateTool(this, 5)">★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="submit-btn" style="margin-top: 16px;" onclick="submitRatings()">Submit Ratings</button>
+                </div>
+            </div>
+
+            <!-- Tab 2: Reviews -->
+            <div id="tab-review" class="tab-content">
+                <div class="section-card review-card">
+                    <div class="section-icon">📝</div>
+                    <div class="section-title">Write a Review</div>
+                    <div class="section-desc">What do you love? What frustrates you? Be honest — I read every word.</div>
+                    <div class="star-rating" id="review-stars">
+                        <span class="star" onclick="setReviewStars(1)">★</span>
+                        <span class="star" onclick="setReviewStars(2)">★</span>
+                        <span class="star" onclick="setReviewStars(3)">★</span>
+                        <span class="star" onclick="setReviewStars(4)">★</span>
+                        <span class="star" onclick="setReviewStars(5)">★</span>
+                    </div>
+                    <div class="rating-label" id="review-label">Tap a star to rate your overall experience</div>
+                    <textarea class="feedback-textarea" placeholder="Share your thoughts... What works well? What could be better? Any specific feature you want to shout out?"></textarea>
+                    <button class="submit-btn" onclick="submitReview()">Submit Review</button>
+                </div>
+            </div>
+
+            <!-- Tab 3: Feature Request -->
+            <div id="tab-wish" class="tab-content">
+                <div class="section-card wish-card">
+                    <div class="section-icon">💡</div>
+                    <div class="section-title">Feature Request</div>
+                    <div class="section-desc">"I wish there was..." — Tell me what feature would make your LASU life easier.</div>
+                    <textarea class="feedback-textarea" placeholder="Describe the feature you'd love to see. For example: 'I wish there was a way to compare my grades with course averages' or 'Can you add a timetable generator?'"></textarea>
+                    <button class="submit-btn" onclick="submitWish()">Submit Request</button>
+                </div>
+            </div>
+
+            <!-- Tab 4: Bug Report -->
+            <div id="tab-bug" class="tab-content">
+                <div class="section-card bug-card">
+                    <div class="section-icon">🐛</div>
+                    <div class="section-title">Report a Bug</div>
+                    <div class="section-desc">Something broken? Help me fix it fast — describe what happened and what you expected.</div>
+                    <textarea class="feedback-textarea" placeholder="What tool were you using? What did you do? What happened instead of what you expected? The more detail, the faster I can fix it."></textarea>
+                    <button class="submit-btn" onclick="submitBug()">Report Bug</button>
+                </div>
+            </div>
+
+            <!-- Success Message -->
+            <div class="success-msg" id="success-msg">
+                <div class="success-icon">🎉</div>
+                <div class="success-title">Thank You!</div>
+                <div class="success-text">Your feedback has been received. I personally read every message.</div>
+            </div>
+
+            <!-- Recent Feedback -->
+            <div class="recent-feed">
+                <div class="recent-header">Recent Feedback</div>
+                <div class="recent-item">
+                    <div class="recent-header-row">
+                        <span class="recent-type type-review">Review</span>
+                        <span class="recent-time">2 hours ago</span>
+                    </div>
+                    <div class="recent-text">"The CGPA calculator saved me during registration. So clean and easy to use!"</div>
+                    <div class="recent-stars">★★★★★</div>
+                </div>
+                <div class="recent-item">
+                    <div class="recent-header-row">
+                        <span class="recent-type type-wish">Feature Request</span>
+                        <span class="recent-time">5 hours ago</span>
+                    </div>
+                    <div class="recent-text">"I wish there was a way to save my semester data so I don't have to re-enter everything next time."</div>
+                </div>
+                <div class="recent-item">
+                    <div class="recent-header-row">
+                        <span class="recent-type type-bug">Bug Report</span>
+                        <span class="recent-time">1 day ago</span>
+                    </div>
+                    <div class="recent-text">"The grade predictor shows wrong values when I input a carryover course."</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+            document.getElementById('success-msg').classList.remove('show');
+        }
+
+        function rateTool(starEl, rating) {
+            const container = starEl.parentElement;
+            const stars = container.querySelectorAll('.star');
+            stars.forEach((s, i) => {
+                if (i < rating) s.classList.add('active');
+                else s.classList.remove('active');
+            });
+        }
+
+        function setReviewStars(rating) {
+            const stars = document.querySelectorAll('#review-stars .star');
+            const labels = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+            stars.forEach((s, i) => {
+                if (i < rating) s.classList.add('active');
+                else s.classList.remove('active');
+            });
+            document.getElementById('review-label').textContent = labels[rating - 1];
+        }
+
+        function submitRatings() { showSuccess(); }
+        function submitReview() { showSuccess(); }
+        function submitWish() { showSuccess(); }
+        function submitBug() { showSuccess(); }
+
+        function showSuccess() {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById('success-msg').classList.add('show');
+        }
+    </script>
+</body>
+</html>
