@@ -46,7 +46,6 @@
             padding-bottom: 30px;
         }
 
-        /* Top Brand Header */
         .brand-header {
             background-color: var(--header-dark);
             display: flex;
@@ -72,7 +71,6 @@
             color: var(--accent-orange);
         }
 
-        /* Content Area */
         .content-area {
             padding: 25px 20px;
         }
@@ -106,11 +104,11 @@
             overflow-x: auto;
             padding-bottom: 15px;
             margin-bottom: 20px;
-            scrollbar-width: none; /* Hide scrollbar for Firefox */
+            scrollbar-width: none;
         }
 
         .filter-container::-webkit-scrollbar {
-            display: none; /* Hide scrollbar for Chrome/Safari */
+            display: none;
         }
 
         .filter-tag {
@@ -123,11 +121,13 @@
             white-space: nowrap;
             text-decoration: none;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
         .filter-tag.active {
             background-color: var(--accent-orange);
-            color: #000;
+            color: #000000;
         }
 
         /* Clickable Blog Feed Post Cards */
@@ -147,14 +147,13 @@
             flex-direction: column;
             gap: 10px;
             border-left: 5px solid transparent;
-            transition: transform 0.1s ease;
+            transition: transform 0.1s ease, opacity 0.2s ease;
         }
 
         .post-card:active {
             transform: scale(0.98);
         }
 
-        /* Dynamic Borders by Category */
         .cat-news { border-left-color: var(--color-news); }
         .cat-stories { border-left-color: var(--color-stories); }
         .cat-spotlight { border-left-color: var(--color-spotlight); }
@@ -208,18 +207,18 @@
 
             <!-- Categories Filter Navigation Scroll -->
             <div class="filter-container">
-                <a href="#" class="filter-tag active">All Posts</a>
-                <a href="#" class="filter-tag">LASU News</a>
-                <a href="#" class="filter-tag">Stories</a>
-                <a href="#" class="filter-tag">Spotlights</a>
-                <a href="#" class="filter-tag">Alerts</a>
+                <span class="filter-tag active" data-filter="all">All Posts</span>
+                <span class="filter-tag" data-filter="news">LASU News</span>
+                <span class="filter-tag" data-filter="stories">Stories</span>
+                <span class="filter-tag" data-filter="spotlight">Spotlights</span>
+                <span class="filter-tag" data-filter="alerts">Alerts</span>
             </div>
 
-            <!-- Blog Post Loop List (Clickable Articles) -->
+            <!-- Blog Post Loop List -->
             <div class="blog-feed">
                 
-                <!-- Sample Article 1: LASU News -->
-                <a href="article-placeholder.html" class="post-card cat-news">
+                <!-- News Card -->
+                <a href="article-placeholder.html" class="post-card cat-news" data-category="news">
                     <span class="post-label lbl-news">LASU News & Updates</span>
                     <h3 class="post-title">Second Semester Revision Week Details & Lecture Adjustments</h3>
                     <div class="post-meta">
@@ -228,8 +227,8 @@
                     </div>
                 </a>
 
-                <!-- Sample Article 2: Stories -->
-                <a href="article-placeholder.html" class="post-card cat-stories">
+                <!-- Stories Card -->
+                <a href="article-placeholder.html" class="post-card cat-stories" data-category="stories">
                     <span class="post-label lbl-stories">Personal Stories</span>
                     <h3 class="post-title">The Late Nights and Coffee Cups: Building Tools for My Fellow Lasuites</h3>
                     <div class="post-meta">
@@ -238,8 +237,8 @@
                     </div>
                 </a>
 
-                <!-- Sample Article 3: Spotlights -->
-                <a href="article-placeholder.html" class="post-card cat-spotlight">
+                <!-- Spotlight Card -->
+                <a href="article-placeholder.html" class="post-card cat-spotlight" data-category="spotlight">
                     <span class="post-label lbl-spotlight">Student Spotlight</span>
                     <h3 class="post-title">How Tolani Balanced a 4.8 CGPA with an On-Campus Fashion Label</h3>
                     <div class="post-meta">
@@ -248,10 +247,10 @@
                     </div>
                 </a>
 
-                <!-- Sample Article 4: Alerts -->
-                <a href="article-placeholder.html" class="post-card cat-alerts">
+                <!-- Alerts Card -->
+                <a href="article-placeholder.html" class="post-card cat-alerts" data-category="alerts">
                     <span class="post-label lbl-alerts">Scholarship & Job Alerts</span>
-                    <h3 class="post-title">MTN Science and Technology Scholarship Scheme 2026 Portal Opens</h3>
+                    <h3 class="post-title">MTN Science and Technology Scholarship Scheme portal Opens</h3>
                     <div class="post-meta">
                         <span>3 days ago</span>
                         <span>Read Post ❯</span>
@@ -261,6 +260,35 @@
             </div>
         </main>
     </div>
+
+    <!-- JavaScript Filter Controller Engine -->
+    <script>
+        const filterTags = document.querySelectorAll('.filter-tag');
+        const postCards = document.querySelectorAll('.post-card');
+
+        filterTags.forEach(tag => {
+            tag.addEventListener('click', () => {
+                // Remove 'active' status from previous active tag
+                document.querySelector('.filter-tag.active').classList.remove('active');
+                // Set current selected tag to active status
+                tag.classList.add('active');
+
+                const filterValue = tag.getAttribute('data-filter');
+
+                postCards.forEach(card => {
+                    if (filterValue === 'all') {
+                        card.style.display = 'flex';
+                    } else {
+                        if (card.getAttribute('data-category') === filterValue) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>
