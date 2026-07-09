@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ochanya's Corner - My Blog</title>
+    <style>
+        :root {
+            --bg-dark: #12223c;
+            --header-dark: #1a2f4c;
+            --text-white: #ffffff;
+            --text-muted: #9aaaba;
+            --accent-orange: #f39c12;
+            
+            /* Category Colors */
+            --color-news: #1abc9c;
+            --color-stories: #e63946;
+            --color-spotlight: #3a86ff;
+            --color-alerts: #f1c40f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #09111e;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            color: var(--text-white);
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 412px;
+            background-color: var(--bg-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding-bottom: 30px;
+        }
+
+        /* Top Brand Header */
+        .brand-header {
+            background-color: var(--header-dark);
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            gap: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .brand-logo {
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .brand-title {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .brand-title span {
+            color: var(--accent-orange);
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 25px 20px;
+        }
+
+        .back-link {
+            color: var(--accent-orange);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        /* Horizontal Category Filter Tags */
+        .filter-container {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            scrollbar-width: none; /* Hide scrollbar for Firefox */
+        }
+
+        .filter-container::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome/Safari */
+        }
+
+        .filter-tag {
+            background-color: var(--header-dark);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .filter-tag.active {
+            background-color: var(--accent-orange);
+            color: #000;
+        }
+
+        /* Clickable Blog Feed Post Cards */
+        .blog-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .post-card {
+            background-color: var(--header-dark);
+            border-radius: 16px;
+            padding: 16px;
+            text-decoration: none;
+            color: var(--text-white);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-left: 5px solid transparent;
+            transition: transform 0.1s ease;
+        }
+
+        .post-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Dynamic Borders by Category */
+        .cat-news { border-left-color: var(--color-news); }
+        .cat-stories { border-left-color: var(--color-stories); }
+        .cat-spotlight { border-left-color: var(--color-spotlight); }
+        .cat-alerts { border-left-color: var(--color-alerts); }
+
+        .post-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .lbl-news { color: var(--color-news); }
+        .lbl-stories { color: var(--color-stories); }
+        .lbl-spotlight { color: var(--color-spotlight); }
+        .lbl-alerts { color: var(--color-alerts); }
+
+        .post-title {
+            font-size: 17px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 8px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+        <!-- Brand Header -->
+        <header class="brand-header">
+            <img src="your-logo.png" alt="LASU GradeTracker" class="brand-logo">
+            <h1 class="brand-title">LASU <span>GradeTracker</span></h1>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="content-area">
+            <a href="ochanyas-corner.html" class="back-link">← Back to Corner</a>
+            
+            <div class="page-header">
+                <h2 class="page-title">📝 My Blog</h2>
+            </div>
+
+            <!-- Categories Filter Navigation Scroll -->
+            <div class="filter-container">
+                <a href="#" class="filter-tag active">All Posts</a>
+                <a href="#" class="filter-tag">LASU News</a>
+                <a href="#" class="filter-tag">Stories</a>
+                <a href="#" class="filter-tag">Spotlights</a>
+                <a href="#" class="filter-tag">Alerts</a>
+            </div>
+
+            <!-- Blog Post Loop List (Clickable Articles) -->
+            <div class="blog-feed">
+                
+                <!-- Sample Article 1: LASU News -->
+                <a href="article-placeholder.html" class="post-card cat-news">
+                    <span class="post-label lbl-news">LASU News & Updates</span>
+                    <h3 class="post-title">Second Semester Revision Week Details & Lecture Adjustments</h3>
+                    <div class="post-meta">
+                        <span>Just Now</span>
+                        <span>Read Post ❯</span>
+                    </div>
+                </a>
+
+                <!-- Sample Article 2: Stories -->
+                <a href="article-placeholder.html" class="post-card cat-stories">
+                    <span class="post-label lbl-stories">Personal Stories</span>
+                    <h3 class="post-title">The Late Nights and Coffee Cups: Building Tools for My Fellow Lasuites</h3>
+                    <div class="post-meta">
+                        <span>Yesterday</span>
+                        <span>Read Post ❯</span>
+                    </div>
+                </a>
+
+                <!-- Sample Article 3: Spotlights -->
+                <a href="article-placeholder.html" class="post-card cat-spotlight">
+                    <span class="post-label lbl-spotlight">Student Spotlight</span>
+                    <h3 class="post-title">How Tolani Balanced a 4.8 CGPA with an On-Campus Fashion Label</h3>
+                    <div class="post-meta">
+                        <span>July 2026</span>
+                        <span>Read Post ❯</span>
+                    </div>
+                </a>
+
+                <!-- Sample Article 4: Alerts -->
+                <a href="article-placeholder.html" class="post-card cat-alerts">
+                    <span class="post-label lbl-alerts">Scholarship & Job Alerts</span>
+                    <h3 class="post-title">MTN Science and Technology Scholarship Scheme 2026 Portal Opens</h3>
+                    <div class="post-meta">
+                        <span>3 days ago</span>
+                        <span>Read Post ❯</span>
+                    </div>
+                </a>
+
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
