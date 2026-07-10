@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LASU Lounge - LASU GradeTracker</title>
+    <style>
+        :root {
+            --bg-dark: #12223c;
+            --header-dark: #1a2f4c;
+            --text-white: #ffffff;
+            --text-muted: #9aaaba;
+            --accent-orange: #f39c12;
+            --color-general: #1abc9c;
+            --color-courses: #f39c12;
+            --color-buddies: #e63946;
+            --color-confessions: #8b5cf6;
+            --color-diary: #ec4899;
+            --color-challenges: #3a86ff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #09111e; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: var(--text-white); }
+        .mobile-container { width: 100%; max-width: 412px; background-color: var(--bg-dark); min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-bottom: 30px; }
+        .brand-header { background-color: var(--header-dark); display: flex; align-items: center; padding: 15px 20px; gap: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .brand-logo { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; background: linear-gradient(135deg, #f39c12, #e67e22); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .brand-title { font-size: 22px; font-weight: 700; }
+        .brand-title span { color: var(--accent-orange); }
+        .content-area { padding: 25px 20px; }
+        .back-link { color: var(--accent-orange); text-decoration: none; font-size: 15px; font-weight: 600; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 6px; }
+
+        .hero { text-align: center; margin-bottom: 28px; }
+        .hero-icon { font-size: 48px; margin-bottom: 10px; }
+        .hero-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+        .hero-title span { color: var(--accent-orange); }
+        .hero-subtitle { font-size: 14px; color: var(--text-muted); line-height: 1.5; max-width: 320px; margin: 0 auto; }
+
+        .section-grid { display: flex; flex-direction: column; gap: 14px; }
+        .section-tile { background-color: var(--header-dark); border-radius: 16px; padding: 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: var(--text-white); border-left: 5px solid transparent; transition: transform 0.1s ease; }
+        .section-tile:active { transform: scale(0.98); }
+        .tile-general { border-left-color: var(--color-general); }
+        .tile-courses { border-left-color: var(--color-courses); }
+        .tile-buddies { border-left-color: var(--color-buddies); }
+        .tile-confessions { border-left-color: var(--color-confessions); }
+        .tile-diary { border-left-color: var(--color-diary); }
+        .tile-challenges { border-left-color: var(--color-challenges); }
+
+        .tile-icon-wrap { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+        .tile-general .tile-icon-wrap { background: rgba(26, 188, 156, 0.15); }
+        .tile-courses .tile-icon-wrap { background: rgba(243, 156, 18, 0.15); }
+        .tile-buddies .tile-icon-wrap { background: rgba(230, 57, 70, 0.15); }
+        .tile-confessions .tile-icon-wrap { background: rgba(139, 92, 246, 0.15); }
+        .tile-diary .tile-icon-wrap { background: rgba(236, 72, 153, 0.15); }
+        .tile-challenges .tile-icon-wrap { background: rgba(58, 134, 255, 0.15); }
+
+        .tile-info { flex: 1; }
+        .tile-title { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+        .tile-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+        .tile-arrow { font-size: 18px; color: var(--text-muted); }
+
+        .lounge-footer { text-align: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .lounge-footer-text { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+        .footer-heart { color: #e63946; }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <header class="brand-header">
+            <img src="your-logo.png" alt="LASU GradeTracker" class="brand-logo">
+            <h1 class="brand-title">LASU <span>GradeTracker</span></h1>
+        </header>
+        <main class="content-area">
+            <a href="index.html" class="back-link">← Back to Home</a>
+
+            <div class="hero">
+                <div class="hero-icon">💬</div>
+                <h2 class="hero-title">LASU <span>Lounge</span></h2>
+                <p class="hero-subtitle">A community where every Lasuite is equal, free, and unjudged. Pick a room.</p>
+            </div>
+
+            <div class="section-grid">
+                <a href="general-chat.html" class="section-tile tile-general">
+                    <div class="tile-icon-wrap">🔥</div>
+                    <div class="tile-info">
+                        <div class="tile-title">General Chat</div>
+                        <div class="tile-desc">Chat with the whole community — like X, but for Lasuites</div>
+                    </div>
+                    <div class="tile-arrow">❯</div>
+                </a>
+
+                <a href="course-corners.html" class="section-tile tile-courses">
+                    <div class="tile-icon-wrap">📚</div>
+                    <div class="tile-info">
+                        <div class="tile-title">Course Corners</div>
+                        <div class="tile-desc">Discuss courses & ask questions among yourselves</div>
+                    </div>
+                    <div class="tile-arrow">❯</div>
+                </a>
+
+                <a href="study-buddies.html" class="section-tile tile-buddies">
+                    <div class="tile-icon-wrap">👥</div>
+                    <div class="tile-info">
+                        <div class="tile-title">Study Buddies</div>
+                        <div class="tile-desc">Find study partners for the semester</div>
+                    </div>
+                    <div class="tile-arrow">❯</div>
+                </a>
+
+                <a href="confessions.html" class="section-tile tile-confessions">
+                    <div class="tile-icon-wrap">😂</div>
+                    <div class="tile-info">
+                        <div class="tile-title">LASU Confessions</div>
+                        <div class="tile-desc">Share anonymously — your identity stays hidden</div>
+                    </div>
+                    <div class="tile-arrow">❯</div>
+                </a>
+
+                <a href="my-diary.html" class="section-tile tile-diary">
+                    <div class="tile-icon-wrap">💜</div>
+                    <div class="tile-info">
+                        <div class="tile-title">My Diary</div>
+                        <div class="tile-desc">A safe space to jot down how you feel & vent out</div>
+                    </div>
+                    <div class="tile-arrow">❯</div>
+                </a>
+
+                <a href="challenges.html" class="section-tile tile-challenges">
+                    <div class="tile-icon-wrap">🏆</div>
+                    <div class="tile-info">
+                        <div class="tile-title">Weekly Challenges</div>
+                        <div class="tile-desc">Complete tasks to earn badges & XP</div>
+                    </div>
+                    <div class="tile-arrow">❯</div>
+                </a>
+            </div>
+
+            <div class="lounge-footer">
+                <div class="lounge-footer-text">
+                    Built with <span class="footer-heart">❤️</span> by Ocheme Faith Ochanya • Chemistry<br>
+                    © 2026 LASU GradeTracker. All rights reserved.
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
