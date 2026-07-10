@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ochanya's Corner - Help Centre</title>
+    <style>
+        :root {
+            --bg-dark: #12223c;
+            --header-dark: #1a2f4c;
+            --text-white: #ffffff;
+            --text-muted: #9aaaba;
+            --accent-orange: #f39c12;
+            --color-faq: #1abc9c;
+            --color-contact: #3a86ff;
+            --color-mental: #e63946;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #09111e; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: var(--text-white); }
+        .mobile-container { width: 100%; max-width: 412px; background-color: var(--bg-dark); min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-bottom: 30px; }
+        .brand-header { background-color: var(--header-dark); display: flex; align-items: center; padding: 15px 20px; gap: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .brand-logo { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; background: linear-gradient(135deg, #f39c12, #e67e22); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .brand-title { font-size: 22px; font-weight: 700; }
+        .brand-title span { color: var(--accent-orange); }
+        .content-area { padding: 25px 20px; }
+        .back-link { color: var(--accent-orange); text-decoration: none; font-size: 15px; font-weight: 600; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 6px; }
+        .page-header { text-align: center; margin-bottom: 25px; }
+        .page-title { font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+        .page-subtitle { font-size: 14px; color: var(--text-muted); }
+
+        /* Section Cards */
+        .section-card { background-color: var(--header-dark); border-radius: 16px; padding: 20px; margin-bottom: 16px; border-left: 5px solid transparent; }
+        .section-card.faq-card { border-left-color: var(--color-faq); }
+        .section-card.contact-card { border-left-color: var(--color-contact); }
+        .section-card.mental-card { border-left-color: var(--color-mental); }
+
+        .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .section-icon { font-size: 22px; }
+        .section-title { font-size: 16px; font-weight: 700; }
+        .section-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
+
+        /* FAQ Accordion */
+        .faq-item { border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-question { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; cursor: pointer; font-size: 14px; font-weight: 600; line-height: 1.4; }
+        .faq-toggle { font-size: 18px; color: var(--text-muted); transition: transform 0.2s ease; }
+        .faq-item.open .faq-toggle { transform: rotate(45deg); color: var(--color-faq); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+        .faq-item.open .faq-answer { max-height: 300px; padding-bottom: 14px; }
+
+        /* Search Bar */
+        .search-box { position: relative; margin-bottom: 16px; }
+        .search-input { width: 100%; padding: 12px 16px 12px 40px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: var(--text-white); font-size: 14px; }
+        .search-input::placeholder { color: rgba(255,255,255,0.3); }
+        .search-input:focus { outline: none; border-color: var(--accent-orange); }
+        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--text-muted); }
+
+        /* Contact Form */
+        .form-group { margin-bottom: 14px; }
+        .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: rgba(255,255,255,0.8); }
+        .form-input, .form-textarea, .form-select { width: 100%; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: var(--text-white); font-size: 14px; }
+        .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.3); }
+        .form-input:focus, .form-textarea:focus, .form-select:focus { outline: none; border-color: var(--accent-orange); }
+        .form-textarea { min-height: 100px; resize: vertical; }
+        .form-select { cursor: pointer; appearance: none; }
+        .form-select option { background: var(--header-dark); color: var(--text-white); }
+
+        /* Submit Button */
+        .submit-btn { width: 100%; padding: 14px; background: var(--accent-orange); color: #000; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
+        .submit-btn:hover { background: #e67e22; }
+        .submit-btn:active { transform: scale(0.98); }
+
+        /* Response Promise Badge */
+        .promise-badge { display: flex; align-items: center; gap: 8px; background: rgba(26, 188, 156, 0.1); border: 1px solid rgba(26, 188, 156, 0.2); border-radius: 10px; padding: 10px 14px; margin-top: 14px; }
+        .promise-icon { font-size: 18px; }
+        .promise-text { font-size: 12px; color: var(--color-faq); font-weight: 600; }
+
+        /* Mental Health Cards */
+        .resource-card { background: rgba(0,0,0,0.15); border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+        .resource-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .resource-icon { font-size: 20px; }
+        .resource-name { font-size: 14px; font-weight: 700; }
+        .resource-detail { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        .resource-contact { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 8px 14px; background: rgba(230, 57, 70, 0.1); border-radius: 8px; font-size: 13px; color: var(--color-mental); font-weight: 600; text-decoration: none; }
+
+        /* Emergency Banner */
+        .emergency-banner { background: linear-gradient(135deg, rgba(230, 57, 70, 0.15), rgba(230, 57, 70, 0.05)); border: 1px solid rgba(230, 57, 70, 0.2); border-radius: 12px; padding: 14px; margin-bottom: 16px; text-align: center; }
+        .emergency-title { font-size: 14px; font-weight: 700; color: var(--color-mental); margin-bottom: 4px; }
+        .emergency-text { font-size: 12px; color: var(--text-muted); }
+
+        /* Success Message */
+        .success-msg { display: none; text-align: center; padding: 30px 20px; }
+        .success-msg.show { display: block; }
+        .success-icon { font-size: 48px; margin-bottom: 12px; }
+        .success-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+        .success-text { font-size: 14px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <header class="brand-header">
+            <img src="your-logo.png" alt="LASU GradeTracker" class="brand-logo">
+            <h1 class="brand-title">LASU <span>GradeTracker</span></h1>
+        </header>
+        <main class="content-area">
+            <a href="ochanyas-corner.html" class="back-link">← Back to Corner</a>
+            <div class="page-header">
+                <h2 class="page-title">❓ Help Centre</h2>
+                <p class="page-subtitle">Everything you need to know — and someone to talk to</p>
+            </div>
+
+            <!-- Section 1: FAQ -->
+            <div class="section-card faq-card">
+                <div class="section-header">
+                    <span class="section-icon">📚</span>
+                    <span class="section-title">Frequently Asked Questions</span>
+                </div>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" placeholder="Search questions..." onkeyup="filterFAQ(this.value)">
+                </div>
+                <div id="faq-list">
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>How do I calculate my CGPA using the calculator?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Enter each course with its unit load and the grade you scored. The calculator automatically multiplies grade points by units, sums them up, and divides by total units to give your CGPA. Make sure your total units are between 18–26 for a standard semester.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>What is the LASU grading system?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            LASU uses a 5-point scale: A = 5.0 (70–100%), B = 4.0 (60–69%), C = 3.0 (50–59%), D = 2.0 (45–49%), E = 1.0 (40–44%), F = 0.0 (0–39%). Your CGPA is calculated by dividing total quality points by total units attempted.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Can I save my semester data for later?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Currently, data is saved to your browser's local storage. We're working on account-based saving so you can access your records across devices. For now, you can download your results as Excel, PDF, or Word.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>How does the Grade Predictor work?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Input your current grades and remaining courses. The predictor calculates the best and worst possible CGPA outcomes based on different grade scenarios, helping you set realistic targets.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>What should I do if my calculated CGPA seems wrong?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Double-check that you've entered the correct unit loads and grades. Carryover courses should be included. If the issue persists, use the Bug Report tab in "Your Voice" or contact me directly through the form below.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Is LASU GradeTracker official or affiliated with LASU?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            No — LASU GradeTracker is an independent student-built tool created by Ocheme Faith Ochanya to help fellow Lasuites. It is not officially affiliated with Lagos State University, but all calculations follow LASU's official grading policy.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Talk to Ochanya -->
+            <div class="section-card contact-card">
+                <div class="section-header">
+                    <span class="section-icon">💬</span>
+                    <span class="section-title">Talk to Ochanya</span>
+                </div>
+                <div class="section-desc">Have a question, suggestion, or just want to say hi? I read every message and respond within 24 hours.</div>
+                <form id="contact-form" onsubmit="submitContact(event)">
+                    <div class="form-group">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" class="form-input" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Your Email</label>
+                        <input type="email" class="form-input" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">What is this about?</label>
+                        <select class="form-select">
+                            <option>General Question</option>
+                            <option>Technical Support</option>
+                            <option>Feature Suggestion</option>
+                            <option>Partnership / Collaboration</option>
+                            <option>Just saying thanks!</option>
+                            <option>Something else</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Your Message</label>
+                        <textarea class="form-textarea" placeholder="Write your message here..." required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+                <div class="promise-badge">
+                    <span class="promise-icon">⏱️</span>
+                    <span class="promise-text">I personally respond to every message within 24 hours</span>
+                </div>
+            </div>
+
+            <!-- Success Message -->
+            <div class="success-msg" id="success-msg">
+                <div class="success-icon">✅</div>
+                <div class="success-title">Message Sent!</div>
+                <div class="success-text">Thank you for reaching out. I'll get back to you within 24 hours.</div>
+            </div>
+
+            <!-- Section 3: Mental Health Resources -->
+            <div class="section-card mental-card">
+                <div class="section-header">
+                    <span class="section-icon">🧠</span>
+                    <span class="section-title">Mental Health Resources</span>
+                </div>
+                <div class="section-desc">Your wellbeing matters. If you're struggling, you are not alone. These resources are here for you.</div>
+
+                <div class="emergency-banner">
+                    <div class="emergency-title">🚨 Need Immediate Help?</div>
+                    <div class="emergency-text">If you or someone you know is in crisis, please reach out immediately. Your life matters.</div>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <span class="resource-icon">🏥</span>
+                        <span class="resource-name">LASU Student Health Centre</span>
+                    </div>
+                    <div class="resource-detail">On-campus counseling and medical services for all LASU students. Confidential and free.</div>
+                    <a href="tel:+2340000000000" class="resource-contact">📞 Call Health Centre</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <span class="resource-icon">🎓</span>
+                        <span class="resource-name">LASU Counselling Unit</span>
+                    </div>
+                    <div class="resource-detail">Professional counselors available for academic stress, personal issues, and mental health support.</div>
+                    <a href="tel:+2340000000000" class="resource-contact">📞 Call Counselling Unit</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <span class="resource-icon">📞</span>
+                        <span class="resource-name">Nigeria Suicide Prevention Helpline</span>
+                    </div>
+                    <div class="resource-detail">24/7 confidential support for anyone in emotional distress or crisis.</div>
+                    <a href="tel:08062106493" class="resource-contact">📞 0806 210 6493</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <span class="resource-icon">💚</span>
+                        <span class="resource-name">Mentally Aware Nigeria</span>
+                    </div>
+                    <div class="resource-detail">Mental health advocacy and support organization. Offers counseling referrals and community support.</div>
+                    <a href="tel:08062106493" class="resource-contact">📞 0806 210 6493</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <span class="resource-icon">🤝</span>
+                        <span class="resource-name">Talk to Ochanya (Personal)</span>
+                    </div>
+                    <div class="resource-detail">Sometimes you just need someone who gets it. I'm not a professional counselor, but I'm here to listen and point you to the right help.</div>
+                    <a href="#" class="resource-contact" style="background: rgba(58, 134, 255, 0.1); color: var(--color-contact);">💬 Message Me</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleFAQ(el) {
+            const item = el.parentElement;
+            const wasOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            if (!wasOpen) item.classList.add('open');
+        }
+
+        function filterFAQ(query) {
+            const items = document.querySelectorAll('.faq-item');
+            const lower = query.toLowerCase();
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(lower) ? '' : 'none';
+            });
+        }
+
+        function submitContact(e) {
+            e.preventDefault();
+            document.getElementById('contact-form').style.display = 'none';
+            document.querySelector('.contact-card .section-header').style.display = 'none';
+            document.querySelector('.contact-card .section-desc').style.display = 'none';
+            document.querySelector('.contact-card .promise-badge').style.display = 'none';
+            document.getElementById('success-msg').classList.add('show');
+        }
+    </script>
+</body>
+</html>
