@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ochanya's Corner - About</title>
+    <style>
+        :root {
+            --bg-dark: #12223c;
+            --header-dark: #1a2f4c;
+            --text-white: #ffffff;
+            --text-muted: #9aaaba;
+            --accent-orange: #f39c12;
+            --color-story: #3a86ff;
+            --color-meet: #1abc9c;
+            --color-team: #f1c40f;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #09111e; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: var(--text-white); }
+        .mobile-container { width: 100%; max-width: 412px; background-color: var(--bg-dark); min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-bottom: 30px; }
+        .brand-header { background-color: var(--header-dark); display: flex; align-items: center; padding: 15px 20px; gap: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .brand-logo { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; background: linear-gradient(135deg, #f39c12, #e67e22); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .brand-title { font-size: 22px; font-weight: 700; }
+        .brand-title span { color: var(--accent-orange); }
+        .content-area { padding: 25px 20px; }
+        .back-link { color: var(--accent-orange); text-decoration: none; font-size: 15px; font-weight: 600; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 6px; }
+        .page-header { text-align: center; margin-bottom: 25px; }
+        .page-title { font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+        .page-subtitle { font-size: 14px; color: var(--text-muted); }
+
+        .section-card { background-color: var(--header-dark); border-radius: 16px; padding: 20px; margin-bottom: 16px; border-left: 5px solid transparent; }
+        .section-card.story-card { border-left-color: var(--color-story); }
+        .section-card.meet-card { border-left-color: var(--color-meet); }
+        .section-card.team-card { border-left-color: var(--color-team); }
+
+        .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .section-icon { font-size: 22px; }
+        .section-title { font-size: 16px; font-weight: 700; }
+        .section-text { font-size: 14px; line-height: 1.8; color: rgba(255,255,255,0.85); }
+        .section-text p { margin-bottom: 14px; }
+        .section-text p:last-child { margin-bottom: 0; }
+        .highlight { color: var(--accent-orange); font-weight: 600; }
+
+        .quote-block { background: rgba(243, 156, 18, 0.08); border-left: 3px solid var(--accent-orange); padding: 14px 16px; border-radius: 0 12px 12px 0; margin: 16px 0; }
+        .quote-text { font-size: 14px; font-style: italic; line-height: 1.6; color: rgba(255,255,255,0.9); }
+        .quote-author { font-size: 12px; color: var(--accent-orange); margin-top: 8px; font-weight: 600; }
+
+        .profile-wrap { text-align: center; margin-bottom: 18px; }
+        .profile-photo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent-orange); margin-bottom: 12px; background: linear-gradient(135deg, #1a2f4c, #0d1b2a); display: flex; align-items: center; justify-content: center; font-size: 48px; margin-left: auto; margin-right: auto; }
+        .profile-name { font-size: 20px; font-weight: 700; margin-bottom: 2px; }
+        .profile-role { font-size: 13px; color: var(--accent-orange); font-weight: 600; margin-bottom: 4px; }
+        .profile-dept { font-size: 12px; color: var(--text-muted); }
+
+        .journey-list { list-style: none; }
+        .journey-item { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+        .journey-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-orange); margin-top: 6px; flex-shrink: 0; }
+        .journey-text { font-size: 13px; line-height: 1.7; color: rgba(255,255,255,0.85); }
+
+        .stats-row { display: flex; justify-content: space-around; padding: 16px 0; margin: 16px 0; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .stat-item { text-align: center; }
+        .stat-number { font-size: 22px; font-weight: 800; color: var(--accent-orange); }
+        .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .role-card { background: rgba(0,0,0,0.15); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+        .role-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .role-icon { font-size: 20px; }
+        .role-name { font-size: 15px; font-weight: 700; }
+        .role-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px; }
+        .role-tag { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 4px 10px; border-radius: 8px; }
+        .tag-open { background: rgba(26, 188, 156, 0.15); color: var(--color-meet); }
+        .tag-soon { background: rgba(241, 196, 15, 0.15); color: var(--color-team); }
+
+        .team-cta { text-align: center; padding: 16px; background: rgba(243, 156, 18, 0.08); border-radius: 12px; margin-top: 10px; }
+        .team-cta-text { font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.85); margin-bottom: 12px; }
+        .team-cta-btn { display: inline-block; padding: 12px 24px; background: var(--accent-orange); color: #000; border-radius: 12px; font-size: 14px; font-weight: 700; text-decoration: none; transition: all 0.2s ease; }
+        .team-cta-btn:active { transform: scale(0.98); }
+
+        .footer-note { text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .footer-text { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+        .footer-heart { color: #e63946; }
+
+        .legacy-banner { background: linear-gradient(135deg, rgba(243, 156, 18, 0.12), rgba(58, 134, 255, 0.08)); border: 1px solid rgba(243, 156, 18, 0.15); border-radius: 16px; padding: 18px; text-align: center; margin-bottom: 20px; }
+        .legacy-icon { font-size: 32px; margin-bottom: 8px; }
+        .legacy-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+        .legacy-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <header class="brand-header">
+            <img src="your-logo.png" alt="LASU GradeTracker" class="brand-logo">
+            <h1 class="brand-title">LASU <span>GradeTracker</span></h1>
+        </header>
+        <main class="content-area">
+            <a href="ochanyas-corner.html" class="back-link">← Back to Corner</a>
+            <div class="page-header">
+                <h2 class="page-title">ℹ️ About</h2>
+                <p class="page-subtitle">The story, the face, and the future</p>
+            </div>
+
+            <div class="legacy-banner">
+                <div class="legacy-icon">🌟</div>
+                <div class="legacy-title">More Than a GradeTracker</div>
+                <div class="legacy-text">A community where every Lasuite is equal, free, and unjudged. Built to outlive us all.</div>
+            </div>
+
+            <!-- Section 1: Our Story -->
+            <div class="section-card story-card">
+                <div class="section-header">
+                    <span class="section-icon">📖</span>
+                    <span class="section-title">Our Story</span>
+                </div>
+                <div class="section-text">
+                    <p>LASU GradeTracker wasn't born from a problem I had. It was born from a <span class="highlight">vision</span> — a burning desire to leave something behind that matters. Something that will still be here in 2 years, 5 years, 10 years. Something generations of Lasuites will look back on and be glad existed.</p>
+                    <p>I didn't just wake up with the name. It took months of brain-cracking, of asking myself what I could build that no one has ever done. Something <em>different</em>. Something <em>real</em>. Something that would <span class="highlight">outlive me</span>.</p>
+                    <p>I started building this during my exam period — one of the hardest seasons of my life. I was juggling my writing project, school exams, reading, and my health because I wasn't feeling well. My eyes hurt from staring at screens late into the night and early morning. My body ached. There were moments I questioned everything: <em>"Why are you even doing this? Why don't you just stop?"</em></p>
+                    <p>But I didn't stop. There was a drive inside me — one I couldn't even explain — that wiped out procrastination entirely. I worked through a four-month holiday, pouring every ounce of energy into this. It got so frustrating at times that I had to step away, but I always came back. Because this isn't just a project. It's a <span class="highlight">legacy</span>.</p>
+                    <p>And it's not just about grades. It's about <span class="highlight">community</span>. A space where Lasuites can just <em>be</em> — themselves, free, unjudged. Where you can vent, connect, find study partners, share confessions anonymously, jot down your feelings, and take on weekly challenges. Where academics meet humanity. Where no one is left behind.</p>
+                </div>
+                <div class="quote-block">
+                    <div class="quote-text">"I didn't build this because I had a problem. I built it because I wanted to solve problems I hadn't even seen yet. For people I hadn't even met."</div>
+                    <div class="quote-author">— Ocheme Faith Ochanya</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-number">1</div>
+                        <div class="stat-label">Vision</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Impact</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">♾️</div>
+                        <div class="stat-label">Legacy</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Meet Ocheme Faith Ochanya -->
+            <div class="section-card meet-card">
+                <div class="section-header">
+                    <span class="section-icon">👩‍🔬</span>
+                    <span class="section-title">Meet Ocheme Faith Ochanya</span>
+                </div>
+                <div class="profile-wrap">
+                    <img src="ochanya-photo.jpg" alt="Ocheme Faith Ochanya" class="profile-photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="profile-photo" style="display:none;">👤</div>
+                    <div class="profile-name">Ocheme Faith Ochanya</div>
+                    <div class="profile-role">Founder & Visionary</div>
+                    <div class="profile-dept">LASU Student • Department of Chemistry</div>
+                </div>
+                <div class="section-text">
+                    <p>Hey there! I'm Ochanya — a <span class="highlight">Chemistry student</span> at LASU who believes passion beats major every single time. I don't code because it's my course. I code because I have something to say, something to build, and a community to serve.</p>
+                </div>
+                <ul class="journey-list">
+                    <li class="journey-item">
+                        <div class="journey-dot"></div>
+                        <div class="journey-text"><strong>Born from vision, not necessity.</strong> I didn't have carryovers. I didn't struggle with CGPA calculations. I simply saw a gap — a space where Lasuites needed more than grades. They needed each other.</div>
+                    </li>
+                    <li class="journey-item">
+                        <div class="journey-dot"></div>
+                        <div class="journey-text"><strong>Built through the fire.</strong> Exams. Projects. Illness. Sleepless nights. Eye strain. Body aches. Every doubt whispered at 3 AM. I pushed through because the vision was louder than the pain.</div>
+                    </li>
+                    <li class="journey-item">
+                        <div class="journey-dot"></div>
+                        <div class="journey-text"><strong>A community, not just a calculator.</strong> From the Lounge to the Diary, from Confessions to Study Buddies — every feature was designed so Lasuites can be free, be heard, and be themselves.</div>
+                    </li>
+                    <li class="journey-item">
+                        <div class="journey-dot"></div>
+                        <div class="journey-text"><strong>Still growing.</strong> I'm not a tech expert. I'm a student with a dream. Every late night, every frustrated moment, every "why am I doing this?" — it all led here. And it's only the beginning.</div>
+                    </li>
+                </ul>
+                <div class="quote-block">
+                    <div class="quote-text">"My goal isn't to be the biggest. My goal is to be the most meaningful. For every Lasuite who ever felt unseen, unheard, or unjudged — this is for you."</div>
+                    <div class="quote-author">— My Why</div>
+                </div>
+            </div>
+
+            <!-- Section 3: Join the Team -->
+            <div class="section-card team-card">
+                <div class="section-header">
+                    <span class="section-icon">🤝</span>
+                    <span class="section-title">Join the Team</span>
+                </div>
+                <div class="section-text">
+                    <p>LASU GradeTracker is growing, and I can't do it alone. If you're passionate about helping fellow students and want to be part of something that will outlive us all, I'd love to hear from you.</p>
+                </div>
+
+                <div class="role-card">
+                    <div class="role-header">
+                        <span class="role-icon">✍️</span>
+                        <span class="role-name">Content Moderator</span>
+                    </div>
+                    <div class="role-desc">Help curate blog posts, verify scholarship alerts, and keep the community informed with accurate, timely updates.</div>
+                    <span class="role-tag tag-open">Open Now</span>
+                </div>
+
+                <div class="role-card">
+                    <div class="role-header">
+                        <span class="role-icon">🎨</span>
+                        <span class="role-name">UI/UX Contributor</span>
+                    </div>
+                    <div class="role-desc">Love designing? Help improve the look and feel of GradeTracker. From mobile layouts to new feature interfaces.</div>
+                    <span class="role-tag tag-soon">Opening Soon</span>
+                </div>
+
+                <div class="role-card">
+                    <div class="role-header">
+                        <span class="role-icon">💻</span>
+                        <span class="role-name">Developer / Tester</span>
+                    </div>
+                    <div class="role-desc">Code with me! Build new features, squash bugs, and help make GradeTracker faster and more reliable.</div>
+                    <span class="role-tag tag-soon">Opening Soon</span>
+                </div>
+
+                <div class="role-card">
+                    <div class="role-header">
+                        <span class="role-icon">📢</span>
+                        <span class="role-name">Community Ambassador</span>
+                    </div>
+                    <div class="role-desc">Spread the word across campus, gather feedback from students, and be the voice of the community.</div>
+                    <span class="role-tag tag-open">Open Now</span>
+                </div>
+
+                <div class="team-cta">
+                    <div class="team-cta-text">Think you'd be a great fit? Or have a skill not listed here? I'm always open to passionate people who believe in the vision.</div>
+                    <a href="contact-ochanya.html" class="team-cta-btn">Reach Out to Join</a>
+                </div>
+            </div>
+
+            <div class="footer-note">
+                <div class="footer-text">Built with <span class="footer-heart">❤️</span> for every Lasuite.<br>© 2026 LASU GradeTracker. All rights reserved.</div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
