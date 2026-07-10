@@ -304,7 +304,7 @@
     <div class="container">
         <!-- HEADER matching the image -->
         <header class="brand-header">
-            <a href="index.html" class="back-btn">
+            <a href="calculator.html" class="back-btn">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                 </svg>
@@ -450,7 +450,6 @@
             messageEl.innerHTML = `Total Units: ${totalUnits} | ${classification}`;
             messageEl.className = 'message success';
 
-            // Prediction
             let targetCGPA = 3.5;
             if (gpa >= 4.5) targetCGPA = 4.8;
             else if (gpa >= 3.5) targetCGPA = 4.5;
