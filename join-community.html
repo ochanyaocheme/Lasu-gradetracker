@@ -2,78 +2,261 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Join the Community - LASU GradeTracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
+            --bg-page: #09111e;
             --bg-dark: #12223c;
             --header-dark: #1a2f4c;
+            --card-bg: #1a2a42;
+            --card-border: #2a3a52;
             --text-white: #ffffff;
             --text-muted: #9aaaba;
+            --text-placeholder: #5a6a82;
             --accent-orange: #f39c12;
-            --color-success: #1abc9c;
-            --color-danger: #e63946;
+            --accent-orange-hover: #e08e0b;
+            --input-bg: #0e1a2e;
+            --input-border: #2a3a52;
+            --input-focus: #f39c12;
+            --error-red: #e74c3c;
+            --success-green: #2ecc71;
+            --badge-green: #1abc9c;
+            --badge-circle: #2ecc71;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: #09111e; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: var(--text-white); }
-        .mobile-container { width: 100%; max-width: 412px; background-color: var(--bg-dark); min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-bottom: 30px; }
-        .brand-header { background-color: var(--header-dark); display: flex; align-items: center; padding: 15px 20px; gap: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
-        .brand-logo { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; background: linear-gradient(135deg, #f39c12, #e67e22); display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        .brand-title { font-size: 22px; font-weight: 700; }
-        .brand-title span { color: var(--accent-orange); }
-        .content-area { padding: 25px 20px; }
-        .back-link { color: var(--accent-orange); text-decoration: none; font-size: 15px; font-weight: 600; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 6px; }
 
-        /* Hero */
-        .hero { text-align: center; margin-bottom: 25px; position: relative; }
-        .hero-header { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; }
-        .hero-icon { font-size: 32px; }
-        .hero-title { font-size: 26px; font-weight: 800; color: var(--accent-orange); }
-        .hero-subtitle { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+        }
 
-        /* Light Bulb Button */
-        .bulb-btn {
-            width: 44px;
-            height: 44px;
+        body { 
+            background-color: var(--bg-page); 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            min-height: 100vh; 
+            color: var(--text-white); 
+        }
+
+        .mobile-container { 
+            width: 100%; 
+            max-width: 412px; 
+            background-color: var(--bg-dark); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative;
+        }
+
+        /* ===== HEADER BAR (exactly like 2nd image) ===== */
+        .header-bar {
+            background-color: var(--header-dark);
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            gap: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-back {
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: rgba(243, 156, 18, 0.15);
-            border: 2px solid rgba(243, 156, 18, 0.3);
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: var(--text-white);
+            font-size: 18px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: absolute;
-            right: 0;
-            top: 0;
+            transition: background 0.2s;
+            flex-shrink: 0;
+            text-decoration: none;
         }
-        .bulb-btn:hover { background: rgba(243, 156, 18, 0.25); transform: scale(1.1); }
-        .bulb-btn:active { transform: scale(0.95); }
+
+        .header-back:active { background: rgba(255,255,255,0.15); }
+
+        .header-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .header-brand {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-white);
+            line-height: 1.2;
+        }
+
+        .header-brand .lasu {
+            color: var(--accent-orange);
+        }
+
+        /* Content */
+        .content-area { 
+            padding: 20px 18px 0; 
+            flex: 1;
+        }
+
+        /* Hero */
+        .hero { 
+            text-align: center; 
+            margin-bottom: 24px; 
+            position: relative;
+            padding-top: 4px;
+        }
+
+        .hero-lightbulb {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-orange);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: rgba(243, 156, 18, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .hero-lightbulb:active {
+            transform: scale(0.95);
+            background: rgba(243, 156, 18, 0.2);
+        }
+
+        .hero-icon { 
+            font-size: 40px; 
+            margin-bottom: 8px; 
+            display: block;
+        }
+
+        .hero-title { 
+            font-size: 28px; 
+            font-weight: 800; 
+            margin-bottom: 6px; 
+            letter-spacing: -0.5px;
+            color: var(--accent-orange);
+        }
+
+        .hero-subtitle { 
+            font-size: 15px; 
+            color: var(--text-muted); 
+            line-height: 1.5;
+            max-width: 300px;
+            margin: 0 auto;
+        }
 
         /* Form Card */
-        .form-card { background-color: var(--header-dark); border-radius: 20px; padding: 24px; border: 1px solid rgba(255,255,255,0.05); }
-        .form-group { margin-bottom: 18px; }
-        .form-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-white); }
-        .form-label .required { color: var(--color-danger); }
+        .form-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 24px 20px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-white);
+        }
+
+        .form-label .required {
+            color: var(--error-red);
+            margin-left: 4px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
         .form-input, .form-select {
             width: 100%;
             padding: 14px 16px;
-            background: rgba(0,0,0,0.25);
-            border: 1px solid rgba(255,255,255,0.08);
+            background-color: var(--input-bg);
+            border: 1.5px solid var(--input-border);
             border-radius: 14px;
             color: var(--text-white);
             font-size: 15px;
-            transition: border-color 0.2s ease;
+            font-weight: 500;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+            appearance: none;
+            -webkit-appearance: none;
         }
-        .form-input::placeholder { color: rgba(255,255,255,0.3); }
-        .form-input:focus, .form-select:focus { outline: none; border-color: var(--accent-orange); }
-        .form-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239aaaba' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
-        .form-select option { background: var(--header-dark); color: var(--text-white); }
 
-        /* Password Field */
-        .password-wrap { position: relative; }
-        .password-toggle {
+        .form-input::placeholder {
+            color: var(--text-placeholder);
+            font-weight: 400;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.15);
+        }
+
+        .form-input.error, .form-select.error {
+            border-color: var(--error-red);
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+        }
+
+        .form-select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239aaaba' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .form-select option {
+            background: var(--input-bg);
+            color: var(--text-white);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper .form-input {
+            padding-right: 50px;
+        }
+
+        .toggle-password {
             position: absolute;
             right: 14px;
             top: 50%;
@@ -81,318 +264,688 @@
             background: none;
             border: none;
             color: var(--text-muted);
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Checkbox */
-        .checkbox-wrap { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; }
-        .checkbox-wrap input[type="checkbox"] {
+        .toggle-password:active { color: var(--accent-orange); }
+
+        .error-message {
+            color: var(--error-red);
+            font-size: 13px;
+            margin-top: 6px;
+            display: none;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .error-message.show { display: flex; }
+
+        /* Checkbox / Terms */
+        .terms-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+            margin-top: 4px;
+        }
+
+        .terms-row input[type="checkbox"] {
             width: 20px;
             height: 20px;
             accent-color: var(--accent-orange);
-            margin-top: 2px;
+            cursor: pointer;
             flex-shrink: 0;
+            margin-top: 2px;
         }
-        .checkbox-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
-        .checkbox-text a { color: var(--accent-orange); text-decoration: none; font-weight: 600; }
+
+        .terms-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .terms-text a {
+            color: var(--accent-orange);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .terms-text a:hover {
+            text-decoration: underline;
+        }
 
         /* Submit Button */
-        .submit-btn {
+        .btn-primary {
             width: 100%;
             padding: 16px;
-            background: var(--accent-orange);
-            color: #000;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
             border: none;
             border-radius: 14px;
+            color: var(--text-white);
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.15s, box-shadow 0.2s;
+            margin-bottom: 20px;
+            font-family: inherit;
         }
-        .submit-btn:hover { background: #e67e22; }
-        .submit-btn:active { transform: scale(0.98); }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        .btn-primary.loading .spinner { display: block; }
+        .btn-primary.loading .btn-text { display: none; }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
         /* Divider */
-        .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; }
-        .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
-        .divider-text { font-size: 13px; color: var(--text-muted); }
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
 
-        /* Social Buttons */
-        .social-btn {
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--input-border);
+        }
+
+        /* Social Login */
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn-social {
             width: 100%;
             padding: 14px;
-            background: rgba(0,0,0,0.15);
-            border: 1px solid rgba(255,255,255,0.08);
+            background-color: var(--input-bg);
+            border: 1.5px solid var(--input-border);
             border-radius: 14px;
             color: var(--text-white);
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 10px;
-            text-decoration: none;
+            transition: border-color 0.2s, background-color 0.2s;
+            font-family: inherit;
         }
-        .social-btn:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.15); }
 
-        /* Badge Preview */
-        .badge-preview {
-            background: rgba(0,0,0,0.15);
-            border: 2px solid var(--accent-orange);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            margin: 20px 0;
+        .btn-social:active {
+            background-color: var(--card-bg);
+            border-color: var(--accent-orange);
         }
-        .badge-preview-title { font-size: 14px; font-weight: 700; color: var(--accent-orange); margin-bottom: 12px; }
-        .badge-circle {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 24px;
-            background: var(--color-success);
-            color: #000;
-            border-radius: 24px;
-            font-size: 14px;
-            font-weight: 700;
-            gap: 6px;
+
+        .btn-social .icon {
+            font-size: 20px;
         }
-        .badge-hint { font-size: 12px; color: var(--text-muted); margin-top: 10px; }
 
         /* Login Link */
-        .login-link { text-align: center; margin-top: 16px; font-size: 14px; color: var(--text-muted); }
-        .login-link a { color: var(--accent-orange); text-decoration: none; font-weight: 600; }
+        .login-prompt {
+            text-align: center;
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
 
-        /* Modal */
+        .login-prompt a {
+            color: var(--accent-orange);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .login-prompt a:active { opacity: 0.7; }
+
+        /* Member Badge Preview */
+        .badge-preview {
+            background: linear-gradient(135deg, #1a2a42, #0e1a2e);
+            border: 2px solid var(--accent-orange);
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .badge-preview-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent-orange);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .badge-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--badge-green);
+            color: var(--text-white);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .badge-circle {
+            width: 16px;
+            height: 16px;
+            background: var(--badge-circle);
+            border-radius: 50%;
+            display: inline-block;
+            border: 2px solid #fff;
+            flex-shrink: 0;
+        }
+
+        .badge-preview-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .footer-line1 {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .footer-line2 {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .heart { color: #e74c3c; }
+
+        /* ===== MODAL: WHY JOIN ===== */
         .modal-overlay {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal-overlay.show { display: flex; }
-        .modal-card {
-            background: var(--header-dark);
-            border: 2px solid var(--accent-orange);
-            border-radius: 20px;
-            padding: 24px;
-            max-width: 360px;
-            width: 100%;
-            position: relative;
-        }
-        .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .modal-title { font-size: 20px; font-weight: 700; color: var(--accent-orange); }
-        .modal-close {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.08);
-            border: none;
-            color: var(--text-muted);
-            font-size: 20px;
-            cursor: pointer;
+            background: rgba(9, 17, 30, 0.85);
+            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            padding: 20px;
         }
-        .modal-close:hover { background: rgba(255,255,255,0.15); }
-        .benefit-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
-        .benefit-check { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-        .benefit-text { font-size: 14px; line-height: 1.5; color: rgba(255,255,255,0.85); }
 
-        /* Footer */
-        .join-footer { text-align: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .join-footer-text { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
-        .footer-heart { color: #e63946; }
-        .footer-motto { font-size: 14px; font-weight: 700; color: var(--accent-orange); letter-spacing: 3px; margin-top: 8px; margin-bottom: 4px; }
-        .footer-year { font-size: 12px; color: #64748b; letter-spacing: 2px; }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 2px solid var(--accent-orange);
+            border-radius: 20px;
+            padding: 28px 24px;
+            width: 100%;
+            max-width: 360px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            text-align: center;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 4px;
+        }
+
+        .modal-close:active { color: var(--accent-orange); }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--accent-orange);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .modal-list {
+            list-style: none;
+            text-align: left;
+        }
+
+        .modal-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 14px;
+            color: var(--text-white);
+            line-height: 1.4;
+        }
+
+        .modal-list li:last-child {
+            border-bottom: none;
+        }
+
+        .modal-list .check {
+            color: var(--success-green);
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            z-index: 3000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 90%;
+            width: max-content;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success { border-color: var(--success-green); color: var(--success-green); }
+        .toast.error { border-color: var(--error-red); color: var(--error-red); }
     </style>
 </head>
 <body>
     <div class="mobile-container">
-        <header class="brand-header">
-            <img src="your-logo.png" alt="LASU GradeTracker" class="brand-logo">
-            <h1 class="brand-title">LASU <span>GradeTracker</span></h1>
+        <!-- ===== HEADER BAR (exactly like 2nd image) ===== -->
+        <header class="header-bar">
+            <a href="index.html" class="header-back" aria-label="Go back">&#8592;</a>
+            <div class="header-logo">
+                <img src="your-logo.png" alt="Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='&#127891;';">
+            </div>
+            <div class="header-brand"><span class="lasu">LASU</span> GradeTracker</div>
         </header>
-        <main class="content-area">
-            <a href="index.html" class="back-link">← Back to Home</a>
 
+        <!-- Content -->
+        <div class="content-area">
+            <!-- Hero -->
             <div class="hero">
-                <div class="hero-header">
-                    <span class="hero-icon">🎓</span>
-                    <h2 class="hero-title">Join the Community</h2>
-                    <button class="bulb-btn" onclick="toggleModal()" title="Why Join?">💡</button>
-                </div>
+                <div class="hero-lightbulb" id="whyJoinBtn" title="Why Join?">&#128161;</div>
+                <span class="hero-icon">&#127891;</span>
+                <h1 class="hero-title">Join the Community</h1>
                 <p class="hero-subtitle">Create your account and connect with fellow LASU students</p>
             </div>
 
+            <!-- Form Card -->
             <div class="form-card">
-                <form id="signup-form" onsubmit="handleSignup(event)">
+                <form id="signupForm" novalidate>
                     <div class="form-group">
-                        <label class="form-label">First Name <span class="required">*</span></label>
-                        <input type="text" class="form-input" placeholder="e.g. Ochanya" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Last Name <span class="required">*</span></label>
-                        <input type="text" class="form-input" placeholder="e.g. Adeleke" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Username <span class="required">*</span></label>
-                        <input type="text" class="form-input" placeholder="Choose a unique username" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Email Address <span class="required">*</span></label>
-                        <input type="email" class="form-input" placeholder="yourname@gmail.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Department <span class="required">*</span></label>
-                        <select class="form-select" required>
-                            <option value="" disabled selected>Select your department</option>
-                            <option>Chemistry</option>
-                            <option>Biochemistry</option>
-                            <option>Computer Science</option>
-                            <option>Mathematics</option>
-                            <option>Physics</option>
-                            <option>Microbiology</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Level <span class="required">*</span></label>
-                        <select class="form-select" required>
-                            <option value="" disabled selected>Select level</option>
-                            <option>100 Level</option>
-                            <option>200 Level</option>
-                            <option>300 Level</option>
-                            <option>400 Level</option>
-                            <option>500 Level</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Password <span class="required">*</span></label>
-                        <div class="password-wrap">
-                            <input type="password" class="form-input" id="password" placeholder="Min 8 characters" minlength="8" required>
-                            <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+                        <label class="form-label" for="firstName">First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" name="firstName" class="form-input" placeholder="e.g. Ochanya" autocomplete="given-name" required>
+                        <div class="error-message" id="firstNameError">
+                            <span>&#9888;&#65039;</span> Please enter your first name
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label">Confirm Password <span class="required">*</span></label>
-                        <input type="password" class="form-input" id="confirm-password" placeholder="Re-enter your password" required>
+                        <label class="form-label" for="lastName">Last Name <span class="required">*</span></label>
+                        <input type="text" id="lastName" name="lastName" class="form-input" placeholder="e.g. Ocheme" autocomplete="family-name" required>
+                        <div class="error-message" id="lastNameError">
+                            <span>&#9888;&#65039;</span> Please enter your last name
+                        </div>
                     </div>
 
-                    <div class="checkbox-wrap">
-                        <input type="checkbox" id="agree" required>
-                        <label for="agree" class="checkbox-text">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>, and I confirm that I am a LASU student.</label>
+                    <div class="form-group">
+                        <label class="form-label" for="username">Username <span class="required">*</span></label>
+                        <input type="text" id="username" name="username" class="form-input" placeholder="Choose a unique username" autocomplete="username" required>
+                        <div class="error-message" id="usernameError">
+                            <span>&#9888;&#65039;</span> Please choose a username
+                        </div>
                     </div>
 
-                    <button type="submit" class="submit-btn">Create Account 🚀</button>
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="yourname@gmail.com" autocomplete="email" required>
+                        <div class="error-message" id="emailError">
+                            <span>&#9888;&#65039;</span> Please enter a valid email address
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="department">Department <span class="required">*</span></label>
+                        <select id="department" name="department" class="form-select" required>
+                            <option value="" disabled selected>Select your department</option>
+                            <option value="chemistry">Chemistry</option>
+                            <option value="physics">Physics</option>
+                            <option value="mathematics">Mathematics</option>
+                            <option value="biology">Biology</option>
+                            <option value="computer-science">Computer Science</option>
+                            <option value="engineering">Engineering</option>
+                            <option value="medicine">Medicine</option>
+                            <option value="law">Law</option>
+                            <option value="accounting">Accounting</option>
+                            <option value="economics">Economics</option>
+                            <option value="mass-comm">Mass Communication</option>
+                            <option value="theatre-arts">Theatre Arts</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="error-message" id="departmentError">
+                            <span>&#9888;&#65039;</span> Please select your department
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="level">Level <span class="required">*</span></label>
+                        <select id="level" name="level" class="form-select" required>
+                            <option value="" disabled selected>Select level</option>
+                            <option value="100">100 Level</option>
+                            <option value="200">200 Level</option>
+                            <option value="300">300 Level</option>
+                            <option value="400">400 Level</option>
+                            <option value="500">500 Level</option>
+                        </select>
+                        <div class="error-message" id="levelError">
+                            <span>&#9888;&#65039;</span> Please select your level
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password <span class="required">*</span></label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" class="form-input" placeholder="Min 8 characters" autocomplete="new-password" minlength="8" required>
+                            <button type="button" class="toggle-password" id="togglePassword" aria-label="Toggle password visibility">&#128065;</button>
+                        </div>
+                        <div class="error-message" id="passwordError">
+                            <span>&#9888;&#65039;</span> Password must be at least 8 characters
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="confirmPassword">Confirm Password <span class="required">*</span></label>
+                        <div class="password-wrapper">
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" placeholder="Re-enter your password" autocomplete="new-password" required>
+                            <button type="button" class="toggle-password" id="toggleConfirmPassword" aria-label="Toggle confirm password visibility">&#128065;</button>
+                        </div>
+                        <div class="error-message" id="confirmPasswordError">
+                            <span>&#9888;&#65039;</span> Passwords do not match
+                        </div>
+                    </div>
+
+                    <div class="terms-row">
+                        <input type="checkbox" id="agreeTerms" name="agreeTerms">
+                        <label class="terms-text" for="agreeTerms">
+                            I agree to the <a href="terms-of-service.html">Terms of Service</a> and <a href="privacy-policy.html">Privacy Policy</a>, and I confirm that I am a LASU student.
+                        </label>
+                    </div>
+                    <div class="error-message" id="termsError">
+                        <span>&#9888;&#65039;</span> You must agree to the terms to continue
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="signupBtn">
+                        <span class="spinner"></span>
+                        <span class="btn-text">Create Account &#128640;</span>
+                    </button>
                 </form>
 
-                <div class="divider">
-                    <div class="divider-line"></div>
-                    <span class="divider-text">or sign up with</span>
-                    <div class="divider-line"></div>
+                <div class="divider">or sign up with</div>
+
+                <div class="social-login">
+                    <button class="btn-social" id="googleSignup">
+                        <span class="icon">&#128269;</span> Google
+                    </button>
+                    <button class="btn-social" id="microsoftSignup">
+                        <span class="icon">&#128311;</span> Microsoft
+                    </button>
                 </div>
 
-                <a href="#" class="social-btn">🔍 Google</a>
-                <a href="#" class="social-btn">🔣 Microsoft</a>
+                <div class="login-prompt">
+                    Already have an account? <a href="login.html">Log in</a>
+                </div>
 
+                <!-- Member Badge Preview -->
                 <div class="badge-preview">
-                    <div class="badge-preview-title">🏅 Member Badge Preview</div>
-                    <div class="badge-circle">🟢 Member</div>
-                    <div class="badge-hint">You'll get this badge on your profile!</div>
+                    <div class="badge-preview-title">
+                        <span>&#127941;</span> Member Badge Preview
+                    </div>
+                    <div class="badge-chip">
+                        <span class="badge-circle"></span> Member
+                    </div>
+                    <div class="badge-preview-text">You'll get this badge on your profile!</div>
                 </div>
-
-                <div class="login-link">Already have an account? <a href="#">Log in</a></div>
             </div>
+        </div>
 
-            <!-- Footer -->
-            <div class="join-footer">
-                <div class="join-footer-text">
-                    Built with <span class="footer-heart">❤️</span> by Ocheme Faith Ochanya • Chemistry<br>
-                    © 2026 LASU GradeTracker. All rights reserved.
-                </div>
-                <div class="footer-motto">CONNECT • LEARN • SUCCEED</div>
-                <div class="footer-year">Est. 2026</div>
-            </div>
-        </main>
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-line1">Built with <span class="heart">&#10084;&#65039;</span> by Ocheme Faith Ochanya &#8226; Chemistry</div>
+            <div class="footer-line2">&copy; 2026 LASU GradeTracker. All rights reserved.</div>
+        </footer>
     </div>
 
-    <!-- Why Join Modal -->
-    <div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <span class="modal-title">🌟 Why Join?</span>
-                <button class="modal-close" onclick="toggleModal()">✕</button>
+    <!-- ===== WHY JOIN MODAL ===== -->
+    <div class="modal-overlay" id="whyJoinModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeWhyJoin">&#10005;</button>
+            <div class="modal-title">
+                <span>&#127775;</span> Why Join?
             </div>
-            <div class="benefit-item">
-                <span class="benefit-check">✅</span>
-                <span class="benefit-text">Post in the LASU Lounge & Course Corners</span>
-            </div>
-            <div class="benefit-item">
-                <span class="benefit-check">✅</span>
-                <span class="benefit-text">Find Study Buddies by course & level</span>
-            </div>
-            <div class="benefit-item">
-                <span class="benefit-check">✅</span>
-                <span class="benefit-text">Write in your private Diary (The Locker)</span>
-            </div>
-            <div class="benefit-item">
-                <span class="benefit-check">✅</span>
-                <span class="benefit-text">Submit entries for Weekly Challenges</span>
-            </div>
-            <div class="benefit-item">
-                <span class="benefit-check">✅</span>
-                <span class="benefit-text">Vote and react to posts & confessions</span>
-            </div>
-            <div class="benefit-item">
-                <span class="benefit-check">✅</span>
-                <span class="benefit-text">Get a Member badge on your profile</span>
-            </div>
-            <div class="benefit-item">
-                <span class="benefit-check">✅</span>
-                <span class="benefit-text">Save/bookmark posts for later</span>
-            </div>
-            <div class="benefit-item">
-                <span class="benefit-check">✅</span>
-                <span class="benefit-text">Receive notifications on replies & reactions</span>
-            </div>
+            <ul class="modal-list">
+                <li><span class="check">&#9989;</span> Post in the LASU Lounge & Course Corners</li>
+                <li><span class="check">&#9989;</span> Find Study Buddies by course & level</li>
+                <li><span class="check">&#9989;</span> Write in your private Diary (The Locker)</li>
+                <li><span class="check">&#9989;</span> Submit entries for Weekly Challenges</li>
+                <li><span class="check">&#9989;</span> Vote and react to posts & confessions</li>
+                <li><span class="check">&#9989;</span> Get a Member badge on your profile</li>
+                <li><span class="check">&#9989;</span> Save/bookmark posts for later</li>
+                <li><span class="check">&#9989;</span> Receive notifications on replies & reactions</li>
+            </ul>
         </div>
     </div>
 
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span id="toastIcon">&#9989;</span>
+        <span id="toastMessage">Message</span>
+    </div>
+
     <script>
-        function toggleModal() {
-            document.getElementById('modal').classList.toggle('show');
+        // ===== DOM Elements =====
+        const signupForm = document.getElementById('signupForm');
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
+        const departmentInput = document.getElementById('department');
+        const levelInput = document.getElementById('level');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const togglePassword = document.getElementById('togglePassword');
+        const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+        const agreeTerms = document.getElementById('agreeTerms');
+        const signupBtn = document.getElementById('signupBtn');
+        const toast = document.getElementById('toast');
+        const toastIcon = document.getElementById('toastIcon');
+        const toastMessage = document.getElementById('toastMessage');
+
+        // Modals
+        const whyJoinModal = document.getElementById('whyJoinModal');
+        const whyJoinBtn = document.getElementById('whyJoinBtn');
+        const closeWhyJoin = document.getElementById('closeWhyJoin');
+
+        // Social
+        const googleSignup = document.getElementById('googleSignup');
+        const microsoftSignup = document.getElementById('microsoftSignup');
+
+        // ===== TOAST =====
+        function showToast(message, type) {
+            toastIcon.innerHTML = type === 'success' ? '&#9989;' : '&#10060;';
+            toastMessage.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            setTimeout(function() { toast.classList.remove('show'); }, 3000);
         }
-        function closeModalOutside(e) {
-            if (e.target === document.getElementById('modal')) toggleModal();
+
+        // ===== PASSWORD TOGGLES =====
+        togglePassword.addEventListener('click', function() {
+            var isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            togglePassword.innerHTML = isPassword ? '&#128584;' : '&#128065;';
+        });
+
+        toggleConfirmPassword.addEventListener('click', function() {
+            var isPassword = confirmPasswordInput.type === 'password';
+            confirmPasswordInput.type = isPassword ? 'text' : 'password';
+            toggleConfirmPassword.innerHTML = isPassword ? '&#128584;' : '&#128065;';
+        });
+
+        // ===== WHY JOIN MODAL =====
+        function openModal(modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
-        function togglePassword() {
-            const pw = document.getElementById('password');
-            pw.type = pw.type === 'password' ? 'text' : 'password';
+
+        function closeModal(modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
         }
-        function handleSignup(e) {
+
+        whyJoinBtn.addEventListener('click', function() { openModal(whyJoinModal); });
+        closeWhyJoin.addEventListener('click', function() { closeModal(whyJoinModal); });
+        whyJoinModal.addEventListener('click', function(e) { if (e.target === whyJoinModal) closeModal(whyJoinModal); });
+
+        // ===== VALIDATION =====
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.form-input, .form-select').forEach(function(el) { el.classList.remove('error'); });
+            document.querySelectorAll('.error-message').forEach(function(el) { el.classList.remove('show'); });
+        }
+
+        // ===== FORM SUBMIT =====
+        signupForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            const pw = document.getElementById('password').value;
-            const cpw = document.getElementById('confirm-password').value;
-            if (pw !== cpw) {
-                alert('Passwords do not match!');
-                return;
-            }
-            alert('Account created! Welcome to the community 🎉');
-        }
+            clearErrors();
+            var hasError = false;
+
+            if (!firstNameInput.value.trim()) { firstNameInput.classList.add('error'); document.getElementById('firstNameError').classList.add('show'); hasError = true; }
+            if (!lastNameInput.value.trim()) { lastNameInput.classList.add('error'); document.getElementById('lastNameError').classList.add('show'); hasError = true; }
+            if (!usernameInput.value.trim()) { usernameInput.classList.add('error'); document.getElementById('usernameError').classList.add('show'); hasError = true; }
+            if (!emailInput.value.trim() || !isValidEmail(emailInput.value.trim())) { emailInput.classList.add('error'); document.getElementById('emailError').classList.add('show'); hasError = true; }
+            if (!departmentInput.value) { departmentInput.classList.add('error'); document.getElementById('departmentError').classList.add('show'); hasError = true; }
+            if (!levelInput.value) { levelInput.classList.add('error'); document.getElementById('levelError').classList.add('show'); hasError = true; }
+            if (!passwordInput.value || passwordInput.value.length < 8) { passwordInput.classList.add('error'); document.getElementById('passwordError').classList.add('show'); hasError = true; }
+            if (confirmPasswordInput.value !== passwordInput.value) { confirmPasswordInput.classList.add('error'); document.getElementById('confirmPasswordError').classList.add('show'); hasError = true; }
+            if (!agreeTerms.checked) { document.getElementById('termsError').classList.add('show'); hasError = true; }
+
+            if (hasError) return;
+
+            signupBtn.classList.add('loading');
+            signupBtn.disabled = true;
+
+            setTimeout(function() {
+                signupBtn.classList.remove('loading');
+                signupBtn.disabled = false;
+                showToast('Account created! Redirecting...', 'success');
+                setTimeout(function() { window.location.href = 'dashboard.html'; }, 1500);
+            }, 2000);
+        });
+
+        // ===== SOCIAL SIGNUP =====
+        googleSignup.addEventListener('click', function() {
+            showToast('Google sign-in: Account picker will open...', 'success');
+        });
+
+        microsoftSignup.addEventListener('click', function() {
+            showToast('Microsoft sign-in: Account picker will open...', 'success');
+        });
+
+        // Clear errors on input
+        document.querySelectorAll('.form-input, .form-select').forEach(function(input) {
+            input.addEventListener('input', function() {
+                input.classList.remove('error');
+                var errorEl = document.getElementById(input.id + 'Error');
+                if (errorEl) errorEl.classList.remove('show');
+            });
+        });
+
+        agreeTerms.addEventListener('change', function() {
+            document.getElementById('termsError').classList.remove('show');
+        });
     </script>
 </body>
 </html>
