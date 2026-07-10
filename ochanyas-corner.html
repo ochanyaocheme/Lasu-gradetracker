@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LASU GradeTracker - Ochanya's Corner</title>
+    <title>Ochanya's Corner</title>
     <style>
         :root {
             --bg-dark: #12223c;
@@ -11,260 +11,119 @@
             --text-white: #ffffff;
             --text-muted: #9aaaba;
             --accent-orange: #f39c12;
-            
-            /* Section Button Colors */
             --color-blog: #1abc9c;
-            --color-voice: #f1c40f;
-            --color-help: #e74c3c;
-            --color-contact: #9b59b6;
-            --color-about: #e91e63;
+            --color-voice: #3a86ff;
+            --color-help: #e63946;
+            --color-contact: #f1c40f;
+            --color-about: #9b59b6;
         }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #09111e; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: var(--text-white); }
+        .mobile-container { width: 100%; max-width: 412px; background-color: var(--bg-dark); min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-bottom: 30px; }
+        .brand-header { background-color: var(--header-dark); display: flex; align-items: center; padding: 15px 20px; gap: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .brand-logo { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; background: linear-gradient(135deg, #f39c12, #e67e22); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .brand-title { font-size: 22px; font-weight: 700; }
+        .brand-title span { color: var(--accent-orange); }
+        .content-area { padding: 25px 20px; }
+        .back-link { color: var(--accent-orange); text-decoration: none; font-size: 15px; font-weight: 600; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 6px; }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+        .hero { text-align: center; margin-bottom: 28px; }
+        .hero-icon { font-size: 48px; margin-bottom: 10px; }
+        .hero-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+        .hero-title span { color: var(--accent-orange); }
+        .hero-subtitle { font-size: 14px; color: var(--text-muted); line-height: 1.5; max-width: 320px; margin: 0 auto; }
 
-        body {
-            background-color: #09111e;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            color: var(--text-white);
-        }
+        .section-grid { display: flex; flex-direction: column; gap: 14px; }
+        .section-tile { background-color: var(--header-dark); border-radius: 16px; padding: 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: var(--text-white); border-left: 5px solid transparent; transition: transform 0.1s ease; }
+        .section-tile:active { transform: scale(0.98); }
+        .tile-blog { border-left-color: var(--color-blog); }
+        .tile-voice { border-left-color: var(--color-voice); }
+        .tile-help { border-left-color: var(--color-help); }
+        .tile-contact { border-left-color: var(--color-contact); }
+        .tile-about { border-left-color: var(--color-about); }
 
-        /* Mobile Container Layout */
-        .mobile-container {
-            width: 100%;
-            max-width: 412px;
-            background-color: var(--bg-dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            padding-bottom: 30px;
-        }
+        .tile-icon-wrap { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+        .tile-blog .tile-icon-wrap { background: rgba(26, 188, 156, 0.15); }
+        .tile-voice .tile-icon-wrap { background: rgba(58, 134, 255, 0.15); }
+        .tile-help .tile-icon-wrap { background: rgba(230, 57, 70, 0.15); }
+        .tile-contact .tile-icon-wrap { background: rgba(241, 196, 15, 0.15); }
+        .tile-about .tile-icon-wrap { background: rgba(155, 89, 182, 0.15); }
 
-        /* Top Brand Header */
-        .brand-header {
-            background-color: var(--header-dark);
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            gap: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+        .tile-info { flex: 1; }
+        .tile-title { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+        .tile-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+        .tile-arrow { font-size: 18px; color: var(--text-muted); }
 
-        .brand-logo {
-            width: 45px;
-            height: 45px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
-        .brand-title {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .brand-title span {
-            color: var(--accent-orange);
-        }
-
-        /* Main Screen Content */
-        .content-area {
-            padding: 25px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Back Navigation Link */
-        .back-link {
-            color: var(--accent-orange);
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Section Banner Title */
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .section-icon {
-            font-size: 26px;
-        }
-
-        .section-title {
-            color: var(--accent-orange);
-            font-size: 26px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .section-subtitle {
-            color: var(--text-muted);
-            font-size: 15px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        /* Navigation Menu Blocks */
-        .menu-list {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .menu-card {
-            width: 100%;
-            border-radius: 18px;
-            padding: 18px 20px;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: var(--text-white);
-            transition: transform 0.1s ease, filter 0.2s ease;
-            cursor: pointer;
-        }
-
-        .menu-card:active {
-            transform: scale(0.98);
-            filter: brightness(0.9);
-        }
-
-        .menu-card-icon {
-            font-size: 30px;
-            margin-right: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .menu-card-details {
-            flex-grow: 1;
-        }
-
-        .menu-card-title {
-            font-size: 19px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .menu-card-subtitle {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .menu-card-arrow {
-            width: 30px;
-            height: 30px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        /* Block Background Colors */
-        .bg-blog { background-color: var(--color-blog); }
-        .bg-voice { background-color: var(--color-voice); }
-        .bg-help { background-color: var(--color-help); }
-        .bg-contact { background-color: var(--color-contact); }
-        .bg-about { background-color: var(--color-about); }
-
+        .corner-footer { text-align: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .corner-footer-text { font-size: 12px; color: var(--text-muted); }
     </style>
 </head>
 <body>
-
     <div class="mobile-container">
-        <!-- Top App Navigation Header -->
         <header class="brand-header">
             <img src="your-logo.png" alt="LASU GradeTracker" class="brand-logo">
             <h1 class="brand-title">LASU <span>GradeTracker</span></h1>
         </header>
-
-        <!-- Main Screen Body Area -->
         <main class="content-area">
             <a href="index.html" class="back-link">← Back to Home</a>
-            
-            <div class="section-header">
-                <span class="section-icon">💬</span>
-                <h2 class="section-title">Ochanya's Corner</h2>
+
+            <div class="hero">
+                <div class="hero-icon">🏠</div>
+                <h2 class="hero-title">Ochanya's <span>Corner</span></h2>
+                <p class="hero-subtitle">A space built with heart. News, feedback, help, and the story behind it all.</p>
             </div>
-            <p class="section-subtitle">Choose a section to explore</p>
 
-            <!-- Navigation Block List -->
-            <div class="menu-list">
-                
-                <!-- 1. My Blog -->
-                <a href="blog.html" class="menu-card bg-blog">
-                    <div class="menu-card-icon">📝</div>
-                    <div class="menu-card-details">
-                        <h3 class="menu-card-title">My Blog</h3>
-                        <p class="menu-card-subtitle">Founder's voice, news & stories</p>
+            <div class="section-grid">
+                <a href="my-blog.html" class="section-tile tile-blog">
+                    <div class="tile-icon-wrap">📝</div>
+                    <div class="tile-info">
+                        <div class="tile-title">My Blog</div>
+                        <div class="tile-desc">LASU News, spotlights, scholarships, job alerts & personal stories</div>
                     </div>
-                    <div class="menu-card-arrow">❯</div>
+                    <div class="tile-arrow">❯</div>
                 </a>
 
-                <!-- 2. Your Voice -->
-                <a href="your-voice.html" class="menu-card bg-voice">
-                    <div class="menu-card-icon">📢</div>
-                    <div class="menu-card-details">
-                        <h3 class="menu-card-title">Your Voice</h3>
-                        <p class="menu-card-subtitle">Feedback hub & feature requests</p>
+                <a href="your-voice.html" class="section-tile tile-voice">
+                    <div class="tile-icon-wrap">📢</div>
+                    <div class="tile-info">
+                        <div class="tile-title">Your Voice</div>
+                        <div class="tile-desc">Rate tools, write reviews, request features & report bugs</div>
                     </div>
-                    <div class="menu-card-arrow">❯</div>
+                    <div class="tile-arrow">❯</div>
                 </a>
 
-                <!-- 3. Help Centre -->
-                <a href="help-centre.html" class="menu-card bg-help">
-                    <div class="menu-card-icon">❓</div>
-                    <div class="menu-card-details">
-                        <h3 class="menu-card-title">Help Centre</h3>
-                        <p class="menu-card-subtitle">FAQs & counseling resources</p>
+                <a href="help-centre.html" class="section-tile tile-help">
+                    <div class="tile-icon-wrap">❓</div>
+                    <div class="tile-info">
+                        <div class="tile-title">Help Centre</div>
+                        <div class="tile-desc">FAQs, talk to Ochanya & mental health resources</div>
                     </div>
-                    <div class="menu-card-arrow">❯</div>
+                    <div class="tile-arrow">❯</div>
                 </a>
 
-                <!-- 4. Contact Ochanya -->
-                <a href="contact-ochanya.html" class="menu-card bg-contact">
-                    <div class="menu-card-icon">📞</div>
-                    <div class="menu-card-details">
-                        <h3 class="menu-card-title">Contact Ochanya</h3>
-                        <p class="menu-card-subtitle">Direct support & instant lines</p>
+                <a href="contact-ochanya.html" class="section-tile tile-contact">
+                    <div class="tile-icon-wrap">📞</div>
+                    <div class="tile-info">
+                        <div class="tile-title">Contact Ochanya</div>
+                        <div class="tile-desc">Email, WhatsApp, call lines & anonymous drop box</div>
                     </div>
-                    <div class="menu-card-arrow">❯</div>
+                    <div class="tile-arrow">❯</div>
                 </a>
 
-                <!-- 5. About -->
-                <a href="about.html" class="menu-card bg-about">
-                    <div class="menu-card-icon">ℹ️</div>
-                    <div class="menu-card-details">
-                        <h3 class="menu-card-title">About</h3>
-                        <p class="menu-card-subtitle">Meet Ochanya & our story</p>
+                <a href="about.html" class="section-tile tile-about">
+                    <div class="tile-icon-wrap">ℹ️</div>
+                    <div class="tile-info">
+                        <div class="tile-title">About</div>
+                        <div class="tile-desc">Our story, meet the founder & join the team</div>
                     </div>
-                    <div class="menu-card-arrow">❯</div>
+                    <div class="tile-arrow">❯</div>
                 </a>
+            </div>
 
+            <div class="corner-footer">
+                <div class="corner-footer-text">Built with ❤️ by Ocheme Faith Ochanya</div>
             </div>
         </main>
     </div>
-
 </body>
 </html>
