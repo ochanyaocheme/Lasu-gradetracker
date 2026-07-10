@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Log In - LASU GradeTracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #09111e;
+            --bg-dark: #12223c;
+            --header-dark: #1a2f4c;
+            --card-bg: #1a2a42;
+            --card-border: #2a3a52;
+            --text-white: #ffffff;
+            --text-muted: #9aaaba;
+            --text-placeholder: #5a6a82;
+            --accent-orange: #f39c12;
+            --input-bg: #0e1a2e;
+            --input-border: #2a3a52;
+            --error-red: #e74c3c;
+            --success-green: #2ecc71;
+            --badge-green: #1abc9c;
+            --badge-circle: #2ecc71;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body { 
+            background-color: var(--bg-page); 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            min-height: 100vh; 
+            color: var(--text-white); 
+        }
+
+        .mobile-container { 
+            width: 100%; 
+            max-width: 412px; 
+            background-color: var(--bg-dark); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative;
+        }
+
+        /* ===== HEADER BAR ===== */
+        .header-bar {
+            background-color: var(--header-dark);
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            gap: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-back {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: var(--text-white);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+
+        .header-back:active { background: rgba(255,255,255,0.15); }
+
+        .header-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .header-brand {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-white);
+            line-height: 1.2;
+        }
+
+        .header-brand .lasu {
+            color: var(--accent-orange);
+        }
+
+        /* Content */
+        .content-area { 
+            padding: 20px 18px 0; 
+            flex: 1;
+        }
+
+        /* Hero */
+        .hero { 
+            text-align: center; 
+            margin-bottom: 24px; 
+            position: relative;
+            padding-top: 4px;
+        }
+
+        .hero-icon { 
+            font-size: 46px; 
+            margin-bottom: 8px; 
+            display: block;
+        }
+
+        .hero-title { 
+            font-size: 28px; 
+            font-weight: 800; 
+            margin-bottom: 6px; 
+            letter-spacing: -0.5px;
+        }
+
+        .hero-title span { 
+            color: var(--accent-orange); 
+        }
+
+        .hero-subtitle { 
+            font-size: 15px; 
+            color: var(--text-muted); 
+            line-height: 1.5;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 24px 20px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-white);
+        }
+
+        .form-label .required {
+            color: var(--error-red);
+            margin-left: 4px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background-color: var(--input-bg);
+            border: 1.5px solid var(--input-border);
+            border-radius: 14px;
+            color: var(--text-white);
+            font-size: 15px;
+            font-weight: 500;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+
+        .form-input::placeholder {
+            color: var(--text-placeholder);
+            font-weight: 400;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.15);
+        }
+
+        .form-input.error {
+            border-color: var(--error-red);
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper .form-input {
+            padding-right: 50px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-password:active { color: var(--accent-orange); }
+
+        .error-message {
+            color: var(--error-red);
+            font-size: 13px;
+            margin-top: 6px;
+            display: none;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .error-message.show { display: flex; }
+
+        /* Options Row */
+        .options-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            margin-top: -4px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-orange);
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            color: var(--accent-orange);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .forgot-password:active { opacity: 0.7; }
+
+        /* Submit Button */
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            border: none;
+            border-radius: 14px;
+            color: var(--text-white);
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.15s, box-shadow 0.2s;
+            margin-bottom: 20px;
+            font-family: inherit;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        .btn-primary.loading .spinner { display: block; }
+        .btn-primary.loading .btn-text { display: none; }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--input-border);
+        }
+
+        /* Social Login */
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn-social {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--input-bg);
+            border: 1.5px solid var(--input-border);
+            border-radius: 14px;
+            color: var(--text-white);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: border-color 0.2s, background-color 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-social:active {
+            background-color: var(--card-bg);
+            border-color: var(--accent-orange);
+        }
+
+        .btn-social .icon {
+            font-size: 20px;
+        }
+
+        /* Sign Up Link */
+        .signup-prompt {
+            text-align: center;
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            padding: 8px 0;
+        }
+
+        .signup-prompt a {
+            color: var(--accent-orange);
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .signup-prompt a:active { 
+            opacity: 0.7; 
+            background: rgba(243, 156, 18, 0.1);
+        }
+
+        /* Member Badge Preview */
+        .badge-preview {
+            background: linear-gradient(135deg, #1a2a42, #0e1a2e);
+            border: 2px solid var(--accent-orange);
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .badge-preview-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent-orange);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .badge-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--badge-green);
+            color: var(--text-white);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .badge-circle {
+            width: 16px;
+            height: 16px;
+            background: var(--badge-circle);
+            border-radius: 50%;
+            display: inline-block;
+            border: 2px solid #fff;
+            flex-shrink: 0;
+        }
+
+        .badge-preview-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .footer-line1 {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .footer-line2 {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .heart { color: #e74c3c; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            z-index: 3000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 90%;
+            width: max-content;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success { border-color: var(--success-green); color: var(--success-green); }
+        .toast.error { border-color: var(--error-red); color: var(--error-red); }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Header -->
+        <header class="header-bar">
+            <a href="index.html" class="header-back" aria-label="Go back">&#8592;</a>
+            <div class="header-logo">
+                <img src="your-logo.png" alt="Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='&#127891;';">
+            </div>
+            <div class="header-brand"><span class="lasu">LASU</span> GradeTracker</div>
+        </header>
+
+        <!-- Content -->
+        <div class="content-area">
+            <!-- Hero -->
+            <div class="hero">
+                <span class="hero-icon">&#128274;</span>
+                <h1 class="hero-title">Welcome <span>Back</span></h1>
+                <p class="hero-subtitle">Log in to access your grades, connect with study buddies, and more.</p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="form-card">
+                <form id="loginForm" novalidate>
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="yourname@gmail.com" autocomplete="email" required>
+                        <div class="error-message" id="emailError">
+                            <span>&#9888;&#65039;</span> Please enter a valid email address
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password <span class="required">*</span></label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" autocomplete="current-password" required>
+                            <button type="button" class="toggle-password" id="togglePassword" aria-label="Toggle password visibility">&#128065;</button>
+                        </div>
+                        <div class="error-message" id="passwordError">
+                            <span>&#9888;&#65039;</span> Please enter your password
+                        </div>
+                    </div>
+
+                    <div class="options-row">
+                        <label class="remember-me">
+                            <input type="checkbox" id="rememberMe" name="rememberMe">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password" id="forgotPassword">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="loginBtn">
+                        <span class="spinner"></span>
+                        <span class="btn-text">Log In &#128640;</span>
+                    </button>
+                </form>
+
+                <div class="divider">or log in with</div>
+
+                <div class="social-login">
+                    <button class="btn-social" id="googleLogin">
+                        <span class="icon">&#128269;</span> Google
+                    </button>
+                    <button class="btn-social" id="microsoftLogin">
+                        <span class="icon">&#128311;</span> Microsoft
+                    </button>
+                </div>
+
+                <div class="signup-prompt">
+                    Don't have an account? <a href="join-community.html" id="createAccountLink">Create Account</a>
+                </div>
+
+                <!-- Member Badge Preview -->
+                <div class="badge-preview">
+                    <div class="badge-preview-title">
+                        <span>&#127941;</span> Member Badge Preview
+                    </div>
+                    <div class="badge-chip">
+                        <span class="badge-circle"></span> Member
+                    </div>
+                    <div class="badge-preview-text">Log in to see your badge on your profile!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-line1">Built with <span class="heart">&#10084;&#65039;</span> by Oscheme Faith Ochanya &#8226; Chemistry</div>
+            <div class="footer-line2">&copy; 2026 LASU GradeTracker. All rights reserved.</div>
+        </footer>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span id="toastIcon">&#9989;</span>
+        <span id="toastMessage">Message</span>
+    </div>
+
+    <script>
+        // DOM Elements
+        var loginForm = document.getElementById('loginForm');
+        var emailInput = document.getElementById('email');
+        var passwordInput = document.getElementById('password');
+        var togglePassword = document.getElementById('togglePassword');
+        var loginBtn = document.getElementById('loginBtn');
+        var emailError = document.getElementById('emailError');
+        var passwordError = document.getElementById('passwordError');
+        var forgotPassword = document.getElementById('forgotPassword');
+        var googleLogin = document.getElementById('googleLogin');
+        var microsoftLogin = document.getElementById('microsoftLogin');
+        var toast = document.getElementById('toast');
+        var toastIcon = document.getElementById('toastIcon');
+        var toastMessage = document.getElementById('toastMessage');
+
+        // Toggle Password
+        togglePassword.addEventListener('click', function() {
+            var isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            togglePassword.innerHTML = isPassword ? '&#128584;' : '&#128065;';
+        });
+
+        // Show Toast
+        function showToast(message, type) {
+            toastIcon.innerHTML = type === 'success' ? '&#9989;' : '&#10060;';
+            toastMessage.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            setTimeout(function() { toast.classList.remove('show'); }, 3000);
+        }
+
+        // Validate Email
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Clear Errors
+        function clearErrors() {
+            emailInput.classList.remove('error');
+            passwordInput.classList.remove('error');
+            emailError.classList.remove('show');
+            passwordError.classList.remove('show');
+        }
+
+        // Form Submit
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearErrors();
+
+            var email = emailInput.value.trim();
+            var password = passwordInput.value;
+            var hasError = false;
+
+            if (!email || !isValidEmail(email)) {
+                emailInput.classList.add('error');
+                emailError.classList.add('show');
+                hasError = true;
+            }
+
+            if (!password) {
+                passwordInput.classList.add('error');
+                passwordError.classList.add('show');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            loginBtn.classList.add('loading');
+            loginBtn.disabled = true;
+
+            setTimeout(function() {
+                loginBtn.classList.remove('loading');
+                loginBtn.disabled = false;
+                showToast('Welcome back! Redirecting...', 'success');
+
+                var rememberMe = document.getElementById('rememberMe').checked;
+                if (rememberMe) {
+                    localStorage.setItem('lasu_remember_email', email);
+                } else {
+                    localStorage.removeItem('lasu_remember_email');
+                }
+
+                setTimeout(function() {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            }, 2000);
+        });
+
+        // ===== FORGOT PASSWORD (Firebase Auth Flow) =====
+        // When user clicks "Forgot password?":
+        // 1. If email is empty/invalid -> show error on email field
+        // 2. If email is valid -> send Firebase password reset email
+        // 3. Show success toast: "Check your email for reset link"
+        // 4. User receives email with link to reset password page
+        // 5. User clicks link -> enters new password -> redirected to login
+
+        forgotPassword.addEventListener('click', function(e) {
+            e.preventDefault();
+            var email = emailInput.value.trim();
+
+            // Step 1: Validate email first
+            if (!email || !isValidEmail(email)) {
+                emailInput.classList.add('error');
+                emailError.innerHTML = '<span>&#9888;&#65039;</span> Please enter your email address first';
+                emailError.classList.add('show');
+                emailInput.focus();
+                return;
+            }
+
+            // Clear any previous errors
+            emailInput.classList.remove('error');
+            emailError.classList.remove('show');
+
+            // Step 2: Show loading state on the link
+            var originalText = forgotPassword.textContent;
+            forgotPassword.textContent = 'Sending...';
+            forgotPassword.style.pointerEvents = 'none';
+            forgotPassword.style.opacity = '0.6';
+
+            // Step 3: Simulate Firebase sendPasswordResetEmail()
+            // In production, this would be:
+            // firebase.auth().sendPasswordResetEmail(email)
+            //   .then(() => { /* success */ })
+            //   .catch((error) => { /* handle error */ });
+
+            setTimeout(function() {
+                // Reset link text
+                forgotPassword.textContent = originalText;
+                forgotPassword.style.pointerEvents = '';
+                forgotPassword.style.opacity = '';
+
+                // Show success message
+                showToast('Check your email for a password reset link!', 'success');
+
+                // Optional: Show additional info toast after a delay
+                setTimeout(function() {
+                    showToast('Link expires in 1 hour. Check spam folder too.', 'success');
+                }, 3500);
+
+            }, 2000);
+        });
+
+        // Social Login
+        googleLogin.addEventListener('click', function() {
+            showToast('Google sign-in coming soon!', 'success');
+        });
+
+        microsoftLogin.addEventListener('click', function() {
+            showToast('Microsoft sign-in coming soon!', 'success');
+        });
+
+        // Create Account Link - ensure navigation works
+        var createAccountLink = document.getElementById('createAccountLink');
+        if (createAccountLink) {
+            createAccountLink.addEventListener('click', function(e) {
+                // Allow default navigation, but show feedback
+                showToast('Redirecting to signup...', 'success');
+            });
+        }
+
+        // Clear error on input
+        emailInput.addEventListener('input', function() {
+            emailInput.classList.remove('error');
+            emailError.classList.remove('show');
+        });
+
+        passwordInput.addEventListener('input', function() {
+            passwordInput.classList.remove('error');
+            passwordError.classList.remove('show');
+        });
+
+        // Load remembered email
+        window.addEventListener('DOMContentLoaded', function() {
+            var rememberedEmail = localStorage.getItem('lasu_remember_email');
+            if (rememberedEmail) {
+                emailInput.value = rememberedEmail;
+                document.getElementById('rememberMe').checked = true;
+            }
+        });
+    </script>
+</body>
+</html>
