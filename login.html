@@ -683,25 +683,26 @@
                 }
 
                 setTimeout(function() {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'index.html';
                 }, 1500);
             }, 2000);
         });
 
-        // ===== FORGOT PASSWORD (Firebase Auth Flow) =====
-        // When user clicks "Forgot password?":
-        // 1. If email is empty/invalid -> show error on email field
-        // 2. If email is valid -> send Firebase password reset email
-        // 3. Show success toast: "Check your email for reset link"
-        // 4. User receives email with link to reset password page
-        // 5. User clicks link -> enters new password -> redirected to login
+        // ===== FORGOT PASSWORD =====
+        // NOTE: Firebase Auth is NOT connected yet.
+        // This is a simulated flow. To make it real:
+        // 1. Add Firebase SDK to your page
+        // 2. Replace the setTimeout below with:
+        //    firebase.auth().sendPasswordResetEmail(email)
+        //      .then(() => showToast('Reset email sent!', 'success'))
+        //      .catch((err) => showToast(err.message, 'error'));
 
         forgotPassword.addEventListener('click', function(e) {
             e.preventDefault();
             var email = emailInput.value.trim();
 
-            // Step 1: Validate email first
-            if (!email || !isValidEmail(email)) {
+            // Validate email first
+            if (!email) {
                 emailInput.classList.add('error');
                 emailError.innerHTML = '<span>&#9888;&#65039;</span> Please enter your email address first';
                 emailError.classList.add('show');
@@ -709,34 +710,35 @@
                 return;
             }
 
-            // Clear any previous errors
+            if (!isValidEmail(email)) {
+                emailInput.classList.add('error');
+                emailError.innerHTML = '<span>&#9888;&#65039;</span> Please enter a valid email address';
+                emailError.classList.add('show');
+                emailInput.focus();
+                return;
+            }
+
+            // Clear errors
             emailInput.classList.remove('error');
             emailError.classList.remove('show');
 
-            // Step 2: Show loading state on the link
+            // Show loading state
             var originalText = forgotPassword.textContent;
             forgotPassword.textContent = 'Sending...';
             forgotPassword.style.pointerEvents = 'none';
             forgotPassword.style.opacity = '0.6';
 
-            // Step 3: Simulate Firebase sendPasswordResetEmail()
-            // In production, this would be:
-            // firebase.auth().sendPasswordResetEmail(email)
-            //   .then(() => { /* success */ })
-            //   .catch((error) => { /* handle error */ });
-
+            // SIMULATED: In production, call Firebase here
             setTimeout(function() {
-                // Reset link text
                 forgotPassword.textContent = originalText;
                 forgotPassword.style.pointerEvents = '';
                 forgotPassword.style.opacity = '';
 
-                // Show success message
-                showToast('Check your email for a password reset link!', 'success');
+                // DEMO MODE: Show what WOULD happen with Firebase
+                showToast('[DEMO] Reset link would be sent to: ' + email, 'success');
 
-                // Optional: Show additional info toast after a delay
                 setTimeout(function() {
-                    showToast('Link expires in 1 hour. Check spam folder too.', 'success');
+                    showToast('Connect Firebase to send real emails.', 'success');
                 }, 3500);
 
             }, 2000);
@@ -760,10 +762,12 @@
             });
         }
 
-        // Clear error on input
+        // Clear error on input - also reset error message text back to default
         emailInput.addEventListener('input', function() {
             emailInput.classList.remove('error');
             emailError.classList.remove('show');
+            // Reset error message text back to default (in case forgot password changed it)
+            emailError.innerHTML = '<span>&#9888;&#65039;</span> Please enter a valid email address';
         });
 
         passwordInput.addEventListener('input', function() {
