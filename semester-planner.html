@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semester Planner - LASU GradeTracker</title>
+    <title>GPA Calculator - LASU GradeTracker</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -144,7 +144,7 @@
         .course-row input:focus, .course-row select:focus {
             border-color: #e9a319;
         }
-        .course-row input.plan-code {
+        .course-row input.course-code {
             flex: 1.5;
         }
         .course-row .remove-btn {
@@ -170,12 +170,20 @@
             margin-top: 8px;
         }
         .btn-primary {
-            background-color: #2a5298;
+            background-color: #1b998b;
             color: white;
         }
         .btn-secondary {
             background-color: #e9a319;
             color: #0d1b2a;
+        }
+        .btn-whatsapp {
+            background-color: #25d366;
+            color: white;
+        }
+        .btn-copy {
+            background-color: #2a5298;
+            color: white;
         }
         .btn:hover {
             opacity: 0.9;
@@ -183,7 +191,7 @@
         }
         .result-box {
             background-color: #0d1b2a;
-            border: 2px solid #2a5298;
+            border: 2px solid #1b998b;
             border-radius: 12px;
             padding: 20px;
             margin-top: 18px;
@@ -197,12 +205,68 @@
         .result-box .value {
             font-size: 2.2rem;
             font-weight: 700;
-            color: #2a5298;
+            color: #1b998b;
         }
         .result-box .label {
             font-size: 0.85rem;
             color: #8899b0;
             margin-top: 5px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .action-buttons .btn {
+            flex: 1;
+            margin-top: 0;
+            padding: 10px;
+            font-size: 0.8rem;
+        }
+        .prediction-box {
+            background-color: #1a2d4a;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+        }
+        .prediction-box h5 {
+            color: #e9a319;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        .prediction-box p {
+            color: #8899b0;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .prediction-box .highlight {
+            color: #1b998b;
+            font-weight: 700;
+        }
+        .grade-legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .grade-item {
+            background-color: #0d1b2a;
+            padding: 10px 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            align-items: center;
+        }
+        .grade-item .points {
+            font-weight: 700;
+            color: #e9a319;
+            font-size: 0.9rem;
+        }
+        .grade-item .range {
+            color: #8899b0;
         }
         .hidden {
             display: none !important;
@@ -214,13 +278,33 @@
         }
         .error { color: #e85d4e; }
         .success { color: #1b998b; }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1b998b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 1000;
+            animation: fadeInOut 3s ease;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- HEADER matching the image -->
         <header class="brand-header">
-            <a href="index.html" class="back-btn">
+            <a href="calculator.html" class="back-btn">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                 </svg>
@@ -231,30 +315,17 @@
 
         <div class="content-area">
             <div class="header">
-                <h1>📅 Semester Planner</h1>
-                <p>Plan your courses and project your CGPA</p>
+                <h1>🧮 GPA Calculator</h1>
+                <p>Calculate your semester GPA</p>
             </div>
 
             <div class="card">
-                <h3>Current Stats (Optional)</h3>
-                <p>Leave blank if this is your first semester</p>
-                <div class="input-group">
-                    <label>Current CGPA</label>
-                    <input type="number" step="0.01" min="0" max="5" id="planner-current-cgpa" placeholder="e.g. 3.50">
-                </div>
-                <div class="input-group">
-                    <label>Current Total Units</label>
-                    <input type="number" id="planner-current-units" placeholder="e.g. 60">
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Planned Courses</h3>
-                <p>Add the courses you plan to take this semester</p>
-                <div id="planner-courses">
+                <h3>Add Your Courses</h3>
+                <p>Enter your courses, grades, and units for this semester</p>
+                <div id="gpa-courses">
                     <div class="course-row">
-                        <input type="text" placeholder="Course code" class="plan-code">
-                        <select class="plan-grade">
+                        <input type="text" placeholder="Course (e.g. CHM 101)" class="course-code">
+                        <select class="course-grade">
                             <option value="">Points</option>
                             <option value="5">5 (70-100)</option>
                             <option value="4">4 (60-69)</option>
@@ -263,29 +334,56 @@
                             <option value="1">1 (40-44)</option>
                             <option value="0">0 (0-39)</option>
                         </select>
-                        <input type="number" placeholder="Units" class="plan-units" min="1" max="6">
+                        <input type="number" placeholder="Units" class="course-units" min="1" max="26">
                         <button class="remove-btn" onclick="removeCourse(this)">×</button>
                     </div>
                 </div>
                 <button class="btn btn-secondary" onclick="addCourse()">+ Add Course</button>
-                <button class="btn btn-primary" onclick="calculatePlanner()">Project My CGPA</button>
-                <div id="planner-result" class="result-box hidden">
-                    <h4>Projected CGPA</h4>
-                    <div class="value" id="planner-value">0.00</div>
-                    <div class="label message" id="planner-message"></div>
+                <button class="btn btn-primary" onclick="calculateGPA()">Calculate GPA</button>
+
+                <div id="gpa-result" class="result-box hidden">
+                    <h4>Your Semester GPA</h4>
+                    <div class="value" id="gpa-value">0.00</div>
+                    <div class="label">out of 5.0</div>
+                    <div class="message" id="gpa-message"></div>
+
+                    <div class="prediction-box hidden" id="prediction-box">
+                        <h5>📈 Prediction</h5>
+                        <p id="prediction-text"></p>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-copy" onclick="copyResult()">📋 Copy</button>
+                        <button class="btn btn-whatsapp" onclick="shareWhatsApp()">💬 WhatsApp</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>LASU Grading System</h3>
+                <div class="grade-legend">
+                    <div class="grade-item"><span class="points">5</span><span class="range">70-100</span></div>
+                    <div class="grade-item"><span class="points">4</span><span class="range">60-69</span></div>
+                    <div class="grade-item"><span class="points">3</span><span class="range">50-59</span></div>
+                    <div class="grade-item"><span class="points">2</span><span class="range">45-49</span></div>
+                    <div class="grade-item"><span class="points">1</span><span class="range">40-44</span></div>
+                    <div class="grade-item"><span class="points">0</span><span class="range">0-39</span></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        let currentGPA = 0;
+        let currentTotalUnits = 0;
+
         function addCourse() {
-            const container = document.getElementById('planner-courses');
+            const container = document.getElementById('gpa-courses');
             const newRow = document.createElement('div');
             newRow.className = 'course-row';
             newRow.innerHTML = `
-                <input type="text" placeholder="Course code" class="plan-code">
-                <select class="plan-grade">
+                <input type="text" placeholder="Course (e.g. CHM 101)" class="course-code">
+                <select class="course-grade">
                     <option value="">Points</option>
                     <option value="5">5 (70-100)</option>
                     <option value="4">4 (60-69)</option>
@@ -294,7 +392,7 @@
                     <option value="1">1 (40-44)</option>
                     <option value="0">0 (0-39)</option>
                 </select>
-                <input type="number" placeholder="Units" class="plan-units" min="1" max="6">
+                <input type="number" placeholder="Units" class="course-units" min="1" max="26">
                 <button class="remove-btn" onclick="removeCourse(this)">×</button>`;
             container.appendChild(newRow);
         }
@@ -307,65 +405,105 @@
             }
         }
 
-        function calculatePlanner() {
-            const currentCGPA = parseFloat(document.getElementById('planner-current-cgpa').value);
-            const currentUnits = parseFloat(document.getElementById('planner-current-units').value);
-            
-            const rows = document.querySelectorAll('#planner-courses .course-row');
-            let semPoints = 0, semUnits = 0;
+        function calculateGPA() {
+            const rows = document.querySelectorAll('#gpa-courses .course-row');
+            let totalPoints = 0, totalUnits = 0;
             let validEntries = 0;
-            
+
             rows.forEach(row => {
-                const grade = parseFloat(row.querySelector('.plan-grade').value);
-                const units = parseFloat(row.querySelector('.plan-units').value);
+                const grade = parseFloat(row.querySelector('.course-grade').value);
+                const units = parseFloat(row.querySelector('.course-units').value);
                 if (!isNaN(grade) && !isNaN(units) && units > 0) {
-                    semPoints += grade * units;
-                    semUnits += units;
+                    totalPoints += grade * units;
+                    totalUnits += units;
                     validEntries++;
                 }
             });
 
-            const resultBox = document.getElementById('planner-result');
-            const valueEl = document.getElementById('planner-value');
-            const messageEl = document.getElementById('planner-message');
+            const resultBox = document.getElementById('gpa-result');
+            const valueEl = document.getElementById('gpa-value');
+            const messageEl = document.getElementById('gpa-message');
+            const predictionBox = document.getElementById('prediction-box');
+            const predictionText = document.getElementById('prediction-text');
 
             if (validEntries === 0) {
-                messageEl.textContent = 'Please enter at least one course with expected grade and units.';
+                messageEl.textContent = 'Please enter at least one course with grade and units.';
                 messageEl.className = 'message error';
                 resultBox.classList.remove('hidden');
+                predictionBox.classList.add('hidden');
                 valueEl.textContent = '0.00';
                 return;
             }
 
-            const semGPA = semUnits > 0 ? (semPoints / semUnits) : 0;
-
-            let projectedCGPA = semGPA;
-            let totalUnits = semUnits;
-            let isFirstSemester = true;
-
-            if (!isNaN(currentCGPA) && !isNaN(currentUnits) && currentUnits > 0) {
-                const totalPoints = (currentCGPA * currentUnits) + semPoints;
-                totalUnits = currentUnits + semUnits;
-                projectedCGPA = totalPoints / totalUnits;
-                isFirstSemester = false;
-            }
-
-            valueEl.textContent = projectedCGPA.toFixed(2);
+            const gpa = totalUnits > 0 ? (totalPoints / totalUnits) : 0;
+            currentGPA = gpa;
+            currentTotalUnits = totalUnits;
+            valueEl.textContent = gpa.toFixed(2);
 
             let classification = '';
-            if (projectedCGPA >= 4.50) classification = 'First Class Honours 🏆';
-            else if (projectedCGPA >= 3.50) classification = 'Second Class Upper 🥇';
-            else if (projectedCGPA >= 2.40) classification = 'Second Class Lower';
-            else if (projectedCGPA >= 1.50) classification = 'Third Class';
+            if (gpa >= 4.50) classification = 'First Class Honours 🏆';
+            else if (gpa >= 3.50) classification = 'Second Class Upper 🥇';
+            else if (gpa >= 2.40) classification = 'Second Class Lower';
+            else if (gpa >= 1.50) classification = 'Third Class';
             else classification = 'Pass';
 
-            if (isFirstSemester) {
-                messageEl.innerHTML = `Semester GPA: ${semGPA.toFixed(2)} | Total Units: ${semUnits} | ${classification}`;
-            } else {
-                messageEl.innerHTML = `Semester GPA: ${semGPA.toFixed(2)} | Cumulative Units: ${totalUnits} | ${classification}`;
-            }
+            messageEl.innerHTML = `Total Units: ${totalUnits} | ${classification}`;
             messageEl.className = 'message success';
+
+            let targetCGPA = 3.5;
+            if (gpa >= 4.5) targetCGPA = 4.8;
+            else if (gpa >= 3.5) targetCGPA = 4.5;
+            else if (gpa >= 2.4) targetCGPA = 3.5;
+            else targetCGPA = 2.4;
+
+            let neededGPA = ((targetCGPA * (totalUnits + 24)) - (gpa * totalUnits)) / 24;
+            if (neededGPA > 5.0) neededGPA = 5.0;
+            if (neededGPA < 0) neededGPA = 0;
+
+            let nextClass = '';
+            if (gpa < 4.5) nextClass = 'First Class';
+            else if (gpa < 3.5) nextClass = '2:1 (Second Class Upper)';
+            else if (gpa < 2.4) nextClass = '2:2 (Second Class Lower)';
+            else nextClass = 'a higher CGPA';
+
+            predictionText.innerHTML = `To reach <span class="highlight">${nextClass}</span> next semester, you need at least <span class="highlight">${neededGPA.toFixed(2)} GPA</span> in your next 24 units.`;
+            predictionBox.classList.remove('hidden');
+
             resultBox.classList.remove('hidden');
+        }
+
+        function copyResult() {
+            const gpa = document.getElementById('gpa-value').textContent;
+            const message = document.getElementById('gpa-message').textContent;
+            const text = `My LASU Semester GPA: ${gpa}/5.0
+${message}
+
+Calculated with LASU GradeTracker 📊`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Result copied to clipboard!');
+            }).catch(() => {
+                showToast('Failed to copy. Try again.');
+            });
+        }
+
+        function shareWhatsApp() {
+            const gpa = document.getElementById('gpa-value').textContent;
+            const message = document.getElementById('gpa-message').textContent;
+            const text = `My LASU Semester GPA: ${gpa}/5.0
+${message}
+
+Calculated with LASU GradeTracker 📊`;
+            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
     </script>
 </body>
