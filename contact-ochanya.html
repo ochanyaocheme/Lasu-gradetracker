@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ochanya's Corner - Contact Ochanya</title>
+    <style>
+        :root {
+            --bg-dark: #12223c;
+            --header-dark: #1a2f4c;
+            --text-white: #ffffff;
+            --text-muted: #9aaaba;
+            --accent-orange: #f39c12;
+            --color-email: #3a86ff;
+            --color-whatsapp: #25d366;
+            --color-call: #1abc9c;
+            --color-anon: #f1c40f;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #09111e; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: var(--text-white); }
+        .mobile-container { width: 100%; max-width: 412px; background-color: var(--bg-dark); min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-bottom: 30px; }
+        .brand-header { background-color: var(--header-dark); display: flex; align-items: center; padding: 15px 20px; gap: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .brand-logo { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; background: linear-gradient(135deg, #f39c12, #e67e22); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .brand-title { font-size: 22px; font-weight: 700; }
+        .brand-title span { color: var(--accent-orange); }
+        .content-area { padding: 25px 20px; }
+        .back-link { color: var(--accent-orange); text-decoration: none; font-size: 15px; font-weight: 600; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 6px; }
+        .page-header { text-align: center; margin-bottom: 25px; }
+        .page-title { font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+        .page-subtitle { font-size: 14px; color: var(--text-muted); }
+
+        /* Promise Banner */
+        .promise-banner { background: linear-gradient(135deg, rgba(243, 156, 18, 0.15), rgba(243, 156, 18, 0.05)); border: 1px solid rgba(243, 156, 18, 0.2); border-radius: 16px; padding: 18px; text-align: center; margin-bottom: 20px; }
+        .promise-icon { font-size: 32px; margin-bottom: 8px; }
+        .promise-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+        .promise-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+        /* Contact Cards */
+        .contact-card { background-color: var(--header-dark); border-radius: 16px; padding: 18px; margin-bottom: 14px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: var(--text-white); border-left: 5px solid transparent; transition: transform 0.1s ease; }
+        .contact-card:active { transform: scale(0.98); }
+        .contact-card.email-card { border-left-color: var(--color-email); }
+        .contact-card.whatsapp-card { border-left-color: var(--color-whatsapp); }
+        .contact-card.call-card { border-left-color: var(--color-call); }
+
+        .contact-icon-wrap { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+        .email-card .contact-icon-wrap { background: rgba(58, 134, 255, 0.15); }
+        .whatsapp-card .contact-icon-wrap { background: rgba(37, 211, 102, 0.15); }
+        .call-card .contact-icon-wrap { background: rgba(26, 188, 156, 0.15); }
+
+        .contact-info { flex: 1; }
+        .contact-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .email-card .contact-label { color: var(--color-email); }
+        .whatsapp-card .contact-label { color: var(--color-whatsapp); }
+        .call-card .contact-label { color: var(--color-call); }
+        .contact-value { font-size: 15px; font-weight: 600; }
+        .contact-hint { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .contact-arrow { font-size: 18px; color: var(--text-muted); }
+
+        /* Anonymous Drop Box */
+        .anon-section { background-color: var(--header-dark); border-radius: 16px; padding: 20px; margin-top: 10px; border-left: 5px solid var(--color-anon); }
+        .anon-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .anon-icon { font-size: 22px; }
+        .anon-title { font-size: 16px; font-weight: 700; }
+        .anon-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+        .anon-highlight { color: var(--color-anon); font-weight: 600; }
+
+        .anon-textarea { width: 100%; min-height: 140px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px; color: var(--text-white); font-size: 14px; resize: vertical; margin-bottom: 12px; }
+        .anon-textarea::placeholder { color: rgba(255,255,255,0.3); }
+        .anon-textarea:focus { outline: none; border-color: var(--accent-orange); }
+
+        .submit-btn { width: 100%; padding: 14px; background: var(--accent-orange); color: #000; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
+        .submit-btn:hover { background: #e67e22; }
+        .submit-btn:active { transform: scale(0.98); }
+
+        /* Ticket ID Display */
+        .ticket-box { display: none; background: rgba(241, 196, 15, 0.1); border: 1px solid rgba(241, 196, 15, 0.2); border-radius: 12px; padding: 16px; text-align: center; margin-top: 14px; }
+        .ticket-box.show { display: block; }
+        .ticket-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+        .ticket-id { font-size: 22px; font-weight: 800; color: var(--color-anon); letter-spacing: 2px; font-family: monospace; }
+        .ticket-hint { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+
+        /* Check Response Section */
+        .check-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .check-label { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+        .check-input-wrap { display: flex; gap: 8px; }
+        .check-input { flex: 1; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: var(--text-white); font-size: 14px; text-align: center; letter-spacing: 2px; font-family: monospace; }
+        .check-input::placeholder { color: rgba(255,255,255,0.3); letter-spacing: normal; font-family: inherit; }
+        .check-input:focus { outline: none; border-color: var(--accent-orange); }
+        .check-btn { padding: 12px 18px; background: var(--header-dark); color: var(--text-white); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+
+        /* Response Display */
+        .response-box { display: none; background: rgba(0,0,0,0.15); border-radius: 12px; padding: 14px; margin-top: 12px; }
+        .response-box.show { display: block; }
+        .response-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--color-anon); margin-bottom: 6px; }
+        .response-text { font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.85); }
+        .response-time { font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+
+        /* Divider */
+        .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+        .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
+        .divider-text { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <header class="brand-header">
+            <img src="your-logo.png" alt="LASU GradeTracker" class="brand-logo">
+            <h1 class="brand-title">LASU <span>GradeTracker</span></h1>
+        </header>
+        <main class="content-area">
+            <a href="ochanyas-corner.html" class="back-link">← Back to Corner</a>
+            <div class="page-header">
+                <h2 class="page-title">📞 Contact Ochanya</h2>
+                <p class="page-subtitle">I'm here. Reach out however feels right.</p>
+            </div>
+
+            <!-- Promise Banner -->
+            <div class="promise-banner">
+                <div class="promise-icon">💌</div>
+                <div class="promise-title">I Read Every Message</div>
+                <div class="promise-text">Whether you email, WhatsApp, call, or drop an anonymous note — I personally read and respond to every single one.</div>
+            </div>
+
+            <!-- Email -->
+            <a href="mailto:ochanyaocheme@gmail.com" class="contact-card email-card">
+                <div class="contact-icon-wrap">📧</div>
+                <div class="contact-info">
+                    <div class="contact-label">Email</div>
+                    <div class="contact-value">ochanyaocheme@gmail.com</div>
+                    <div class="contact-hint">Best for detailed questions & suggestions</div>
+                </div>
+                <div class="contact-arrow">❯</div>
+            </a>
+
+            <!-- WhatsApp -->
+            <a href="https://wa.me/2348104926247" class="contact-card whatsapp-card" target="_blank">
+                <div class="contact-icon-wrap">💬</div>
+                <div class="contact-info">
+                    <div class="contact-label">WhatsApp</div>
+                    <div class="contact-value">0810 492 6247</div>
+                    <div class="contact-hint">Quick replies, voice notes welcome</div>
+                </div>
+                <div class="contact-arrow">❯</div>
+            </a>
+
+            <!-- Call Lines -->
+            <a href="tel:08104926247" class="contact-card call-card">
+                <div class="contact-icon-wrap">📱</div>
+                <div class="contact-info">
+                    <div class="contact-label">Call / WhatsApp Line</div>
+                    <div class="contact-value">0810 492 6247</div>
+                    <div class="contact-hint">Calls & WhatsApp both welcome</div>
+                </div>
+                <div class="contact-arrow">❯</div>
+            </a>
+
+            <a href="tel:07057137459" class="contact-card call-card">
+                <div class="contact-icon-wrap">📞</div>
+                <div class="contact-info">
+                    <div class="contact-label">Calls Only</div>
+                    <div class="contact-value">0705 713 7459</div>
+                    <div class="contact-hint">Voice calls only — no WhatsApp</div>
+                </div>
+                <div class="contact-arrow">❯</div>
+            </a>
+
+            <div class="divider">
+                <div class="divider-line"></div>
+                <div class="divider-text">Or stay anonymous</div>
+                <div class="divider-line"></div>
+            </div>
+
+            <!-- Anonymous Drop Box -->
+            <div class="anon-section">
+                <div class="anon-header">
+                    <span class="anon-icon">🕵️</span>
+                    <span class="anon-title">Anonymous Drop Box</span>
+                </div>
+                <div class="anon-desc">
+                    Don't want to reveal your identity? No problem. Drop your message here — <span class="anon-highlight">no name, no email, no number needed</span>. I'll read it and get back to you.
+                </div>
+
+                <form id="anon-form" onsubmit="submitAnon(event)">
+                    <textarea class="anon-textarea" placeholder="Say whatever is on your mind... Questions, suggestions, concerns, or just venting — it's all welcome here. Write as much as you need." required></textarea>
+                    <button type="submit" class="submit-btn">Drop Message Anonymously</button>
+                </form>
+
+                <!-- Ticket ID -->
+                <div class="ticket-box" id="ticket-box">
+                    <div class="ticket-label">Your Anonymous Ticket ID</div>
+                    <div class="ticket-id" id="ticket-id">LASU-8X2K9M</div>
+                    <div class="ticket-hint">Save this ID! Come back here and enter it below to check if I've responded.</div>
+                </div>
+
+                <!-- Check Response -->
+                <div class="check-section">
+                    <div class="check-label">Already dropped a message?</div>
+                    <div class="check-input-wrap">
+                        <input type="text" class="check-input" id="check-input" placeholder="Enter your ticket ID" maxlength="12">
+                        <button class="check-btn" onclick="checkResponse()">Check</button>
+                    </div>
+                </div>
+
+                <!-- Response Display -->
+                <div class="response-box" id="response-box">
+                    <div class="response-label">Ochanya's Response</div>
+                    <div class="response-text" id="response-text">Hey there! Thanks for reaching out. I've looked into your concern about the grade calculator and you're absolutely right — there was a rounding issue with carryover courses. I've fixed it in the latest update. Let me know if you spot anything else!</div>
+                    <div class="response-time" id="response-time">Responded 2 hours ago</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function generateTicketId() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let id = 'LASU-';
+            for (let i = 0; i < 6; i++) {
+                id += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return id;
+        }
+
+        function submitAnon(e) {
+            e.preventDefault();
+            const ticketId = generateTicketId();
+            document.getElementById('ticket-id').textContent = ticketId;
+            document.getElementById('ticket-box').classList.add('show');
+            document.getElementById('anon-form').reset();
+
+            // TODO: Save to Firebase Firestore
+            // const message = document.querySelector('.anon-textarea').value;
+            // firebase.firestore().collection('anonymous_messages').add({
+            //     ticketId: ticketId,
+            //     message: message,
+            //     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            //     status: 'unread',
+            //     response: null,
+            //     respondedAt: null
+            // });
+        }
+
+        function checkResponse() {
+            const input = document.getElementById('check-input').value.trim().toUpperCase();
+            if (!input) return;
+
+            // TODO: Query Firebase for ticket ID
+            // const snapshot = await firebase.firestore()
+            //     .collection('anonymous_messages')
+            //     .where('ticketId', '==', input)
+            //     .get();
+            // if (!snapshot.empty) {
+            //     const data = snapshot.docs[0].data();
+            //     if (data.response) {
+            //         document.getElementById('response-text').textContent = data.response;
+            //         document.getElementById('response-time').textContent = 'Responded ' + timeAgo(data.respondedAt);
+            //         document.getElementById('response-box').classList.add('show');
+            //     } else {
+            //         alert('No response yet. Check back soon!');
+            //     }
+            // } else {
+            //     alert('Ticket ID not found. Please double-check and try again.');
+            // }
+
+            // Demo: show sample response
+            document.getElementById('response-box').classList.add('show');
+        }
+    </script>
+</body>
+</html>
