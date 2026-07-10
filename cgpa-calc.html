@@ -15,6 +15,57 @@
         .container {
             max-width: 500px;
             margin: 0 auto;
+            padding: 0;
+            padding-bottom: 40px;
+        }
+
+        /* ===== HEADER matching the image ===== */
+        .brand-header {
+            background-color: #162236;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            gap: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            text-decoration: none;
+            flex-shrink: 0;
+            transition: background-color 0.2s ease;
+        }
+        .back-btn:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        .back-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+        .brand-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        /* LASU = orange, GradeTracker = white */
+        .brand-title .lasu-text { color: #e9a319; }
+        .brand-title .gradetracker-text { color: #ffffff; }
+
+        /* ===== CONTENT ===== */
+        .content-area {
             padding: 20px;
             padding-bottom: 40px;
         }
@@ -22,14 +73,6 @@
             text-align: center;
             margin-bottom: 25px;
             padding-top: 10px;
-        }
-        .back-btn {
-            display: inline-block;
-            color: #e9a319;
-            text-decoration: none;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            font-weight: 600;
         }
         .header h1 {
             color: #e9a319;
@@ -160,38 +203,50 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <a href="calculator.html" class="back-btn">← Back</a>
-            <h1>📈 CGPA Calculator</h1>
-            <p>Calculate your cumulative GPA across semesters</p>
-        </div>
+        <!-- HEADER matching the image -->
+        <header class="brand-header">
+            <a href="index.html" class="back-btn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </a>
+            <img src="your-logo.png" alt="LASU GradeTracker" class="brand-logo">
+            <h1 class="brand-title"><span class="lasu-text">LASU</span> <span class="gradetracker-text">GradeTracker</span></h1>
+        </header>
 
-        <div class="card">
-            <h3>Calculate Your CGPA</h3>
-            <p>Add all your past semesters to get your cumulative GPA</p>
-            
-            <div id="semesters">
-                <div class="semester-block">
-                    <h4>Semester 1</h4>
-                    <div class="input-group">
-                        <label>Semester 1 GPA</label>
-                        <input type="number" step="0.01" min="0" max="5" class="sem-gpa" placeholder="e.g. 4.25">
-                    </div>
-                    <div class="input-group">
-                        <label>Semester 1 Total Units</label>
-                        <input type="number" class="sem-units" placeholder="e.g. 24">
+        <div class="content-area">
+            <div class="header">
+                <h1>📈 CGPA Calculator</h1>
+                <p>Calculate your cumulative GPA across semesters</p>
+            </div>
+
+            <div class="card">
+                <h3>Calculate Your CGPA</h3>
+                <p>Add all your past semesters to get your cumulative GPA</p>
+                
+                <div id="semesters">
+                    <div class="semester-block">
+                        <h4>Semester 1</h4>
+                        <div class="input-group">
+                            <label>Semester 1 GPA</label>
+                            <input type="number" step="0.01" min="0" max="5" class="sem-gpa" placeholder="e.g. 4.25">
+                        </div>
+                        <div class="input-group">
+                            <label>Semester 1 Total Units</label>
+                            <input type="number" class="sem-units" placeholder="e.g. 24">
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <button class="btn btn-secondary" onclick="addSemester()">+ Add Another Semester</button>
-            <button class="btn btn-primary" onclick="calculateCGPA()">Calculate CGPA</button>
-            
-            <div id="cgpa-result" class="result-box hidden">
-                <h4>Your CGPA</h4>
-                <div class="value" id="cgpa-value">0.00</div>
-                <div class="label">Cumulative Grade Point Average</div>
-                <div class="message" id="cgpa-message"></div>
+                
+                <button class="btn btn-secondary" onclick="addSemester()">+ Add Another Semester</button>
+                <button class="btn btn-primary" onclick="calculateCGPA()">Calculate CGPA</button>
+                
+                <div id="cgpa-result" class="result-box hidden">
+                    <h4>Your CGPA</h4>
+                    <div class="value" id="cgpa-value">0.00</div>
+                    <div class="label">Cumulative Grade Point Average</div>
+                    <div class="message" id="cgpa-message"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -262,4 +317,4 @@
         }
     </script>
 </body>
-</html>
+    </html>
