@@ -35,17 +35,24 @@ body{background-color:#0f172a;color:#fff}
 <body class="min-h-screen bg-[#0f172a] text-white antialiased">
 
 <header class="sticky top-0 z-50 bg-[#0f172a] border-b border-white/8 px-4 py-3 flex items-center gap-3">
-<button class="p-2 -ml-2 rounded-full hover:bg-white/5 active:bg-white/10 transition" aria-label="Go back">
+<button onclick="goBack()" class="p-2 -ml-2 rounded-full hover:bg-white/5 active:bg-white/10 transition" aria-label="Go back">
 <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
 </button>
 <img src="your-logo.png" class="w-10 h-10 rounded-xl object-cover shrink-0" alt="LASU GradeTracker" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
 <div class="hidden w-10 h-10 bg-amber-500 rounded-xl items-center justify-center shrink-0"><span class="text-[#0f172a] font-extrabold text-[10px]">LASU</span></div>
 <h1 class="text-[17px] font-bold leading-tight tracking-tight"><span class="text-amber-400">LASU</span> <span class="text-white">GradeTracker</span></h1>
-<div class="ml-auto flex items-center gap-3">
-<button class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition" aria-label="Notifications">
+<div class="ml-auto flex items-center gap-3 relative">
+<button onclick="toggleNotifications(event)" class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition" aria-label="Notifications">
 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-<span class="absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0f172a]"></span>
+<span id="notifBadge" class="hidden absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0f172a]"></span>
 </button>
+<div id="notifPanel" class="hidden absolute top-12 right-0 w-80 max-w-[90vw] bg-[#1e293b] border border-white/8 rounded-2xl shadow-2xl z-50 max-h-[70vh] overflow-y-auto animate-fade-in">
+<div class="p-4 border-b border-white/8 flex items-center justify-between sticky top-0 bg-[#1e293b]">
+<h3 class="font-bold text-white text-sm">Notifications</h3>
+<button onclick="clearNotifications()" class="text-[11px] text-gray-400 hover:text-amber-400 transition">Clear all</button>
+</div>
+<div id="notifList" class="divide-y divide-white/5"></div>
+</div>
 <button onclick="openProfile(0)" class="rounded-full" aria-label="My profile">
 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-9 h-9 rounded-full border-2 border-red-500/50 cursor-pointer avatar-hover object-cover" alt="My Profile">
 </button>
@@ -161,6 +168,24 @@ Post
 </div>
 </div>
 
+<div id="commentsModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeCommentsModal()">
+<div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up max-h-[85vh] flex flex-col">
+<div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-3 mb-1 shrink-0"></div>
+<div class="px-5 py-3 border-b border-white/8 flex items-center justify-between shrink-0">
+<h3 class="text-base font-bold text-white">Comments</h3>
+<span id="commentsCount" class="text-[12px] text-gray-500">0 comments</span>
+</div>
+<div id="commentsList" class="px-5 overflow-y-auto flex-1"></div>
+<div class="p-4 border-t border-white/8 flex items-center gap-2 shrink-0">
+<img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-8 h-8 rounded-full object-cover border border-white/8 shrink-0" alt="Me">
+<input id="commentInput" type="text" placeholder="Write a comment..." class="flex-1 bg-[#0f172a] rounded-xl px-4 py-2.5 text-[13.5px] text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none transition" onkeydown="if(event.key==='Enter')addComment()">
+<button onclick="addComment()" class="action-btn bg-amber-500 hover:bg-amber-400 text-black font-bold w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition">
+<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+</button>
+</div>
+</div>
+</div>
+
 <div id="profileModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4" onclick="if(event.target===this)closeProfileModal()">
 <div class="bg-[#1e293b] w-full max-w-sm rounded-[28px] border border-white/8 overflow-hidden animate-fade-in max-h-[90vh] overflow-y-auto">
 <div class="h-24 bg-gradient-to-br from-amber-500/25 via-orange-500/20 to-amber-600/25 relative">
@@ -201,7 +226,7 @@ Post
 </div>
 <div class="mt-4 flex gap-3">
 <button id="modalFollowBtn" onclick="toggleFollow()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-black font-bold py-2.5 rounded-xl text-sm transition">Follow</button>
-<button class="flex-1 bg-[#0f172a] hover:bg-white/5 text-white font-semibold py-2.5 rounded-xl text-sm transition border border-white/8">Message</button>
+<button id="modalMessageBtn" onclick="openChatFromProfile()" class="flex-1 bg-[#0f172a] hover:bg-white/5 text-white font-semibold py-2.5 rounded-xl text-sm transition border border-white/8">Message</button>
 </div>
 <div class="mt-4 flex gap-1 bg-[#0f172a] p-1 rounded-xl">
 <button onclick="switchProfileTab('posts')" id="profileTab-posts" class="profile-tab-active flex-1 py-2 rounded-lg text-xs font-semibold transition-all">Posts</button>
@@ -264,6 +289,87 @@ Post
 </div>
 </div>
 
+<div id="chatModal" class="fixed inset-0 z-[70] hidden flex-col bg-[#0f172a]">
+<div class="sticky top-0 bg-[#0f172a] border-b border-white/8 px-3 py-2.5 flex items-center gap-2.5 shrink-0">
+<button onclick="closeChatModal()" class="p-2 rounded-full hover:bg-white/5 transition" aria-label="Close chat">
+<svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+</button>
+<img id="chatAvatar" src="" class="w-9 h-9 rounded-full object-cover border border-white/8" alt="">
+<div class="flex-1 min-w-0">
+<h3 id="chatName" class="text-[14px] font-bold text-white truncate"></h3>
+<p id="chatStatus" class="text-[11px] text-gray-500"></p>
+</div>
+<button onclick="startCall('audio')" class="p-2 rounded-full hover:bg-white/5 text-gray-300 hover:text-amber-400 transition" aria-label="Audio call">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+</button>
+<button onclick="startCall('video')" class="p-2 rounded-full hover:bg-white/5 text-gray-300 hover:text-amber-400 transition" aria-label="Video call">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+</button>
+<div class="relative">
+<button onclick="toggleChatMenu(event)" class="p-2 rounded-full hover:bg-white/5 text-gray-300 transition" aria-label="Chat options">
+<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4z"/></svg>
+</button>
+<div id="chatMenu" class="hidden absolute right-0 top-10 w-48 bg-[#1e293b] border border-white/10 rounded-xl shadow-2xl z-20 overflow-hidden">
+<button onclick="openWallpaperPicker()" class="w-full text-left px-4 py-2.5 text-[13px] text-gray-200 hover:bg-white/5 transition flex items-center gap-2">&#127912; Change wallpaper</button>
+<button id="archiveChatBtn" onclick="toggleArchiveChat()" class="w-full text-left px-4 py-2.5 text-[13px] text-gray-200 hover:bg-white/5 transition flex items-center gap-2">&#128451; Archive chat</button>
+<button id="blockUserBtn" onclick="toggleBlockUser()" class="w-full text-left px-4 py-2.5 text-[13px] text-amber-400 hover:bg-white/5 transition flex items-center gap-2">&#128683; Block user</button>
+<button onclick="deleteChatHistory()" class="w-full text-left px-4 py-2.5 text-[13px] text-red-400 hover:bg-white/5 transition flex items-center gap-2">&#128465; Delete chat</button>
+</div>
+</div>
+</div>
+<div id="wallpaperPicker" class="hidden absolute inset-x-0 top-14 bg-[#1e293b] border-b border-white/10 p-3 z-30 flex items-center gap-2.5 overflow-x-auto">
+<span class="text-[11px] text-gray-400 font-medium shrink-0">Wallpaper:</span>
+<button onclick="setWallpaper('default')" class="w-9 h-9 rounded-lg shrink-0 border-2 border-white/20 bg-[#0f172a]"></button>
+<button onclick="setWallpaper('slate')" class="w-9 h-9 rounded-lg shrink-0 border-2 border-white/20 bg-gradient-to-br from-slate-700 to-slate-900"></button>
+<button onclick="setWallpaper('amber')" class="w-9 h-9 rounded-lg shrink-0 border-2 border-white/20 bg-gradient-to-br from-amber-600/60 to-orange-900"></button>
+<button onclick="setWallpaper('emerald')" class="w-9 h-9 rounded-lg shrink-0 border-2 border-white/20 bg-gradient-to-br from-emerald-600/50 to-emerald-950"></button>
+<button onclick="setWallpaper('rose')" class="w-9 h-9 rounded-lg shrink-0 border-2 border-white/20 bg-gradient-to-br from-rose-600/50 to-rose-950"></button>
+<button onclick="setWallpaper('indigo')" class="w-9 h-9 rounded-lg shrink-0 border-2 border-white/20 bg-gradient-to-br from-indigo-600/50 to-indigo-950"></button>
+<button onclick="closeWallpaperPicker()" class="ml-auto text-[11px] text-gray-400 hover:text-white shrink-0 px-2">Done</button>
+</div>
+<div id="chatMessages" class="flex-1 overflow-y-auto px-4 py-4 space-y-2.5 transition-colors"></div>
+<div id="blockedNotice" class="hidden px-4 py-3 text-center text-[12px] text-gray-500 bg-[#1e293b] border-t border-white/8">You've blocked this user. Unblock to send messages.</div>
+<div id="chatInputBar" class="p-3 border-t border-white/8 flex items-center gap-2 shrink-0 bg-[#0f172a]">
+<input id="chatInput" type="text" placeholder="Type a message..." class="flex-1 bg-[#1e293b] rounded-xl px-4 py-2.5 text-[13.5px] text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none transition" onkeydown="if(event.key==='Enter')sendMessage()">
+<button onclick="sendMessage()" class="action-btn bg-amber-500 hover:bg-amber-400 text-black font-bold w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition">
+<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+</button>
+</div>
+</div>
+
+<div id="callOverlay" class="fixed inset-0 z-[80] hidden flex-col items-center justify-between bg-gradient-to-b from-[#1e293b] to-[#0f172a] text-center py-12 px-6">
+<div class="w-full">
+<p id="callStatus" class="text-gray-400 text-sm font-medium tracking-wide">Calling...</p>
+<img id="callAvatar" src="" class="w-28 h-28 rounded-full object-cover border-4 border-white/10 mx-auto mt-6" alt="">
+<h2 id="callName" class="text-2xl font-bold text-white mt-4"></h2>
+<p id="callTimer" class="text-gray-400 text-sm mt-1.5">00:00</p>
+<div id="videoFrame" class="hidden mt-6 w-full aspect-video bg-black/40 rounded-2xl border border-white/10 flex items-center justify-center relative overflow-hidden">
+<img id="videoAvatarBig" src="" class="w-24 h-24 rounded-full object-cover opacity-80" alt="">
+<div class="absolute bottom-3 right-3 w-20 h-28 bg-black/60 rounded-xl border border-white/20 flex items-center justify-center">
+<span class="text-[10px] text-gray-400">You</span>
+</div>
+</div>
+</div>
+<div class="w-full max-w-xs">
+<div class="flex items-center gap-3 mb-6 px-2">
+<svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9l-3 3m0 0l3 3m-3-3h12M15 5v14"/></svg>
+<input id="volumeSlider" type="range" min="0" max="100" value="80" class="flex-1 accent-amber-500" oninput="document.getElementById('volumeLabel').textContent=this.value+'%'">
+<span id="volumeLabel" class="text-[11px] text-gray-400 w-9 text-right shrink-0">80%</span>
+</div>
+<div class="flex items-center justify-center gap-5">
+<button id="muteBtn" onclick="toggleMute()" class="w-14 h-14 rounded-full bg-white/10 hover:bg-white/15 flex items-center justify-center text-white transition">
+<svg id="muteIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m-4 0h8M8 11V5a4 4 0 118 0v6a4 4 0 11-8 0z"/></svg>
+</button>
+<button onclick="endCall()" class="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center text-white transition shadow-lg shadow-red-500/30">
+<svg class="w-7 h-7 rotate-[135deg]" fill="currentColor" viewBox="0 0 24 24"><path d="M20.487 17.14l-4.065-3.696a1 1 0 00-1.391.043l-1.85 1.85a12.5 12.5 0 01-5.517-5.517l1.85-1.85a1 1 0 00.043-1.391L5.86 2.513a1 1 0 00-1.391-.087l-2.06 1.766a1 1 0 00-.31.912c.535 3.06 2.081 6.207 4.588 8.714 2.507 2.507 5.654 4.053 8.714 4.588a1 1 0 00.912-.31l1.766-2.06a1 1 0 00-.087-1.391z"/></svg>
+</button>
+<button id="speakerBtn" onclick="toggleSpeaker()" class="w-14 h-14 rounded-full bg-white/10 hover:bg-white/15 flex items-center justify-center text-white transition">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15.54 8.46a5 5 0 010 7.07"/></svg>
+</button>
+</div>
+</div>
+</div>
+
 <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 bg-[#1e293b] text-white px-5 py-3 rounded-2xl shadow-2xl border border-white/8 flex items-center gap-2.5 text-sm font-semibold opacity-0 pointer-events-none transition-all duration-300 z-50 -translate-y-2">
 <svg id="toastIcon" class="w-5 h-5 text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
 <span id="toastMsg">Copied!</span>
@@ -317,11 +423,77 @@ let viewedProfileId=null;
 let currentProfileTab='posts';
 let tempAvatar=null;
 
+function goBack(){window.location.href='lounge.html';}
+
+let notifications=JSON.parse(localStorage.getItem('lasu_notifications')||'null');
+if(!notifications){
+notifications=[
+{id:1,type:'mention',text:'Adebola Oluwaseun mentioned you in a comment',time:'3h ago',read:false},
+{id:2,type:'tag',text:'Your post was tagged in #LASU trending discussions',time:'5h ago',read:false},
+{id:3,type:'like',text:'Chioma Nwosu and 12 others liked your post',time:'1d ago',read:true}
+];
+localStorage.setItem('lasu_notifications',JSON.stringify(notifications));
+}
+
+const NOTIF_ICONS={
+mention:{icon:'@',color:'text-blue-400 bg-blue-500/15'},
+tag:{icon:'#',color:'text-amber-400 bg-amber-500/15'},
+like:{icon:'&#10084;&#65039;',color:'text-red-400 bg-red-500/15'},
+comment:{icon:'&#128172;',color:'text-green-400 bg-green-500/15'},
+follow:{icon:'&#128100;',color:'text-purple-400 bg-purple-500/15'}
+};
+
+function addNotification(type,text){
+notifications.unshift({id:Date.now(),type:type,text:text,time:'Just now',read:false});
+localStorage.setItem('lasu_notifications',JSON.stringify(notifications));
+updateNotifBadge();
+if(!document.getElementById('notifPanel').classList.contains('hidden'))renderNotifications();
+}
+
+function updateNotifBadge(){
+const badge=document.getElementById('notifBadge');
+const hasUnread=notifications.some(n=>!n.read);
+badge.classList.toggle('hidden',!hasUnread);
+}
+
+function toggleNotifications(e){
+e.stopPropagation();
+const panel=document.getElementById('notifPanel');
+const willOpen=panel.classList.contains('hidden');
+panel.classList.toggle('hidden');
+if(willOpen){
+renderNotifications();
+setTimeout(()=>{notifications.forEach(n=>n.read=true);localStorage.setItem('lasu_notifications',JSON.stringify(notifications));updateNotifBadge();},1500);
+}
+}
+
+document.addEventListener('click',(e)=>{
+const panel=document.getElementById('notifPanel');
+if(panel&&!panel.classList.contains('hidden')&&!panel.contains(e.target))panel.classList.add('hidden');
+});
+
+function renderNotifications(){
+const list=document.getElementById('notifList');
+if(notifications.length===0){list.innerHTML='<div class="text-center py-10 text-gray-500 text-sm">No notifications yet</div>';return;}
+list.innerHTML=notifications.map(n=>{
+const cfg=NOTIF_ICONS[n.type]||NOTIF_ICONS.like;
+return `<div class="flex items-start gap-3 px-4 py-3 ${n.read?'':'bg-amber-500/5'}"><div class="w-8 h-8 rounded-full ${cfg.color} flex items-center justify-center text-[13px] font-bold shrink-0">${cfg.icon}</div><div class="flex-1 min-w-0"><p class="text-[13px] text-gray-200 leading-snug">${n.text}</p><span class="text-[10.5px] text-gray-500">${n.time}</span></div>${n.read?'':'<span class="w-2 h-2 bg-amber-500 rounded-full mt-1.5 shrink-0"></span>'}</div>`;
+}).join('');
+}
+
+function clearNotifications(){
+notifications=[];
+localStorage.setItem('lasu_notifications',JSON.stringify(notifications));
+renderNotifications();
+updateNotifBadge();
+showToast('Notifications cleared','info');
+}
+
 if(posts.length===0){
 posts=[
-{id:1,userId:1,content:'Just calculated my CGPA using the LASU GradeTracker! Went from 3.2 to 3.8 this semester. Who else is using it?',time:'2h ago',likes:24,comments:5,shares:3,liked:false,saved:false,tags:['#GradeTracker','#LASU'],image:null},
-{id:2,userId:2,content:'Bio 301 practical was something else today. Thank God for this app helping me track my grades so I know where I stand!',time:'4h ago',likes:15,comments:2,shares:1,liked:false,saved:false,tags:['#BioLife','#LASU'],image:null},
-{id:3,userId:0,content:'Important Announcement: The new GPA calculator update is live! Now supports 5-point and 4-point grading systems. Check it out!',time:'1h ago',likes:156,comments:23,shares:45,liked:false,saved:false,tags:['#Announcement','#Update'],image:null}
+{id:1,userId:1,content:'Just calculated my CGPA using the LASU GradeTracker! Went from 3.2 to 3.8 this semester. Who else is using it?',time:'2h ago',likes:24,comments:[{id:1,userId:2,text:'Congrats! That\'s a huge jump 🔥',time:'1h ago'}],shares:3,liked:false,saved:false,bookmarked:false,tags:['#GradeTracker','#LASU'],image:null},
+{id:2,userId:2,content:'Bio 301 practical was something else today. Thank God for this app helping me track my grades so I know where I stand!',time:'4h ago',likes:15,comments:[],shares:1,liked:false,saved:false,bookmarked:false,tags:['#BioLife','#LASU'],image:null},
+{id:3,userId:0,content:'Important Announcement: The new GPA calculator update is live! Now supports 5-point and 4-point grading systems. Check it out!',time:'1h ago',likes:156,comments:[{id:2,userId:1,text:'This is huge, thank you!',time:'40m ago'}],shares:45,liked:false,saved:false,bookmarked:false,tags:['#Announcement','#Update'],image:null}
 ];
 localStorage.setItem('lasu_posts',JSON.stringify(posts));
 }
@@ -344,10 +516,17 @@ function createPost(){
 const input=document.getElementById('postInput');
 const content=input.value.trim();
 if(!content)return;
-const newPost={id:Date.now(),userId:0,content:content,time:'Just now',likes:0,comments:0,shares:0,liked:false,saved:false,tags:extractTags(content),image:null};
+const newPost={id:Date.now(),userId:0,content:content,time:'Just now',likes:0,comments:[],shares:0,liked:false,saved:false,bookmarked:false,tags:extractTags(content),image:null};
 posts.unshift(newPost);currentUser.posts++;
 localStorage.setItem('lasu_posts',JSON.stringify(posts));
 input.value='';togglePostBtn(input);renderPosts();showToast('Post created successfully!');
+const mentions=content.match(/@[\w]+/g);
+if(newPost.tags.length>0){
+setTimeout(()=>addNotification('tag','Your post is trending under '+newPost.tags[0]),4000);
+}
+if(mentions&&mentions.length>0){
+setTimeout(()=>addNotification('mention','You mentioned '+mentions[0]+' — they were notified'),3000);
+}
 }
 
 function extractTags(text){const tags=text.match(/#[\w]+/g);return tags||[];}
@@ -372,7 +551,111 @@ showToast('Saved to profile & downloaded to phone!');
 }
 }
 
-function commentPost(id){showToast('Comments coming with Firebase!','info');}
+let activeCommentPostId=null;
+
+function togglePostMenu(e,id){
+e.stopPropagation();
+document.querySelectorAll('[id^="postMenu-"]').forEach(m=>{if(m.id!=='postMenu-'+id)m.classList.add('hidden');});
+const menu=document.getElementById('postMenu-'+id);
+menu.classList.toggle('hidden');
+}
+document.addEventListener('click',()=>{document.querySelectorAll('[id^="postMenu-"]').forEach(m=>m.classList.add('hidden'));});
+
+function deletePost(id){
+const post=posts.find(p=>p.id===id);
+const isRepost=post&&post.repostedBy!==undefined;
+if(!confirm(isRepost?'Undo this repost?':'Delete this post? This cannot be undone.'))return;
+if(isRepost&&post.repostOfId){
+const original=posts.find(p=>p.id===post.repostOfId);
+if(original){original.reposts=Math.max(0,(original.reposts||1)-1);original.userReposted=false;}
+}
+posts=posts.filter(p=>p.id!==id);
+if(!isRepost)currentUser.posts=Math.max(0,currentUser.posts-1);
+localStorage.setItem('lasu_posts',JSON.stringify(posts));
+renderPosts();
+loadProfilePosts();
+showToast(isRepost?'Repost removed':'Post deleted','info');
+}
+
+function resharePost(id){
+const original=posts.find(p=>p.id===id);
+if(!original)return;
+if(original.repostedBy!==undefined){showToast('You can\'t reshare a repost — reshare the original','info');return;}
+if(original.userReposted){
+const existing=posts.find(p=>p.repostOfId===id&&p.repostedBy===0);
+if(existing)deletePost(existing.id);
+return;
+}
+const repost={id:Date.now(),userId:original.userId,content:original.content,time:'Just now',likes:0,comments:[],shares:0,liked:false,saved:false,bookmarked:false,tags:original.tags,image:null,repostedBy:0,repostOfId:original.id};
+original.reposts=(original.reposts||0)+1;
+original.userReposted=true;
+posts.unshift(repost);
+localStorage.setItem('lasu_posts',JSON.stringify(posts));
+renderPosts();
+showToast('Reposted to your profile!');
+if(original.userId!==0){
+setTimeout(()=>addNotification('mention',getUser(original.userId).name+' will see that you reposted their post'),1500);
+}
+}
+
+function commentPost(id){
+activeCommentPostId=id;
+const post=posts.find(p=>p.id===id);
+if(!post)return;
+if(!Array.isArray(post.comments))post.comments=[];
+renderComments();
+const modal=document.getElementById('commentsModal');
+modal.classList.remove('hidden');modal.classList.add('flex');
+}
+
+function closeCommentsModal(){
+const modal=document.getElementById('commentsModal');
+modal.classList.add('hidden');modal.classList.remove('flex');
+activeCommentPostId=null;
+}
+
+function renderComments(){
+const post=posts.find(p=>p.id===activeCommentPostId);
+if(!post)return;
+const list=document.getElementById('commentsList');
+if(post.comments.length===0){list.innerHTML='<div class="text-center py-10 text-gray-500 text-sm">No comments yet. Be the first!</div>';}
+else{
+list.innerHTML=post.comments.map(c=>{
+const user=getUser(c.userId);
+const isMine=c.userId===0;
+return `<div class="flex gap-2.5 py-3"><img src="${user.avatar}" class="w-8 h-8 rounded-full object-cover shrink-0 border border-white/8"><div class="flex-1 min-w-0"><div class="bg-[#0f172a] rounded-xl px-3 py-2"><div class="flex items-center justify-between gap-2"><span class="font-semibold text-[12.5px] text-white">${user.name}</span>${isMine?`<button onclick="deleteComment(${c.id})" class="text-gray-500 hover:text-red-400 transition shrink-0" aria-label="Delete comment"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>`:''}</div><p class="text-gray-300 text-[13px] mt-0.5 leading-relaxed">${c.text}</p></div><span class="text-[10px] text-gray-500 ml-1">${c.time}</span></div></div>`;
+}).join('');
+}
+document.getElementById('commentsCount').textContent=post.comments.length+' comments';
+localStorage.setItem('lasu_posts',JSON.stringify(posts));
+}
+
+function addComment(){
+const input=document.getElementById('commentInput');
+const text=input.value.trim();
+if(!text)return;
+const post=posts.find(p=>p.id===activeCommentPostId);
+if(!post)return;
+post.comments.push({id:Date.now(),userId:0,text:text,time:'Just now'});
+input.value='';
+renderComments();
+renderPosts();
+if(post.userId!==0){
+setTimeout(()=>{
+addNotification('comment','Your comment on '+getUser(post.userId).name+'\'s post was posted');
+if(Math.random()>0.4)addNotification('like',getUser(post.userId).name+' liked your comment');
+},1200);
+}
+}
+
+function deleteComment(commentId){
+const post=posts.find(p=>p.id===activeCommentPostId);
+if(!post)return;
+post.comments=post.comments.filter(c=>c.id!==commentId);
+renderComments();
+renderPosts();
+showToast('Comment deleted','info');
+}
 
 function openShare(id){sharePostId=id;const modal=document.getElementById('shareModal');modal.classList.remove('hidden');modal.classList.add('flex');}
 function closeShareModal(){const modal=document.getElementById('shareModal');modal.classList.add('hidden');modal.classList.remove('flex');sharePostId=null;}
@@ -399,13 +682,27 @@ if(t===tab){btn.className='profile-tab-active flex-1 py-2 rounded-lg text-xs fon
 else{btn.className='profile-tab-inactive flex-1 py-2 rounded-lg text-xs font-medium transition-all';content.classList.add('hidden');}
 });
 if(tab==='posts')loadProfilePosts();
+if(tab==='saved')loadProfileSaved();
+}
+
+function loadProfileSaved(){
+const container=document.getElementById('profileContent-saved');
+if(viewedProfileId!==0){container.innerHTML='<div class="text-center py-8"><p class="text-gray-500 text-sm">Saved posts are private</p></div>';return;}
+const savedPosts=posts.filter(p=>p.saved||p.bookmarked);
+if(savedPosts.length===0){container.innerHTML='<div class="text-center py-8"><svg class="w-10 h-10 text-gray-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg><p class="text-gray-500 text-sm">Saved posts will appear here</p></div>';return;}
+container.innerHTML=savedPosts.map(post=>{const user=getUser(post.userId);return `<div class="bg-[#0f172a] rounded-xl p-3 border border-white/5"><div class="flex items-center gap-2 mb-1"><img src="${user.avatar}" class="w-5 h-5 rounded-full object-cover"><span class="text-[11px] text-gray-400 font-medium">${user.name}</span>${post.saved?'<span class="text-[9px] text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">Saved</span>':''}${post.bookmarked?'<span class="text-[9px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded">Bookmarked</span>':''}</div><p class="text-gray-200 text-[13px] leading-relaxed">${post.content}</p></div>`;}).join('');
+}
+
+function toggleBookmark(id){
+const post=posts.find(p=>p.id===id);
+if(post){post.bookmarked=!post.bookmarked;localStorage.setItem('lasu_posts',JSON.stringify(posts));renderPosts();showToast(post.bookmarked?'Bookmarked — find it later in your profile':'Removed bookmark','info');}
 }
 
 function loadProfilePosts(){
 const container=document.getElementById('profileContent-posts');
-const userPosts=posts.filter(p=>p.userId===viewedProfileId||(viewedProfileId===0&&p.userId===0));
+const userPosts=posts.filter(p=>(p.userId===viewedProfileId&&p.repostedBy===undefined)||(viewedProfileId===0&&p.repostedBy===0));
 if(userPosts.length===0){container.innerHTML='<div class="text-center py-8"><svg class="w-10 h-10 text-gray-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg><p class="text-gray-500 text-sm">No posts yet</p></div>';return;}
-container.innerHTML=userPosts.map(post=>`<div class="bg-[#0f172a] rounded-xl p-3 border border-white/5"><p class="text-gray-200 text-[13px] leading-relaxed">${post.content}</p><div class="flex items-center gap-3 mt-2 text-[11px] text-gray-500"><span>${post.time}</span><span>&#10084;&#65039; ${post.likes}</span><span>&#128172; ${post.comments}</span></div></div>`).join('');
+container.innerHTML=userPosts.map(post=>`<div class="bg-[#0f172a] rounded-xl p-3 border border-white/5 relative"><p class="text-gray-200 text-[13px] leading-relaxed pr-6">${post.content}</p>${post.userId===0?`<button onclick="deletePost(${post.id})" class="absolute top-2 right-2 p-1 text-gray-500 hover:text-red-400 transition" aria-label="Delete post"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>`:''}<div class="flex items-center gap-3 mt-2 text-[11px] text-gray-500"><span>${post.time}</span><span>&#10084;&#65039; ${post.likes}</span><span>&#128172; ${Array.isArray(post.comments)?post.comments.length:post.comments}</span></div></div>`).join('');
 }
 
 function openProfile(userId){
@@ -426,6 +723,15 @@ document.getElementById('modalFollowers').textContent=user.followers;
 const badgeArea=document.getElementById('modalBadgeArea');
 if(badges.length>0){badgeArea.innerHTML=badges.map(b=>renderBadge(b,true)).join('');}else{badgeArea.innerHTML='';}
 document.getElementById('editAvatarBtn').style.display=isSelf?'flex':'none';
+const msgBtn=document.getElementById('modalMessageBtn');
+if(isSelf){msgBtn.style.display='none';}
+else{
+msgBtn.style.display='block';
+const chat=chats[userId];
+msgBtn.textContent=chat&&chat.blocked?'Blocked':'Message';
+msgBtn.disabled=!!(chat&&chat.blocked);
+msgBtn.className=chat&&chat.blocked?'flex-1 bg-[#0f172a] text-gray-500 font-semibold py-2.5 rounded-xl text-sm border border-white/8 cursor-not-allowed':'flex-1 bg-[#0f172a] hover:bg-white/5 text-white font-semibold py-2.5 rounded-xl text-sm transition border border-white/8';
+}
 const followBtn=document.getElementById('modalFollowBtn');
 if(isSelf){followBtn.textContent='Edit Profile';followBtn.onclick=openEditProfile;followBtn.className='flex-1 bg-[#0f172a] hover:bg-white/5 text-white font-bold py-2.5 rounded-xl text-sm transition border border-white/8';}
 else{followBtn.textContent=user.following?'Following':'Follow';followBtn.onclick=toggleFollow;followBtn.className=user.following?'flex-1 bg-[#0f172a] hover:bg-white/5 text-white font-bold py-2.5 rounded-xl text-sm transition border border-white/8':'flex-1 bg-amber-500 hover:bg-amber-400 text-black font-bold py-2.5 rounded-xl text-sm transition';}
@@ -489,7 +795,7 @@ function renderPosts(){
 const feed=document.getElementById('postsFeed');
 const empty=document.getElementById('emptyState');
 let filtered=posts;
-if(currentFilter==='my')filtered=posts.filter(p=>p.userId===0);
+if(currentFilter==='my')filtered=posts.filter(p=>p.userId===0||p.repostedBy===0);
 if(currentFilter==='trending')filtered=[...posts].sort((a,b)=>b.likes-a.likes);
 if(currentFilter==='following')filtered=posts.filter(p=>p.userId!==0);
 if(filtered.length===0){feed.innerHTML='';empty.classList.remove('hidden');empty.classList.add('flex');return;}
@@ -498,12 +804,231 @@ feed.innerHTML=filtered.map(post=>{
 const user=getUser(post.userId);
 const isAdmin=user.isAdmin;
 const userBadges=getUserBadges(user);
-return `<div class="post-card bg-[#1e293b] rounded-2xl border border-white/6 p-4"><div class="flex items-start gap-3"><div class="relative shrink-0"><img src="${user.avatar}" onclick="openProfile(${post.userId})" class="w-10 h-10 rounded-full cursor-pointer avatar-hover object-cover border ${isAdmin?'border-red-500/50':'border-white/8'}" alt="${user.name}"></div><div class="flex-1 min-w-0"><div class="flex items-center gap-2 flex-wrap"><span onclick="openProfile(${post.userId})" class="font-semibold text-[13px] cursor-pointer hover:text-amber-400 transition truncate ${isAdmin?'text-red-400':'text-white'}">${user.name}</span>${userBadges.length>0?`<div class="flex items-center gap-0.5">${userBadges.map(b=>renderBadge(b,true)).join('')}</div>`:''}<span class="text-gray-500 text-[11px] ml-auto">${post.time}</span></div><p class="text-gray-200 text-[14px] mt-2 leading-relaxed">${formatContent(post.content)}</p>${post.tags.length?`<div class="flex flex-wrap gap-2 mt-2.5">${post.tags.map(t=>`<span class="text-amber-400/70 text-[11px] font-medium hover:text-amber-400 cursor-pointer transition">${t}</span>`).join('')}</div>`:''}<div class="flex items-center gap-1 mt-3.5 pt-3 border-t border-white/5"><button onclick="likePost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ${post.liked?'text-red-400 bg-red-500/8':'text-gray-400 hover:text-red-400 hover:bg-white/4'}" aria-label="Like"><svg class="w-[18px] h-[18px] ${post.liked?'fill-current':''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg><span>${post.likes}</span></button><button onclick="commentPost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-blue-400 hover:bg-white/4 transition" aria-label="Comment"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg><span>${post.comments}</span></button><button onclick="openShare(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-green-400 hover:bg-white/4 transition" aria-label="Share"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg><span>${post.shares}</span></button><button onclick="savePost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ml-auto ${post.saved?'text-amber-400 bg-amber-500/8':'text-gray-400 hover:text-amber-400 hover:bg-white/4'}" aria-label="Save"><svg class="w-[18px] h-[18px] ${post.saved?'fill-current':''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg></button></div></div></div></div>`;
+const isRepost=post.repostedBy!==undefined;
+const isOwner=isRepost?post.repostedBy===0:post.userId===0;
+const reposterName=isRepost?(post.repostedBy===0?'You':getUser(post.repostedBy).name):'';
+return `<div class="post-card bg-[#1e293b] rounded-2xl border border-white/6 p-4">${isRepost?`<div class="flex items-center gap-1.5 text-[11.5px] text-gray-500 mb-2.5 font-medium"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 4v4H6a2 2 0 00-2 2v4m14 4v-4H8a2 2 0 01-2-2v-4m14-4l-3-3m3 3l-3 3M4 20l3 3m-3-3l3-3"/></svg><span>Reposted by ${reposterName}</span></div>`:''}<div class="flex items-start gap-3"><div class="relative shrink-0"><img src="${user.avatar}" onclick="openProfile(${post.userId})" class="w-10 h-10 rounded-full cursor-pointer avatar-hover object-cover border ${isAdmin?'border-red-500/50':'border-white/8'}" alt="${user.name}"></div><div class="flex-1 min-w-0"><div class="flex items-center gap-2 flex-wrap"><span onclick="openProfile(${post.userId})" class="font-semibold text-[13px] cursor-pointer hover:text-amber-400 transition truncate ${isAdmin?'text-red-400':'text-white'}">${user.name}</span>${userBadges.length>0?`<div class="flex items-center gap-0.5">${userBadges.map(b=>renderBadge(b,true)).join('')}</div>`:''}<span class="text-gray-500 text-[11px] ${isOwner?'':'ml-auto'}">${post.time}</span>${isOwner?`<div class="relative ml-auto"><button onclick="togglePostMenu(event,${post.id})" class="p-1 rounded-lg hover:bg-white/5 text-gray-500 hover:text-white transition" aria-label="Post options"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4z"/></svg></button><div id="postMenu-${post.id}" class="hidden absolute right-0 top-7 w-40 bg-[#0f172a] border border-white/10 rounded-xl shadow-2xl z-20 overflow-hidden"><button onclick="deletePost(${post.id})" class="w-full text-left px-3.5 py-2.5 text-[12.5px] text-red-400 hover:bg-red-500/10 transition font-medium">${isRepost?'Undo Repost':'Delete Post'}</button></div></div>`:''}</div><p class="text-gray-200 text-[14px] mt-2 leading-relaxed">${formatContent(post.content)}</p>${post.tags.length?`<div class="flex flex-wrap gap-2 mt-2.5">${post.tags.map(t=>`<span class="text-amber-400/70 text-[11px] font-medium hover:text-amber-400 cursor-pointer transition">${t}</span>`).join('')}</div>`:''}<div class="flex items-center gap-1 mt-3.5 pt-3 border-t border-white/5"><button onclick="likePost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ${post.liked?'text-red-400 bg-red-500/8':'text-gray-400 hover:text-red-400 hover:bg-white/4'}" aria-label="Like"><svg class="w-[18px] h-[18px] ${post.liked?'fill-current':''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg><span>${post.likes}</span></button><button onclick="commentPost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-blue-400 hover:bg-white/4 transition" aria-label="Comment"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg><span>${Array.isArray(post.comments)?post.comments.length:post.comments}</span></button><button onclick="resharePost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ${post.userReposted?'text-emerald-400 bg-emerald-500/8':'text-gray-400 hover:text-emerald-400 hover:bg-white/4'}" aria-label="Reshare" title="Reshare to your followers"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 4v4H6a2 2 0 00-2 2v4m14 4v-4H8a2 2 0 01-2-2v-4m14-4l-3-3m3 3l-3 3M4 20l3 3m-3-3l3-3"/></svg><span>${post.reposts||0}</span></button><button onclick="openShare(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-green-400 hover:bg-white/4 transition" aria-label="Share"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg><span>${post.shares}</span></button><button onclick="toggleBookmark(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ml-auto ${post.bookmarked?'text-blue-400 bg-blue-500/8':'text-gray-400 hover:text-blue-400 hover:bg-white/4'}" aria-label="Bookmark" title="Bookmark for later"><svg class="w-[18px] h-[18px] ${post.bookmarked?'fill-current':''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z"/></svg></button><button onclick="savePost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ${post.saved?'text-amber-400 bg-amber-500/8':'text-gray-400 hover:text-amber-400 hover:bg-white/4'}" aria-label="Save" title="Save to profile & download"><svg class="w-[18px] h-[18px] ${post.saved?'fill-current':''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg></button></div></div></div></div>`;
 }).join('');
 }
 
 function formatContent(text){return text.replace(/(#[\w]+)/g,'<span class="text-amber-400/80 hover:text-amber-400 cursor-pointer transition">$1</span>');}
 
+/* ===================== MESSAGING ===================== */
+let chats=JSON.parse(localStorage.getItem('lasu_chats')||'{}');
+let activeChatUserId=null;
+let callType=null;
+let callTimerInterval=null;
+let callSeconds=0;
+let isMuted=false;
+let isSpeakerOn=false;
+
+const WALLPAPERS={
+default:'bg-[#0f172a]',
+slate:'bg-gradient-to-br from-slate-700 to-slate-900',
+amber:'bg-gradient-to-br from-amber-600/30 to-orange-950',
+emerald:'bg-gradient-to-br from-emerald-600/25 to-emerald-950',
+rose:'bg-gradient-to-br from-rose-600/25 to-rose-950',
+indigo:'bg-gradient-to-br from-indigo-600/25 to-indigo-950'
+};
+
+function getChat(userId){
+if(!chats[userId]){
+chats[userId]={messages:[
+{id:1,from:userId,text:'Hey! Thanks for connecting on LASU GradeTracker 👋',time:'Yesterday'}
+],wallpaper:'default',blocked:false,archived:false};
+saveChats();
+}
+return chats[userId];
+}
+
+function saveChats(){localStorage.setItem('lasu_chats',JSON.stringify(chats));}
+
+function openChatFromProfile(){
+if(viewedProfileId===null||viewedProfileId===0){showToast('You can\'t message yourself','info');return;}
+const uid=viewedProfileId;
+closeProfileModal();
+openChat(uid);
+}
+
+function openChat(userId){
+activeChatUserId=userId;
+const user=getUser(userId);
+const chat=getChat(userId);
+document.getElementById('chatAvatar').src=user.avatar;
+document.getElementById('chatName').textContent=user.name;
+document.getElementById('chatStatus').textContent=chat.blocked?'Blocked':(user.online?'Online':'Offline');
+document.getElementById('archiveChatBtn').textContent=chat.archived?'📤 Unarchive chat':'📥 Archive chat';
+document.getElementById('blockUserBtn').textContent=chat.blocked?'✅ Unblock user':'🚫 Block user';
+document.getElementById('blockedNotice').classList.toggle('hidden',!chat.blocked);
+document.getElementById('chatInputBar').classList.toggle('hidden',chat.blocked);
+applyWallpaper(chat.wallpaper||'default');
+renderChatMessages();
+const modal=document.getElementById('chatModal');
+modal.classList.remove('hidden');modal.classList.add('flex');
+document.getElementById('chatMenu').classList.add('hidden');
+document.getElementById('wallpaperPicker').classList.add('hidden');
+}
+
+function closeChatModal(){
+const modal=document.getElementById('chatModal');
+modal.classList.add('hidden');modal.classList.remove('flex');
+activeChatUserId=null;
+}
+
+function applyWallpaper(key){
+const el=document.getElementById('chatMessages');
+Object.values(WALLPAPERS).forEach(cls=>{cls.split(' ').forEach(c=>el.classList.remove(c));});
+(WALLPAPERS[key]||WALLPAPERS.default).split(' ').forEach(c=>el.classList.add(c));
+}
+
+function renderChatMessages(){
+const chat=getChat(activeChatUserId);
+const container=document.getElementById('chatMessages');
+if(chat.messages.length===0){container.innerHTML='<div class="text-center text-gray-500 text-sm py-10">No messages yet. Say hello!</div>';return;}
+container.innerHTML=chat.messages.map(m=>{
+const isMe=m.from===0;
+return `<div class="flex ${isMe?'justify-end':'justify-start'} group"><div class="max-w-[75%] ${isMe?'bg-amber-500 text-black':'bg-[#1e293b] text-white'} rounded-2xl px-3.5 py-2 text-[13.5px] leading-relaxed relative">
+<span>${m.text}</span>
+<div class="flex items-center justify-end gap-1.5 mt-0.5"><span class="text-[9.5px] ${isMe?'text-black/60':'text-gray-500'}">${m.time}</span>${isMe?`<button onclick="deleteMessage(${m.id})" class="text-black/50 hover:text-black transition opacity-0 group-hover:opacity-100" aria-label="Delete message"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>`:''}</div>
+</div></div>`;
+}).join('');
+container.scrollTop=container.scrollHeight;
+}
+
+function sendMessage(){
+const input=document.getElementById('chatInput');
+const text=input.value.trim();
+if(!text||activeChatUserId===null)return;
+const chat=getChat(activeChatUserId);
+chat.messages.push({id:Date.now(),from:0,text:text,time:'Just now'});
+saveChats();
+input.value='';
+renderChatMessages();
+}
+
+function deleteMessage(msgId){
+const chat=getChat(activeChatUserId);
+chat.messages=chat.messages.filter(m=>m.id!==msgId);
+saveChats();
+renderChatMessages();
+showToast('Message deleted','info');
+}
+
+function toggleChatMenu(e){
+e.stopPropagation();
+document.getElementById('wallpaperPicker').classList.add('hidden');
+document.getElementById('chatMenu').classList.toggle('hidden');
+}
+document.addEventListener('click',(e)=>{
+const menu=document.getElementById('chatMenu');
+if(menu&&!menu.classList.contains('hidden')&&!menu.contains(e.target)&&e.target.closest('button[onclick^="toggleChatMenu"]')===null)menu.classList.add('hidden');
+});
+
+function openWallpaperPicker(){
+document.getElementById('chatMenu').classList.add('hidden');
+document.getElementById('wallpaperPicker').classList.remove('hidden');
+}
+function closeWallpaperPicker(){document.getElementById('wallpaperPicker').classList.add('hidden');}
+function setWallpaper(key){
+const chat=getChat(activeChatUserId);
+chat.wallpaper=key;
+saveChats();
+applyWallpaper(key);
+showToast('Wallpaper updated!');
+}
+
+function toggleBlockUser(){
+const chat=getChat(activeChatUserId);
+const user=getUser(activeChatUserId);
+chat.blocked=!chat.blocked;
+saveChats();
+document.getElementById('chatMenu').classList.add('hidden');
+document.getElementById('blockUserBtn').textContent=chat.blocked?'✅ Unblock user':'🚫 Block user';
+document.getElementById('blockedNotice').classList.toggle('hidden',!chat.blocked);
+document.getElementById('chatInputBar').classList.toggle('hidden',chat.blocked);
+document.getElementById('chatStatus').textContent=chat.blocked?'Blocked':(user.online?'Online':'Offline');
+showToast(chat.blocked?'You blocked '+user.name:'You unblocked '+user.name,'info');
+}
+
+function toggleArchiveChat(){
+const chat=getChat(activeChatUserId);
+chat.archived=!chat.archived;
+saveChats();
+document.getElementById('chatMenu').classList.add('hidden');
+document.getElementById('archiveChatBtn').textContent=chat.archived?'📤 Unarchive chat':'📥 Archive chat';
+showToast(chat.archived?'Chat archived':'Chat unarchived','info');
+}
+
+function deleteChatHistory(){
+if(!confirm('Delete this entire conversation? This cannot be undone.'))return;
+const chat=getChat(activeChatUserId);
+chat.messages=[];
+saveChats();
+renderChatMessages();
+document.getElementById('chatMenu').classList.add('hidden');
+showToast('Chat deleted','info');
+}
+
+/* ===================== CALLS ===================== */
+function startCall(type){
+if(activeChatUserId===null)return;
+const chat=getChat(activeChatUserId);
+if(chat.blocked){showToast('Unblock this user to call them','info');return;}
+callType=type;
+const user=getUser(activeChatUserId);
+document.getElementById('callAvatar').src=user.avatar;
+document.getElementById('videoAvatarBig').src=user.avatar;
+document.getElementById('callName').textContent=user.name;
+document.getElementById('callStatus').textContent=type==='video'?'Video calling...':'Calling...';
+document.getElementById('callTimer').textContent='00:00';
+document.getElementById('videoFrame').classList.toggle('hidden',type!=='video');
+callSeconds=0;isMuted=false;isSpeakerOn=false;
+updateMuteUI();
+const overlay=document.getElementById('callOverlay');
+overlay.classList.remove('hidden');overlay.classList.add('flex');
+setTimeout(()=>{
+if(!activeChatUserId)return;
+document.getElementById('callStatus').textContent='Connected';
+callTimerInterval=setInterval(()=>{
+callSeconds++;
+const mm=String(Math.floor(callSeconds/60)).padStart(2,'0');
+const ss=String(callSeconds%60).padStart(2,'0');
+document.getElementById('callTimer').textContent=mm+':'+ss;
+},1000);
+},2000);
+}
+
+function endCall(){
+clearInterval(callTimerInterval);
+const overlay=document.getElementById('callOverlay');
+overlay.classList.add('hidden');overlay.classList.remove('flex');
+const user=activeChatUserId!==null?getUser(activeChatUserId):null;
+if(user&&callSeconds>0){
+const chat=getChat(activeChatUserId);
+const mm=String(Math.floor(callSeconds/60)).padStart(2,'0');
+const ss=String(callSeconds%60).padStart(2,'0');
+chat.messages.push({id:Date.now(),from:0,text:(callType==='video'?'📹 Video call':'📞 Voice call')+' — '+mm+':'+ss,time:'Just now'});
+saveChats();
+if(activeChatUserId!==null)renderChatMessages();
+}
+showToast('Call ended','info');
+callType=null;callSeconds=0;
+}
+
+function toggleMute(){isMuted=!isMuted;updateMuteUI();}
+function updateMuteUI(){
+const btn=document.getElementById('muteBtn');
+btn.classList.toggle('bg-red-500/80',isMuted);
+btn.classList.toggle('bg-white/10',!isMuted);
+}
+function toggleSpeaker(){
+isSpeakerOn=!isSpeakerOn;
+const btn=document.getElementById('speakerBtn');
+btn.classList.toggle('bg-amber-500/80',isSpeakerOn);
+btn.classList.toggle('bg-white/10',!isSpeakerOn);
+}
+
+updateNotifBadge();
 renderPosts();
 </script>
 </body>
