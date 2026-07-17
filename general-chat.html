@@ -30,19 +30,20 @@ body{background-color:#0f172a;color:#fff}
 .profile-tab-active{color:#f59e0b!important;background:rgba(245,158,11,.1)!important}
 .profile-tab-inactive{color:#64748b}
 .profile-tab-inactive:hover{color:#94a3b8;background:rgba(255,255,255,.03)}
+#chatMessages,#inboxList,#commentsList,#notifList{overscroll-behavior:contain}
 </style>
 </head>
 <body class="min-h-screen bg-[#0f172a] text-white antialiased">
 
 <header class="sticky top-0 z-50 bg-[#0f172a] border-b border-white/8 px-4 py-3 flex items-center gap-3">
-<button onclick="goBack()" class="p-2 -ml-2 rounded-full hover:bg-white/5 active:bg-white/10 transition" aria-label="Go back">
+<button onclick="goBack()" class="p-2 -ml-2 rounded-full hover:bg-white/5 active:bg-white/10 transition shrink-0" aria-label="Go back">
 <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
 </button>
 <img src="your-logo.png" class="w-10 h-10 rounded-xl object-cover shrink-0" alt="LASU GradeTracker" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
 <div class="hidden w-10 h-10 bg-amber-500 rounded-xl items-center justify-center shrink-0"><span class="text-[#0f172a] font-extrabold text-[10px]">LASU</span></div>
-<h1 class="text-[17px] font-bold leading-tight tracking-tight"><span class="text-amber-400">LASU</span> <span class="text-white">GradeTracker</span></h1>
+<h1 class="text-[17px] font-bold leading-tight tracking-tight truncate min-w-0"><span class="text-amber-400">LASU</span> <span class="text-white">GradeTracker</span></h1>
 <div class="ml-auto flex items-center gap-3 relative">
-<button onclick="toggleNotifications(event)" class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition" aria-label="Notifications">
+<button onclick="toggleNotifications(event)" class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition shrink-0" aria-label="Notifications">
 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
 <span id="notifBadge" class="hidden absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0f172a]"></span>
 </button>
@@ -53,11 +54,11 @@ body{background-color:#0f172a;color:#fff}
 </div>
 <div id="notifList" class="divide-y divide-white/5"></div>
 </div>
-<button onclick="openInbox()" class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition" aria-label="Messages">
+<button onclick="openInbox()" class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition shrink-0" aria-label="Messages">
 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
 </button>
-<button onclick="openProfile(0)" class="rounded-full" aria-label="My profile">
-<img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-9 h-9 rounded-full border-2 border-red-500/50 cursor-pointer avatar-hover object-cover" alt="My Profile">
+<button onclick="openProfile(0)" class="rounded-full shrink-0" aria-label="My profile">
+<img id="headerAvatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=student" class="w-9 h-9 rounded-full border-2 border-white/15 cursor-pointer avatar-hover object-cover shrink-0" alt="My Profile">
 </button>
 </div>
 </header>
@@ -72,7 +73,7 @@ General Chat
 
 <div class="mx-4 mt-5 bg-[#1e293b] rounded-2xl border border-white/8 p-4">
 <div class="flex gap-3">
-<img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-10 h-10 rounded-full shrink-0 border border-white/8 object-cover" alt="Me">
+<img src="https://api.dicebear.com/7.x/avataaars/svg?seed=student" class="w-10 h-10 rounded-full shrink-0 border border-white/8 object-cover" alt="Me">
 <div class="flex-1">
 <textarea id="postInput" placeholder="What's on your mind? Share with the community..." class="w-full bg-[#0f172a] rounded-xl px-4 py-3 text-[14px] text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none resize-none h-[72px] transition-all" oninput="togglePostBtn(this)"></textarea>
 </div>
@@ -180,7 +181,7 @@ Post
 </div>
 <div id="commentsList" class="px-5 overflow-y-auto flex-1"></div>
 <div class="p-4 border-t border-white/8 flex items-center gap-2 shrink-0">
-<img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-8 h-8 rounded-full object-cover border border-white/8 shrink-0" alt="Me">
+<img src="https://api.dicebear.com/7.x/avataaars/svg?seed=student" class="w-8 h-8 rounded-full object-cover border border-white/8 shrink-0" alt="Me">
 <input id="commentInput" type="text" placeholder="Write a comment..." class="flex-1 bg-[#0f172a] rounded-xl px-4 py-2.5 text-[13.5px] text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none transition" onkeydown="if(event.key==='Enter')addComment()">
 <button onclick="addComment()" class="action-btn bg-amber-500 hover:bg-amber-400 text-black font-bold w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition">
 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
@@ -233,15 +234,10 @@ Post
 </div>
 <div class="mt-4 flex gap-1 bg-[#0f172a] p-1 rounded-xl">
 <button onclick="switchProfileTab('posts')" id="profileTab-posts" class="profile-tab-active flex-1 py-2 rounded-lg text-xs font-semibold transition-all">Posts</button>
-<button onclick="switchProfileTab('diary')" id="profileTab-diary" class="profile-tab-inactive flex-1 py-2 rounded-lg text-xs font-medium transition-all">Diary</button>
 <button onclick="switchProfileTab('saved')" id="profileTab-saved" class="profile-tab-inactive flex-1 py-2 rounded-lg text-xs font-medium transition-all">Saved</button>
 </div>
 <div id="profileTabContent" class="mt-3 min-h-[100px]">
 <div id="profileContent-posts" class="space-y-2"></div>
-<div id="profileContent-diary" class="hidden text-center py-8">
-<svg class="w-10 h-10 text-gray-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-<p class="text-gray-500 text-sm">Your diary entries will appear here</p>
-</div>
 <div id="profileContent-saved" class="hidden text-center py-8">
 <svg class="w-10 h-10 text-gray-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
 <p class="text-gray-500 text-sm">Saved posts will appear here</p>
@@ -263,10 +259,10 @@ Post
 <div class="flex justify-center">
 <div class="relative">
 <img id="editAvatarPreview" src="" class="w-20 h-20 rounded-full border-4 border-[#1e293b] bg-[#1e293b] object-cover" alt="">
-<label class="absolute bottom-0 right-0 w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-black cursor-pointer hover:bg-amber-400 transition shadow-lg">
+<label for="avatarFileInput" class="absolute bottom-0 right-0 w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-black cursor-pointer hover:bg-amber-400 transition shadow-lg">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-<input type="file" accept="image/*" class="hidden" onchange="handleAvatarChange(event)">
 </label>
+<input id="avatarFileInput" type="file" accept="image/*" class="absolute w-px h-px opacity-0 overflow-hidden -z-10" onchange="handleAvatarChange(event)">
 </div>
 </div>
 <div>
@@ -288,11 +284,12 @@ Post
 </div>
 </div>
 <button onclick="saveProfile()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl text-sm transition mt-2">Save Changes</button>
+<button onclick="resetDemoData()" class="w-full bg-transparent hover:bg-white/5 text-gray-500 hover:text-red-400 font-medium py-2.5 rounded-xl text-[12.5px] transition">Reset Demo Data</button>
 </div>
 </div>
 </div>
 
-<div id="inboxModal" class="fixed inset-0 z-[65] hidden flex-col bg-[#0f172a]">
+<div id="inboxModal" class="fixed inset-0 z-[65] hidden flex-col bg-[#0f172a]" style="height:100dvh">
 <div class="sticky top-0 bg-[#0f172a] border-b border-white/8 px-3 py-2.5 flex items-center gap-2.5 shrink-0">
 <button onclick="closeInbox()" class="p-2 rounded-full hover:bg-white/5 transition" aria-label="Close messages">
 <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
@@ -307,7 +304,7 @@ Post
 <div id="inboxList" class="flex-1 overflow-y-auto px-2 py-2 space-y-1"></div>
 </div>
 
-<div id="chatModal" class="fixed inset-0 z-[70] hidden flex-col bg-[#0f172a]">
+<div id="chatModal" class="fixed inset-0 z-[70] hidden flex-col bg-[#0f172a]" style="height:100dvh">
 <div class="sticky top-0 bg-[#0f172a] border-b border-white/8 px-3 py-2.5 flex items-center gap-2.5 shrink-0">
 <button onclick="closeChatModal()" class="p-2 rounded-full hover:bg-white/5 transition" aria-label="Close chat">
 <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
@@ -324,37 +321,9 @@ Post
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
 </button>
 <div class="relative">
-<button onclick="toggleChatMenu(event)" class="p-2 rounded-full hover:bg-white/5 text-gray-300 transition" aria-label="Chat options">
+<button onclick="openChatOptions()" class="p-2 rounded-full hover:bg-white/5 text-gray-300 transition" aria-label="Chat options">
 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4z"/></svg>
 </button>
-<div id="chatMenu" class="hidden fixed right-3 top-14 w-52 bg-[#1e293b] border border-white/10 rounded-xl shadow-2xl z-[75] overflow-hidden">
-<button onclick="openWallpaperPicker()" class="w-full text-left px-4 py-2.5 text-[13px] text-gray-200 hover:bg-white/5 transition flex items-center gap-2">&#127912; Change wallpaper</button>
-<button id="archiveChatBtn" onclick="toggleArchiveChat()" class="w-full text-left px-4 py-2.5 text-[13px] text-gray-200 hover:bg-white/5 transition flex items-center gap-2">&#128451; Archive chat</button>
-<button id="blockUserBtn" onclick="toggleBlockUser()" class="w-full text-left px-4 py-2.5 text-[13px] text-amber-400 hover:bg-white/5 transition flex items-center gap-2">&#128683; Block user</button>
-<button onclick="deleteChatHistory()" class="w-full text-left px-4 py-2.5 text-[13px] text-red-400 hover:bg-white/5 transition flex items-center gap-2">&#128465; Delete chat</button>
-</div>
-</div>
-</div>
-<div id="wallpaperPicker" class="hidden fixed inset-x-0 top-14 bg-[#1e293b] border-b border-white/10 p-3 z-[75] max-h-[55vh] overflow-y-auto">
-<div class="flex items-center justify-between mb-2.5">
-<span class="text-[12px] text-gray-300 font-semibold">Choose a wallpaper</span>
-<button onclick="closeWallpaperPicker()" class="text-[11px] text-gray-400 hover:text-white px-2">Done</button>
-</div>
-<div class="grid grid-cols-4 gap-2.5">
-<button onclick="setWallpaper('default')" class="aspect-square rounded-xl border-2 border-white/20 bg-[#0f172a] flex items-center justify-center text-[9px] text-gray-500">Default</button>
-<button onclick="setWallpaper('slate')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-slate-700 to-slate-900"></button>
-<button onclick="setWallpaper('amber')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-amber-600/60 to-orange-900"></button>
-<button onclick="setWallpaper('floral')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-rose-400/50 via-pink-600/40 to-fuchsia-950 relative overflow-hidden"><span class="absolute inset-0 flex items-center justify-center text-[16px]">&#127801;</span></button>
-<button onclick="setWallpaper('nature')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-green-600/50 via-emerald-700/40 to-green-950 relative overflow-hidden"><span class="absolute inset-0 flex items-center justify-center text-[16px]">&#127795;</span></button>
-<button onclick="setWallpaper('solitude')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-slate-500/40 via-gray-600/30 to-slate-950 relative overflow-hidden"><span class="absolute inset-0 flex items-center justify-center text-[16px]">&#127777;&#65039;</span></button>
-<button onclick="setWallpaper('ocean')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-cyan-500/50 via-blue-700/40 to-blue-950 relative overflow-hidden"><span class="absolute inset-0 flex items-center justify-center text-[16px]">&#127754;</span></button>
-<button onclick="setWallpaper('sunset')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-orange-500/50 via-pink-600/40 to-purple-950 relative overflow-hidden"><span class="absolute inset-0 flex items-center justify-center text-[16px]">&#127749;</span></button>
-<button onclick="setWallpaper('indigo')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-indigo-600/50 to-indigo-950"></button>
-<label class="aspect-square rounded-xl border-2 border-dashed border-amber-500/40 flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-white/5 transition">
-<svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-<span class="text-[9px] text-amber-400 text-center px-1">Your Photo</span>
-<input type="file" accept="image/*" class="hidden" onchange="handleWallpaperImage(event)">
-</label>
 </div>
 </div>
 <div id="chatMessages" class="flex-1 overflow-y-auto px-4 py-4 space-y-2.5 transition-colors"></div>
@@ -368,7 +337,44 @@ Post
 </div>
 </div>
 
-<div id="callOverlay" class="fixed inset-0 z-[80] hidden flex-col items-center justify-between bg-gradient-to-b from-[#1e293b] to-[#0f172a] text-center py-12 px-6">
+<div id="chatOptionsModal" class="fixed inset-0 z-[76] hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeChatOptions()">
+<div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] p-4 border-t border-white/8 animate-slide-up">
+<div class="w-10 h-1 bg-white/15 rounded-full mx-auto mb-4"></div>
+<button onclick="closeChatOptions();openWallpaperPicker()" class="w-full text-left px-3 py-3.5 text-[14px] text-gray-200 hover:bg-white/5 rounded-xl transition flex items-center gap-3">&#127912; Change wallpaper</button>
+<button id="archiveChatBtn" onclick="toggleArchiveChat()" class="w-full text-left px-3 py-3.5 text-[14px] text-gray-200 hover:bg-white/5 rounded-xl transition flex items-center gap-3">&#128451; Archive chat</button>
+<button id="blockUserBtn" onclick="toggleBlockUser()" class="w-full text-left px-3 py-3.5 text-[14px] text-amber-400 hover:bg-white/5 rounded-xl transition flex items-center gap-3">&#128683; Block user</button>
+<button onclick="deleteChatHistory()" class="w-full text-left px-3 py-3.5 text-[14px] text-red-400 hover:bg-white/5 rounded-xl transition flex items-center gap-3">&#128465; Delete chat</button>
+<button onclick="closeChatOptions()" class="w-full bg-[#0f172a] hover:bg-white/5 text-white font-semibold py-3 rounded-xl text-sm transition border border-white/5 mt-2">Cancel</button>
+</div>
+</div>
+
+<div id="wallpaperModal" class="fixed inset-0 z-[76] hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeWallpaperPicker()">
+<div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] p-5 border-t border-white/8 animate-slide-up max-h-[80vh] overflow-y-auto">
+<div class="w-10 h-1 bg-white/15 rounded-full mx-auto mb-4"></div>
+<div class="flex items-center justify-between mb-3">
+<span class="text-[14px] text-white font-bold">Choose a wallpaper</span>
+<button onclick="closeWallpaperPicker()" class="text-[12px] text-gray-400 hover:text-white px-2">Done</button>
+</div>
+<div class="grid grid-cols-4 gap-2.5">
+<button onclick="setWallpaper('default')" class="aspect-square rounded-xl border-2 border-white/20 bg-[#0f172a] flex items-center justify-center text-[9px] text-gray-500">Default</button>
+<button onclick="setWallpaper('slate')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-slate-700 to-slate-900"></button>
+<button onclick="setWallpaper('amber')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-amber-600/60 to-orange-900"></button>
+<button onclick="setWallpaper('floral')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-rose-400/50 via-pink-600/40 to-fuchsia-950 relative overflow-hidden"><span class="absolute inset-0 flex items-center justify-center text-[16px]">&#127801;</span></button>
+<button onclick="setWallpaper('nature')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-green-600/50 via-emerald-700/40 to-green-950 relative overflow-hidden"><span class="absolute inset-0 flex items-center justify-center text-[16px]">&#127795;</span></button>
+<button onclick="setWallpaper('solitude')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-slate-500/40 via-gray-600/30 to-slate-950 relative overflow-hidden"><span class="absolute inset-0 flex items-center justify-center text-[16px]">&#127777;&#65039;</span></button>
+<button onclick="setWallpaper('ocean')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-cyan-500/50 via-blue-700/40 to-blue-950 relative overflow-hidden"><span class="absolute inset-0 flex items-center justify-center text-[16px]">&#127754;</span></button>
+<button onclick="setWallpaper('sunset')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-orange-500/50 via-pink-600/40 to-purple-950 relative overflow-hidden"><span class="absolute inset-0 flex items-center justify-center text-[16px]">&#127749;</span></button>
+<button onclick="setWallpaper('indigo')" class="aspect-square rounded-xl border-2 border-white/20 bg-gradient-to-br from-indigo-600/50 to-indigo-950"></button>
+<label for="wallpaperFileInput" class="aspect-square rounded-xl border-2 border-dashed border-amber-500/40 flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-white/5 transition">
+<svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+<span class="text-[9px] text-amber-400 text-center px-1">Your Photo</span>
+</label>
+</div>
+<input id="wallpaperFileInput" type="file" accept="image/*" class="absolute w-px h-px opacity-0 overflow-hidden -z-10" onchange="handleWallpaperImage(event)">
+</div>
+</div>
+
+<div id="callOverlay" class="fixed inset-0 z-[80] hidden flex-col items-center justify-between bg-gradient-to-b from-[#1e293b] to-[#0f172a] text-center py-12 px-6" style="height:100dvh">
 <div class="w-full">
 <p id="callStatus" class="text-gray-400 text-sm font-medium tracking-wide">Calling...</p>
 <img id="callAvatar" src="" class="w-28 h-28 rounded-full object-cover border-4 border-white/10 mx-auto mt-6" alt="">
@@ -437,30 +443,48 @@ return `<div class="badge-wrap inline-flex items-center justify-center ${size} $
 }
 
 const currentUser={
-name:'LASU GradeTracker Official',
-handle:'@lasu_official',
-avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=official',
-dept:'Administration',
-level:'Staff',
-bio:'Official LASU GradeTracker account. Announcements, updates & community management.',
-posts:45,
-likes:1200,
+name:'You',
+handle:'@you',
+avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=student',
+dept:'Computer Science',
+level:'200L',
+bio:'LASU student using GradeTracker to stay on top of my grades 📚',
+posts:2,
+likes:23,
 wins:0,
-followers:2500,
+followers:34,
 following:false,
 online:true,
 isMember:true,
-isAdmin:true
+isAdmin:false
 };
+
+const savedProfile=JSON.parse(localStorage.getItem('lasu_profile')||'null');
+if(savedProfile)Object.assign(currentUser,savedProfile);
 
 const demoUsers=[
 {name:'Adebola Oluwaseun',handle:'@adebola_seun',avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=adebola',dept:'Chemistry',level:'200L',bio:'LASU Chemistry student | GradeTracker enthusiast | Always grinding | 4.0 or nothing!',posts:12,likes:48,wins:3,followers:156,following:false,online:true,isMember:true,isAdmin:false},
 {name:'Chioma Nwosu',handle:'@chioma_n',avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=chioma',dept:'Biology',level:'300L',bio:'Bio major | Nature lover | LASU represent! | Future researcher',posts:8,likes:32,wins:1,followers:89,following:false,online:true,isMember:true,isAdmin:false},
-{name:'Tunde Bakare',handle:'@tunde_b',avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=tunde',dept:'Physics',level:'100L',bio:'First year vibes | Physics is life | Still figuring things out',posts:5,likes:19,wins:0,followers:42,following:false,online:false,isMember:true,isAdmin:false}
+{name:'Tunde Bakare',handle:'@tunde_b',avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=tunde',dept:'Physics',level:'100L',bio:'First year vibes | Physics is life | Still figuring things out',posts:5,likes:19,wins:0,followers:42,following:false,online:false,isMember:true,isAdmin:false},
+{name:'LASU GradeTracker Official',handle:'@lasu_official',avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=official',dept:'Administration',level:'Staff',bio:'Official LASU GradeTracker account. Announcements, updates & community management.',posts:45,likes:1200,wins:0,followers:2500,following:false,online:true,isMember:true,isAdmin:true}
 ];
 
 let posts=JSON.parse(localStorage.getItem('lasu_posts')||'[]');
 let currentFilter='all';
+let activeTagFilter=null;
+
+function filterByTag(tag){
+document.getElementById('profileModal').classList.add('hidden');
+document.getElementById('profileModal').classList.remove('flex');
+activeTagFilter=tag;
+window.scrollTo({top:0,behavior:'smooth'});
+renderPosts();
+}
+
+function clearTagFilter(){
+activeTagFilter=null;
+renderPosts();
+}
 let sharePostId=null;
 let viewedProfileId=null;
 let currentProfileTab='posts';
@@ -565,7 +589,7 @@ if(posts.length===0){
 posts=[
 {id:1,userId:1,content:'Just calculated my CGPA using the LASU GradeTracker! Went from 3.2 to 3.8 this semester. Who else is using it?',time:'2h ago',likes:24,comments:[{id:1,userId:2,text:'Congrats! That\'s a huge jump 🔥',time:'1h ago'}],shares:3,liked:false,saved:false,tags:['#GradeTracker','#LASU'],image:null},
 {id:2,userId:2,content:'Bio 301 practical was something else today. Thank God for this app helping me track my grades so I know where I stand!',time:'4h ago',likes:15,comments:[],shares:1,liked:false,saved:false,tags:['#BioLife','#LASU'],image:null},
-{id:3,userId:0,content:'Important Announcement: The new GPA calculator update is live! Now supports 5-point and 4-point grading systems. Check it out!',time:'1h ago',likes:156,comments:[{id:2,userId:1,text:'This is huge, thank you!',time:'40m ago'}],shares:45,liked:false,saved:false,tags:['#Announcement','#Update'],image:null}
+{id:3,userId:4,content:'Important Announcement: The new GPA calculator update is live! Now supports 5-point and 4-point grading systems. Check it out!',time:'1h ago',likes:156,comments:[{id:2,userId:1,text:'This is huge, thank you!',time:'40m ago'}],shares:45,liked:false,saved:false,tags:['#Announcement','#Update'],image:null}
 ];
 localStorage.setItem('lasu_posts',JSON.stringify(posts));
 }
@@ -614,12 +638,7 @@ if(post){
 post.saved=!post.saved;
 localStorage.setItem('lasu_posts',JSON.stringify(posts));
 renderPosts();
-if(post.saved){
-const blob=new Blob([post.content],{type:'text/plain'});
-const url=URL.createObjectURL(blob);
-const a=document.createElement('a');a.href=url;a.download='LASU-GradeTracker-Post.txt';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
-showToast('Saved to profile & downloaded to phone!');
-}else{showToast('Removed from saved posts','info');}
+showToast(post.saved?'Saved to your profile':'Removed from saved posts','info');
 }
 }
 
@@ -678,12 +697,14 @@ if(!Array.isArray(post.comments))post.comments=[];
 renderComments();
 const modal=document.getElementById('commentsModal');
 modal.classList.remove('hidden');modal.classList.add('flex');
+lockBodyScroll();
 }
 
 function closeCommentsModal(){
 const modal=document.getElementById('commentsModal');
 modal.classList.add('hidden');modal.classList.remove('flex');
 activeCommentPostId=null;
+unlockBodyScroll();
 }
 
 function renderComments(){
@@ -739,8 +760,8 @@ renderPosts();
 showToast('Comment deleted','info');
 }
 
-function openShare(id){sharePostId=id;const modal=document.getElementById('shareModal');modal.classList.remove('hidden');modal.classList.add('flex');}
-function closeShareModal(){const modal=document.getElementById('shareModal');modal.classList.add('hidden');modal.classList.remove('flex');sharePostId=null;}
+function openShare(id){sharePostId=id;const modal=document.getElementById('shareModal');modal.classList.remove('hidden');modal.classList.add('flex');lockBodyScroll();}
+function closeShareModal(){const modal=document.getElementById('shareModal');modal.classList.add('hidden');modal.classList.remove('flex');sharePostId=null;unlockBodyScroll();}
 
 function shareTo(platform){
 const post=posts.find(p=>p.id===sharePostId);
@@ -757,7 +778,7 @@ function copyLink(){navigator.clipboard.writeText('https://lasu-gradetracker.git
 
 function switchProfileTab(tab){
 currentProfileTab=tab;
-['posts','diary','saved'].forEach(t=>{
+['posts','saved'].forEach(t=>{
 const btn=document.getElementById('profileTab-'+t);
 const content=document.getElementById('profileContent-'+t);
 if(t===tab){btn.className='profile-tab-active flex-1 py-2 rounded-lg text-xs font-semibold transition-all';content.classList.remove('hidden');}
@@ -818,10 +839,13 @@ const followBtn=document.getElementById('modalFollowBtn');
 if(isSelf){followBtn.textContent='Edit Profile';followBtn.onclick=openEditProfile;followBtn.className='flex-1 bg-[#0f172a] hover:bg-white/5 text-white font-bold py-2.5 rounded-xl text-sm transition border border-white/8';}
 else{followBtn.textContent=user.following?'Following':'Follow';followBtn.onclick=toggleFollow;followBtn.className=user.following?'flex-1 bg-[#0f172a] hover:bg-white/5 text-white font-bold py-2.5 rounded-xl text-sm transition border border-white/8':'flex-1 bg-amber-500 hover:bg-amber-400 text-black font-bold py-2.5 rounded-xl text-sm transition';}
 switchProfileTab('posts');
-const modal=document.getElementById('profileModal');modal.classList.remove('hidden');modal.classList.add('flex');
+const modal=document.getElementById('profileModal');
+const wasOpen=modal.classList.contains('flex');
+modal.classList.remove('hidden');modal.classList.add('flex');
+if(!wasOpen)lockBodyScroll();
 }
 
-function closeProfileModal(){const modal=document.getElementById('profileModal');modal.classList.add('hidden');modal.classList.remove('flex');viewedProfileId=null;}
+function closeProfileModal(){const modal=document.getElementById('profileModal');modal.classList.add('hidden');modal.classList.remove('flex');viewedProfileId=null;unlockBodyScroll();}
 
 function toggleFollow(){
 if(viewedProfileId===null||viewedProfileId===0)return;
@@ -840,9 +864,16 @@ document.getElementById('editDept').value=currentUser.dept;
 document.getElementById('editLevel').value=currentUser.level;
 tempAvatar=null;
 const modal=document.getElementById('editProfileModal');modal.classList.remove('hidden');modal.classList.add('flex');
+lockBodyScroll();
 }
 
-function closeEditProfile(){const modal=document.getElementById('editProfileModal');modal.classList.add('hidden');modal.classList.remove('flex');tempAvatar=null;}
+function closeEditProfile(){const modal=document.getElementById('editProfileModal');modal.classList.add('hidden');modal.classList.remove('flex');tempAvatar=null;unlockBodyScroll();}
+
+function resetDemoData(){
+if(!confirm('This clears all posts, comments, messages and notifications from this browser and reloads with fresh demo data. Continue?'))return;
+['lasu_posts','lasu_notifications','lasu_chats'].forEach(k=>localStorage.removeItem(k));
+location.reload();
+}
 
 function handleAvatarChange(event){
 const file=event.target.files[0];if(!file)return;
@@ -857,8 +888,9 @@ currentUser.bio=document.getElementById('editBio').value||currentUser.bio;
 currentUser.dept=document.getElementById('editDept').value||currentUser.dept;
 currentUser.level=document.getElementById('editLevel').value||currentUser.level;
 if(tempAvatar){currentUser.avatar=tempAvatar;}
-document.querySelector('header img[alt="My Profile"]').src=currentUser.avatar;
-document.querySelector('#postInput').parentElement.previousElementSibling.src=currentUser.avatar;
+localStorage.setItem('lasu_profile',JSON.stringify(currentUser));
+syncMyAvatarUI();
+renderPosts();
 closeEditProfile();showToast('Profile updated successfully!');
 setTimeout(()=>openProfile(0),300);
 }
@@ -877,19 +909,24 @@ function renderPosts(){
 const feed=document.getElementById('postsFeed');
 const empty=document.getElementById('emptyState');
 let filtered=posts;
+if(activeTagFilter){
+filtered=posts.filter(p=>p.tags.some(t=>t.toLowerCase()===activeTagFilter.toLowerCase()));
+}else{
 if(currentFilter==='my')filtered=posts.filter(p=>p.userId===0||p.repostedBy===0);
 if(currentFilter==='trending')filtered=[...posts].sort((a,b)=>b.likes-a.likes);
 if(currentFilter==='following')filtered=posts.filter(p=>p.userId!==0);
-if(filtered.length===0){feed.innerHTML='';empty.classList.remove('hidden');empty.classList.add('flex');return;}
+}
+const banner=activeTagFilter?`<div class="flex items-center justify-between bg-amber-500/10 border border-amber-500/25 rounded-xl px-4 py-2.5 mb-1"><span class="text-[13px] text-amber-400 font-medium">Showing posts tagged ${escapeHTML(activeTagFilter)}</span><button onclick="clearTagFilter()" class="text-[12px] text-gray-400 hover:text-white font-medium px-2">Clear ✕</button></div>`:'';
+if(filtered.length===0){feed.innerHTML=banner;empty.classList.remove('hidden');empty.classList.add('flex');return;}
 empty.classList.add('hidden');empty.classList.remove('flex');
-feed.innerHTML=filtered.map(post=>{
+feed.innerHTML=banner+filtered.map(post=>{
 const user=getUser(post.userId);
 const isAdmin=user.isAdmin;
 const userBadges=getUserBadges(user);
 const isRepost=post.repostedBy!==undefined;
 const isOwner=isRepost?post.repostedBy===0:post.userId===0;
 const reposterName=isRepost?(post.repostedBy===0?'You':getUser(post.repostedBy).name):'';
-return `<div class="post-card bg-[#1e293b] rounded-2xl border border-white/6 p-4 transition-shadow" data-post-id="${post.id}">${isRepost?`<div class="flex items-center gap-1.5 text-[11.5px] text-gray-500 mb-2.5 font-medium"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 4v4H6a2 2 0 00-2 2v4m14 4v-4H8a2 2 0 01-2-2v-4m14-4l-3-3m3 3l-3 3M4 20l3 3m-3-3l3-3"/></svg><span>Reposted by ${escapeHTML(reposterName)}</span></div>`:''}<div class="flex items-start gap-3"><div class="relative shrink-0"><img src="${user.avatar}" onclick="openProfile(${post.userId})" class="w-10 h-10 rounded-full cursor-pointer avatar-hover object-cover border ${isAdmin?'border-red-500/50':'border-white/8'}" alt="${escapeHTML(user.name)}"></div><div class="flex-1 min-w-0"><div class="flex items-center gap-2 flex-wrap"><span onclick="openProfile(${post.userId})" class="font-semibold text-[13px] cursor-pointer hover:text-amber-400 transition truncate ${isAdmin?'text-red-400':'text-white'}">${escapeHTML(user.name)}</span>${userBadges.length>0?`<div class="flex items-center gap-0.5">${userBadges.map(b=>renderBadge(b,true)).join('')}</div>`:''}<span class="text-gray-500 text-[11px] ${isOwner?'':'ml-auto'}">${post.time}</span>${isOwner?`<div class="relative ml-auto"><button onclick="togglePostMenu(event,${post.id})" class="p-1 rounded-lg hover:bg-white/5 text-gray-500 hover:text-white transition" aria-label="Post options"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4z"/></svg></button><div id="postMenu-${post.id}" class="hidden absolute right-0 top-7 w-40 bg-[#0f172a] border border-white/10 rounded-xl shadow-2xl z-20 overflow-hidden"><button onclick="deletePost(${post.id})" class="w-full text-left px-3.5 py-2.5 text-[12.5px] text-red-400 hover:bg-red-500/10 transition font-medium">${isRepost?'Undo Repost':'Delete Post'}</button></div></div>`:''}</div><p class="text-gray-200 text-[14px] mt-2 leading-relaxed">${formatContent(post.content)}</p>${post.tags.length?`<div class="flex flex-wrap gap-2 mt-2.5">${post.tags.map(t=>`<span class="text-amber-400/70 text-[11px] font-medium hover:text-amber-400 cursor-pointer transition">${escapeHTML(t)}</span>`).join('')}</div>`:''}<div class="flex items-center gap-1 mt-3.5 pt-3 border-t border-white/5"><button onclick="likePost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ${post.liked?'text-red-400 bg-red-500/8':'text-gray-400 hover:text-red-400 hover:bg-white/4'}" aria-label="Like"><svg class="w-[18px] h-[18px] ${post.liked?'fill-current':''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg><span>${post.likes}</span></button><button onclick="commentPost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-blue-400 hover:bg-white/4 transition" aria-label="Comment"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg><span>${Array.isArray(post.comments)?post.comments.length:post.comments}</span></button><button onclick="resharePost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ${post.userReposted?'text-emerald-400 bg-emerald-500/8':'text-gray-400 hover:text-emerald-400 hover:bg-white/4'}" aria-label="Reshare" title="Reshare to your followers"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 4v4H6a2 2 0 00-2 2v4m14 4v-4H8a2 2 0 01-2-2v-4m14-4l-3-3m3 3l-3 3M4 20l3 3m-3-3l3-3"/></svg><span>${post.reposts||0}</span></button><button onclick="openShare(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-green-400 hover:bg-white/4 transition" aria-label="Share"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg><span>${post.shares}</span></button><button onclick="savePost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ml-auto ${post.saved?'text-amber-400 bg-amber-500/8':'text-gray-400 hover:text-amber-400 hover:bg-white/4'}" aria-label="Save" title="Save — find it later in your profile"><svg class="w-[18px] h-[18px] ${post.saved?'fill-current':''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg></button></div></div></div></div>`;
+return `<div class="post-card bg-[#1e293b] rounded-2xl border border-white/6 p-4 transition-shadow" data-post-id="${post.id}">${isRepost?`<div class="flex items-center gap-1.5 text-[11.5px] text-gray-500 mb-2.5 font-medium"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 4v4H6a2 2 0 00-2 2v4m14 4v-4H8a2 2 0 01-2-2v-4m14-4l-3-3m3 3l-3 3M4 20l3 3m-3-3l3-3"/></svg><span>Reposted by ${escapeHTML(reposterName)}</span></div>`:''}<div class="flex items-start gap-3"><div class="relative shrink-0"><img src="${user.avatar}" onclick="openProfile(${post.userId})" class="w-10 h-10 rounded-full cursor-pointer avatar-hover object-cover border ${isAdmin?'border-red-500/50':'border-white/8'}" alt="${escapeHTML(user.name)}"></div><div class="flex-1 min-w-0"><div class="flex items-center gap-2 flex-wrap"><span onclick="openProfile(${post.userId})" class="font-semibold text-[13px] cursor-pointer hover:text-amber-400 transition truncate ${isAdmin?'text-red-400':'text-white'}">${escapeHTML(user.name)}</span>${userBadges.length>0?`<div class="flex items-center gap-0.5">${userBadges.map(b=>renderBadge(b,true)).join('')}</div>`:''}<span class="text-gray-500 text-[11px] ${isOwner?'':'ml-auto'}">${post.time}</span>${isOwner?`<div class="relative ml-auto"><button onclick="togglePostMenu(event,${post.id})" class="p-1 rounded-lg hover:bg-white/5 text-gray-500 hover:text-white transition" aria-label="Post options"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4z"/></svg></button><div id="postMenu-${post.id}" class="hidden absolute right-0 top-7 w-40 bg-[#0f172a] border border-white/10 rounded-xl shadow-2xl z-20 overflow-hidden"><button onclick="deletePost(${post.id})" class="w-full text-left px-3.5 py-2.5 text-[12.5px] text-red-400 hover:bg-red-500/10 transition font-medium">${isRepost?'Undo Repost':'Delete Post'}</button></div></div>`:''}</div><p class="text-gray-200 text-[14px] mt-2 leading-relaxed">${formatContent(post.content)}</p>${post.tags.length?`<div class="flex flex-wrap gap-2 mt-2.5">${post.tags.map(t=>`<span onclick="filterByTag('${t.replace(/'/g,"")}')" class="text-amber-400/70 text-[11px] font-medium hover:text-amber-400 cursor-pointer transition">${escapeHTML(t)}</span>`).join('')}</div>`:''}<div class="flex items-center gap-1 mt-3.5 pt-3 border-t border-white/5"><button onclick="likePost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ${post.liked?'text-red-400 bg-red-500/8':'text-gray-400 hover:text-red-400 hover:bg-white/4'}" aria-label="Like"><svg class="w-[18px] h-[18px] ${post.liked?'fill-current':''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg><span>${post.likes}</span></button><button onclick="commentPost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-blue-400 hover:bg-white/4 transition" aria-label="Comment"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg><span>${Array.isArray(post.comments)?post.comments.length:post.comments}</span></button><button onclick="resharePost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ${post.userReposted?'text-emerald-400 bg-emerald-500/8':'text-gray-400 hover:text-emerald-400 hover:bg-white/4'}" aria-label="Reshare" title="Reshare to your followers"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 4v4H6a2 2 0 00-2 2v4m14 4v-4H8a2 2 0 01-2-2v-4m14-4l-3-3m3 3l-3 3M4 20l3 3m-3-3l3-3"/></svg><span>${post.reposts||0}</span></button><button onclick="openShare(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-green-400 hover:bg-white/4 transition" aria-label="Share"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg><span>${post.shares}</span></button><button onclick="savePost(${post.id})" class="action-btn flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg transition ml-auto ${post.saved?'text-amber-400 bg-amber-500/8':'text-gray-400 hover:text-amber-400 hover:bg-white/4'}" aria-label="Save" title="Save — find it later in your profile"><svg class="w-[18px] h-[18px] ${post.saved?'fill-current':''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg></button></div></div></div></div>`;
 }).join('');
 }
 
@@ -930,14 +967,39 @@ function saveChats(){localStorage.setItem('lasu_chats',JSON.stringify(chats));}
 
 let inboxFilter='all';
 
+let scrollLockCount=0;
+let lockedScrollY=0;
+function lockBodyScroll(){
+if(scrollLockCount===0){
+lockedScrollY=window.scrollY;
+document.body.style.position='fixed';
+document.body.style.top=(-lockedScrollY)+'px';
+document.body.style.width='100%';
+document.body.style.overflow='hidden';
+}
+scrollLockCount++;
+}
+function unlockBodyScroll(){
+scrollLockCount=Math.max(0,scrollLockCount-1);
+if(scrollLockCount===0){
+document.body.style.position='';
+document.body.style.top='';
+document.body.style.width='';
+document.body.style.overflow='';
+window.scrollTo(0,lockedScrollY);
+}
+}
+
 function openInbox(){
 setInboxFilter('all');
 const modal=document.getElementById('inboxModal');
 modal.classList.remove('hidden');modal.classList.add('flex');
+lockBodyScroll();
 }
 function closeInbox(){
 const modal=document.getElementById('inboxModal');
 modal.classList.add('hidden');modal.classList.remove('flex');
+unlockBodyScroll();
 }
 
 function setInboxFilter(filter){
@@ -999,14 +1061,16 @@ applyWallpaper(chat.wallpaper||'default');
 renderChatMessages();
 const modal=document.getElementById('chatModal');
 modal.classList.remove('hidden');modal.classList.add('flex');
-document.getElementById('chatMenu').classList.add('hidden');
-document.getElementById('wallpaperPicker').classList.add('hidden');
+closeChatOptions();
+closeWallpaperPicker();
+lockBodyScroll();
 }
 
 function closeChatModal(){
 const modal=document.getElementById('chatModal');
 modal.classList.add('hidden');modal.classList.remove('flex');
 activeChatUserId=null;
+unlockBodyScroll();
 }
 
 function applyWallpaper(value){
@@ -1058,21 +1122,23 @@ renderChatMessages();
 showToast('Message deleted','info');
 }
 
-function toggleChatMenu(e){
-e.stopPropagation();
-document.getElementById('wallpaperPicker').classList.add('hidden');
-document.getElementById('chatMenu').classList.toggle('hidden');
+function openChatOptions(){
+const modal=document.getElementById('chatOptionsModal');
+modal.classList.remove('hidden');modal.classList.add('flex');
 }
-document.addEventListener('click',(e)=>{
-const menu=document.getElementById('chatMenu');
-if(menu&&!menu.classList.contains('hidden')&&!menu.contains(e.target)&&e.target.closest('button[onclick^="toggleChatMenu"]')===null)menu.classList.add('hidden');
-});
+function closeChatOptions(){
+const modal=document.getElementById('chatOptionsModal');
+modal.classList.add('hidden');modal.classList.remove('flex');
+}
 
 function openWallpaperPicker(){
-document.getElementById('chatMenu').classList.add('hidden');
-document.getElementById('wallpaperPicker').classList.remove('hidden');
+const modal=document.getElementById('wallpaperModal');
+modal.classList.remove('hidden');modal.classList.add('flex');
 }
-function closeWallpaperPicker(){document.getElementById('wallpaperPicker').classList.add('hidden');}
+function closeWallpaperPicker(){
+const modal=document.getElementById('wallpaperModal');
+modal.classList.add('hidden');modal.classList.remove('flex');
+}
 function setWallpaper(key){
 const chat=getChat(activeChatUserId);
 chat.wallpaper=key;
@@ -1102,7 +1168,7 @@ const chat=getChat(activeChatUserId);
 const user=getUser(activeChatUserId);
 chat.blocked=!chat.blocked;
 saveChats();
-document.getElementById('chatMenu').classList.add('hidden');
+closeChatOptions();
 document.getElementById('blockUserBtn').textContent=chat.blocked?'✅ Unblock user':'🚫 Block user';
 document.getElementById('blockedNotice').classList.toggle('hidden',!chat.blocked);
 document.getElementById('chatInputBar').classList.toggle('hidden',chat.blocked);
@@ -1114,7 +1180,7 @@ function toggleArchiveChat(){
 const chat=getChat(activeChatUserId);
 chat.archived=!chat.archived;
 saveChats();
-document.getElementById('chatMenu').classList.add('hidden');
+closeChatOptions();
 document.getElementById('archiveChatBtn').textContent=chat.archived?'📤 Unarchive chat':'📥 Archive chat';
 showToast(chat.archived?'Chat archived':'Chat unarchived','info');
 }
@@ -1125,7 +1191,7 @@ const chat=getChat(activeChatUserId);
 chat.messages=[];
 saveChats();
 renderChatMessages();
-document.getElementById('chatMenu').classList.add('hidden');
+closeChatOptions();
 showToast('Chat deleted','info');
 }
 
@@ -1198,8 +1264,15 @@ const slider=document.getElementById('volumeSlider');
 setVolume(parseInt(slider.value,10)+delta);
 }
 
+function syncMyAvatarUI(){
+document.querySelectorAll('img[alt="My Profile"], img[alt="Me"]').forEach(img=>img.src=currentUser.avatar);
+const headerAvatar=document.getElementById('headerAvatar');
+if(headerAvatar)headerAvatar.className=currentUser.isAdmin?'w-9 h-9 rounded-full border-2 border-red-500/50 cursor-pointer avatar-hover object-cover shrink-0':'w-9 h-9 rounded-full border-2 border-white/15 cursor-pointer avatar-hover object-cover shrink-0';
+}
+
+syncMyAvatarUI();
 updateNotifBadge();
 renderPosts();
 </script>
 </body>
-</html>
+</html> 
