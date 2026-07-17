@@ -54,11 +54,14 @@ body{background-color:#0f172a;color:#fff}
 </div>
 <div id="notifList" class="divide-y divide-white/5"></div>
 </div>
+<button onclick="openPeopleSearch()" class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition shrink-0" aria-label="Search people">
+<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+</button>
 <button onclick="openInbox()" class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition shrink-0" aria-label="Messages">
 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
 </button>
 <button onclick="openProfile(0)" class="rounded-full shrink-0" aria-label="My profile">
-<img id="headerAvatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=student" class="w-9 h-9 rounded-full border-2 border-white/15 cursor-pointer avatar-hover object-cover shrink-0" alt="My Profile">
+<img id="headerAvatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-9 h-9 rounded-full border-2 border-red-500/50 cursor-pointer avatar-hover object-cover shrink-0" alt="My Profile">
 </button>
 </div>
 </header>
@@ -73,7 +76,7 @@ General Chat
 
 <div class="mx-4 mt-5 bg-[#1e293b] rounded-2xl border border-white/8 p-4">
 <div class="flex gap-3">
-<img src="https://api.dicebear.com/7.x/avataaars/svg?seed=student" class="w-10 h-10 rounded-full shrink-0 border border-white/8 object-cover" alt="Me">
+<img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-10 h-10 rounded-full shrink-0 border border-white/8 object-cover" alt="Me">
 <div class="flex-1">
 <textarea id="postInput" placeholder="What's on your mind? Share with the community..." class="w-full bg-[#0f172a] rounded-xl px-4 py-3 text-[14px] text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none resize-none h-[72px] transition-all" oninput="togglePostBtn(this)"></textarea>
 </div>
@@ -181,7 +184,7 @@ Post
 </div>
 <div id="commentsList" class="px-5 overflow-y-auto flex-1"></div>
 <div class="p-4 border-t border-white/8 flex items-center gap-2 shrink-0">
-<img src="https://api.dicebear.com/7.x/avataaars/svg?seed=student" class="w-8 h-8 rounded-full object-cover border border-white/8 shrink-0" alt="Me">
+<img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-8 h-8 rounded-full object-cover border border-white/8 shrink-0" alt="Me">
 <input id="commentInput" type="text" placeholder="Write a comment..." class="flex-1 bg-[#0f172a] rounded-xl px-4 py-2.5 text-[13.5px] text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none transition" onkeydown="if(event.key==='Enter')addComment()">
 <button onclick="addComment()" class="action-btn bg-amber-500 hover:bg-amber-400 text-black font-bold w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition">
 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
@@ -285,8 +288,19 @@ Post
 </div>
 <button onclick="saveProfile()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl text-sm transition mt-2">Save Changes</button>
 <button onclick="resetDemoData()" class="w-full bg-transparent hover:bg-white/5 text-gray-500 hover:text-red-400 font-medium py-2.5 rounded-xl text-[12.5px] transition">Reset Demo Data</button>
+<p class="text-center text-[10px] text-gray-600 pt-1">Build 2026-07-17.2</p>
 </div>
 </div>
+</div>
+
+<div id="peopleSearchModal" class="fixed inset-0 z-[66] hidden flex-col bg-[#0f172a]" style="height:100dvh">
+<div class="sticky top-0 bg-[#0f172a] border-b border-white/8 px-3 py-2.5 flex items-center gap-2.5 shrink-0">
+<button onclick="closePeopleSearch()" class="p-2 rounded-full hover:bg-white/5 transition" aria-label="Close search">
+<svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+</button>
+<input id="peopleSearchInput" type="text" placeholder="Search people by name or department..." class="flex-1 bg-[#1e293b] rounded-xl px-4 py-2.5 text-[13.5px] text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none transition" oninput="renderPeopleSearch()">
+</div>
+<div id="peopleSearchList" class="flex-1 overflow-y-auto px-3 py-2 space-y-1.5"></div>
 </div>
 
 <div id="inboxModal" class="fixed inset-0 z-[65] hidden flex-col bg-[#0f172a]" style="height:100dvh">
@@ -443,20 +457,20 @@ return `<div class="badge-wrap inline-flex items-center justify-center ${size} $
 }
 
 const currentUser={
-name:'You',
-handle:'@you',
-avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=student',
-dept:'Computer Science',
-level:'200L',
-bio:'LASU student using GradeTracker to stay on top of my grades 📚',
-posts:2,
-likes:23,
+name:'LASU GradeTracker Official',
+handle:'@lasu_official',
+avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=official',
+dept:'Administration',
+level:'Staff',
+bio:'Official LASU GradeTracker account. Announcements, updates & community management.',
+posts:45,
+likes:1200,
 wins:0,
-followers:34,
+followers:2500,
 following:false,
 online:true,
 isMember:true,
-isAdmin:false
+isAdmin:true
 };
 
 const savedProfile=JSON.parse(localStorage.getItem('lasu_profile')||'null');
@@ -465,8 +479,7 @@ if(savedProfile)Object.assign(currentUser,savedProfile);
 const demoUsers=[
 {name:'Adebola Oluwaseun',handle:'@adebola_seun',avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=adebola',dept:'Chemistry',level:'200L',bio:'LASU Chemistry student | GradeTracker enthusiast | Always grinding | 4.0 or nothing!',posts:12,likes:48,wins:3,followers:156,following:false,online:true,isMember:true,isAdmin:false},
 {name:'Chioma Nwosu',handle:'@chioma_n',avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=chioma',dept:'Biology',level:'300L',bio:'Bio major | Nature lover | LASU represent! | Future researcher',posts:8,likes:32,wins:1,followers:89,following:false,online:true,isMember:true,isAdmin:false},
-{name:'Tunde Bakare',handle:'@tunde_b',avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=tunde',dept:'Physics',level:'100L',bio:'First year vibes | Physics is life | Still figuring things out',posts:5,likes:19,wins:0,followers:42,following:false,online:false,isMember:true,isAdmin:false},
-{name:'LASU GradeTracker Official',handle:'@lasu_official',avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=official',dept:'Administration',level:'Staff',bio:'Official LASU GradeTracker account. Announcements, updates & community management.',posts:45,likes:1200,wins:0,followers:2500,following:false,online:true,isMember:true,isAdmin:true}
+{name:'Tunde Bakare',handle:'@tunde_b',avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=tunde',dept:'Physics',level:'100L',bio:'First year vibes | Physics is life | Still figuring things out',posts:5,likes:19,wins:0,followers:42,following:false,online:false,isMember:true,isAdmin:false}
 ];
 
 let posts=JSON.parse(localStorage.getItem('lasu_posts')||'[]');
@@ -589,7 +602,7 @@ if(posts.length===0){
 posts=[
 {id:1,userId:1,content:'Just calculated my CGPA using the LASU GradeTracker! Went from 3.2 to 3.8 this semester. Who else is using it?',time:'2h ago',likes:24,comments:[{id:1,userId:2,text:'Congrats! That\'s a huge jump 🔥',time:'1h ago'}],shares:3,liked:false,saved:false,tags:['#GradeTracker','#LASU'],image:null},
 {id:2,userId:2,content:'Bio 301 practical was something else today. Thank God for this app helping me track my grades so I know where I stand!',time:'4h ago',likes:15,comments:[],shares:1,liked:false,saved:false,tags:['#BioLife','#LASU'],image:null},
-{id:3,userId:4,content:'Important Announcement: The new GPA calculator update is live! Now supports 5-point and 4-point grading systems. Check it out!',time:'1h ago',likes:156,comments:[{id:2,userId:1,text:'This is huge, thank you!',time:'40m ago'}],shares:45,liked:false,saved:false,tags:['#Announcement','#Update'],image:null}
+{id:3,userId:0,content:'Important Announcement: The new GPA calculator update is live! Now supports 5-point and 4-point grading systems. Check it out!',time:'1h ago',likes:156,comments:[{id:2,userId:1,text:'This is huge, thank you!',time:'40m ago'}],shares:45,liked:false,saved:false,tags:['#Announcement','#Update'],image:null}
 ];
 localStorage.setItem('lasu_posts',JSON.stringify(posts));
 }
@@ -990,6 +1003,56 @@ window.scrollTo(0,lockedScrollY);
 }
 }
 
+function openPeopleSearch(){
+document.getElementById('peopleSearchInput').value='';
+renderPeopleSearch();
+const modal=document.getElementById('peopleSearchModal');
+modal.classList.remove('hidden');modal.classList.add('flex');
+lockBodyScroll();
+setTimeout(()=>document.getElementById('peopleSearchInput').focus(),100);
+}
+function closePeopleSearch(){
+const modal=document.getElementById('peopleSearchModal');
+modal.classList.add('hidden');modal.classList.remove('flex');
+unlockBodyScroll();
+}
+
+function renderPeopleSearch(){
+const q=document.getElementById('peopleSearchInput').value.trim().toLowerCase();
+const list=document.getElementById('peopleSearchList');
+const results=demoUsers.map((u,i)=>({id:i+1,user:u})).filter(({user})=>{
+if(!q)return true;
+return user.name.toLowerCase().includes(q)||user.handle.toLowerCase().includes(q)||user.dept.toLowerCase().includes(q);
+});
+if(results.length===0){
+list.innerHTML='<div class="text-center py-16 text-gray-500 text-sm px-6">No one found — try a different name or department</div>';
+return;
+}
+list.innerHTML=results.map(({id,user})=>{
+const badges=getUserBadges(user);
+return `<div class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition">
+<img onclick="closePeopleSearch();openProfile(${id})" src="${user.avatar}" class="w-12 h-12 rounded-full object-cover border ${user.isAdmin?'border-red-500/50':'border-white/8'} cursor-pointer shrink-0">
+<div onclick="closePeopleSearch();openProfile(${id})" class="flex-1 min-w-0 cursor-pointer">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="font-semibold text-[13.5px] ${user.isAdmin?'text-red-400':'text-white'} truncate">${escapeHTML(user.name)}</span>
+${badges.length>0?`<div class="flex items-center gap-0.5">${badges.map(b=>renderBadge(b,true)).join('')}</div>`:''}
+</div>
+<p class="text-[11.5px] text-gray-500 truncate">${escapeHTML(user.handle)} · ${escapeHTML(user.dept)} · ${user.followers} followers</p>
+</div>
+<button onclick="quickToggleFollow(${id})" class="shrink-0 text-[12px] font-bold px-3.5 py-1.5 rounded-lg transition ${user.following?'bg-[#0f172a] text-white border border-white/8':'bg-amber-500 text-black'}">${user.following?'Following':'Follow'}</button>
+</div>`;
+}).join('');
+}
+
+function quickToggleFollow(id){
+const user=demoUsers[id-1];
+if(!user)return;
+user.following=!user.following;
+user.followers+=user.following?1:-1;
+renderPeopleSearch();
+showToast(user.following?'Now following '+user.name+'!':'Unfollowed '+user.name,'info');
+}
+
 function openInbox(){
 setInboxFilter('all');
 const modal=document.getElementById('inboxModal');
@@ -1275,4 +1338,4 @@ updateNotifBadge();
 renderPosts();
 </script>
 </body>
-</html> 
+</html>
