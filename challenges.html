@@ -7,7 +7,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+*{font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 body{background-color:#0f172a;color:#fff}
 ::-webkit-scrollbar{width:0;height:0}
 @keyframes slide-up{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -16,7 +16,6 @@ body{background-color:#0f172a;color:#fff}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 @keyframes trophy-shine{0%{transform:translateX(-100%) rotate(25deg)}100%{transform:translateX(200%) rotate(25deg)}}
-@keyframes progress-fill{from{width:0}to{width:var(--target-width)}}
 .animate-slide-up{animation:slide-up .35s cubic-bezier(.16,1,.3,1)}
 .animate-fade-in{animation:fade-in .2s ease-out}
 .animate-pulse-soft{animation:pulse-soft 2s ease-in-out infinite}
@@ -36,28 +35,61 @@ body{background-color:#0f172a;color:#fff}
 .shimmer{background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);background-size:200% 100%;animation:shimmer 1.5s infinite}
 .trophy-shine{position:relative;overflow:hidden}
 .trophy-shine::after{content:'';position:absolute;top:0;left:0;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);animation:trophy-shine 3s infinite}
+.notification-panel{transform:translateX(100%);transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.notification-panel.open{transform:translateX(0)}
+.notification-item{transition:all .15s ease}
+.notification-item:active{background:rgba(255,255,255,.05)}
+.notification-item.unread{border-left:2px solid #fbbf24}
+.profile-modal{transform:translateY(100%);transition:transform .35s cubic-bezier(.16,1,.3,1)}
+.profile-modal.open{transform:translateY(0)}
+.level-modal{transform:scale(.9);opacity:0;transition:all .25s ease}
+.level-modal.open{transform:scale(1);opacity:1}
+.check-in-btn{transition:all .15s ease}
+.check-in-btn:active{transform:scale(.95)}
+.game-card{transition:all .2s ease}
+.game-card:hover{transform:translateY(-2px)}
+.game-card:active{transform:scale(.98)}
+.memory-card{transition:transform .4s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.memory-card.flipped{transform:rotateY(180deg)}
+.memory-card-face{backface-visibility:hidden}
+.memory-card-back{transform:rotateY(180deg)}
+.trivia-option{transition:all .15s ease}
+.trivia-option.correct{background:rgba(34,197,94,.25)!important;border-color:rgba(34,197,94,.6)!important}
+.trivia-option.wrong{background:rgba(239,68,68,.25)!important;border-color:rgba(239,68,68,.6)!important}
 </style>
 </head>
 <body class="min-h-screen bg-[#0f172a] text-white antialiased relative">
 
 <!-- HEADER -->
 <header class="sticky top-0 z-50 bg-[#0f172a]/95 backdrop-blur-md border-b border-white/8 px-4 py-3 flex items-center gap-3">
-  <button class="p-2 -ml-2 rounded-full hover:bg-white/5 active:bg-white/10 transition" onclick="showToast('Back to Home')">
+  <button class="p-2 -ml-2 rounded-full hover:bg-white/5 active:bg-white/10 transition shrink-0" onclick="goBack()">
     <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
   </button>
   <img src="your-logo.png" class="w-10 h-10 rounded-xl object-cover shrink-0" alt="LASU GradeTracker" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
   <div class="hidden w-10 h-10 bg-amber-500 rounded-xl items-center justify-center shrink-0"><span class="text-[#0f172a] font-extrabold text-[10px]">LASU</span></div>
-  <h1 class="text-[17px] font-bold leading-tight tracking-tight"><span class="text-amber-400">LASU</span> <span class="text-white">GradeTracker</span></h1>
-  <div class="ml-auto flex items-center gap-3">
-    <button class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition" onclick="showToast('No new notifications')">
+  <h1 class="text-[17px] font-bold leading-tight tracking-tight truncate min-w-0"><span class="text-amber-400">LASU</span> <span class="text-white">GradeTracker</span></h1>
+  <div class="ml-auto flex items-center gap-3 shrink-0">
+    <button class="relative p-1.5 rounded-full hover:bg-white/5 active:bg-white/10 transition shrink-0" onclick="toggleNotifications()">
       <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-      <span class="absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0f172a]"></span>
+      <span id="notifBadge" class="absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0f172a]"></span>
     </button>
-    <button onclick="openProfile()" class="rounded-full">
-      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-9 h-9 rounded-full border-2 border-amber-500/50 cursor-pointer object-cover" alt="My Profile">
+    <button onclick="openMyProfile()" class="rounded-full shrink-0">
+      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-9 h-9 rounded-full border-2 border-amber-500/50 cursor-pointer object-cover shrink-0" alt="My Profile">
     </button>
   </div>
 </header>
+
+<!-- NOTIFICATION PANEL -->
+<div id="notificationPanel" class="notification-panel fixed inset-y-0 right-0 w-[85%] max-w-sm bg-[#1e293b] z-[60] border-l border-white/8 shadow-2xl">
+  <div class="flex items-center justify-between p-4 border-b border-white/8">
+    <h3 class="font-bold text-white text-[15px]">Notifications</h3>
+    <button onclick="toggleNotifications()" class="p-2 rounded-full hover:bg-white/5">
+      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div id="notificationsList" class="overflow-y-auto" style="max-height:calc(100vh - 60px)"></div>
+</div>
+<div id="notificationOverlay" class="fixed inset-0 bg-black/50 z-[55] hidden" onclick="toggleNotifications()"></div>
 
 <!-- PAGE TITLE -->
 <div class="px-4 pt-6 pb-1 text-center">
@@ -74,10 +106,10 @@ body{background-color:#0f172a;color:#fff}
 <div class="mx-4 mt-5">
   <div class="bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-2xl border border-amber-500/20 p-4">
     <div class="flex items-center gap-4">
-      <div class="relative">
-        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-14 h-14 rounded-full object-cover border-2 border-amber-500">
+      <div class="relative" onclick="openMyProfile()">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=official" class="w-14 h-14 rounded-full object-cover border-2 border-amber-500 cursor-pointer">
         <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center border-2 border-[#0f172a]">
-          <span class="text-[10px] font-bold text-black">12</span>
+          <span id="userLevelBadge" class="text-[10px] font-bold text-black">12</span>
         </div>
       </div>
       <div class="flex-1">
@@ -86,30 +118,31 @@ body{background-color:#0f172a;color:#fff}
         <div class="flex items-center gap-3 mt-1.5">
           <div class="flex items-center gap-1">
             <span class="text-sm">⭐</span>
-            <span class="text-white text-sm font-bold">2,450</span>
+            <span id="userXP" class="text-white text-sm font-bold">2,450</span>
             <span class="text-gray-500 text-[10px]">XP</span>
           </div>
           <div class="flex items-center gap-1">
             <span class="text-sm">🏅</span>
-            <span class="text-white text-sm font-bold">8</span>
+            <span id="userBadgeCount" class="text-white text-sm font-bold">8</span>
             <span class="text-gray-500 text-[10px]">Badges</span>
           </div>
         </div>
       </div>
       <div class="text-right">
         <p class="text-gray-400 text-[10px]">Next Level</p>
-        <p class="text-amber-400 font-bold text-sm">2,550 XP</p>
+        <p id="nextLevelXP" class="text-amber-400 font-bold text-sm">2,550 XP</p>
+        <button onclick="openLevelInfo()" class="text-[10px] text-gray-500 underline mt-1">How levels work?</button>
       </div>
     </div>
     <div class="mt-3">
       <div class="flex justify-between text-[10px] text-gray-400 mb-1">
-        <span>Level 12</span>
-        <span>Level 13</span>
+        <span id="currentLevelLabel">Level 12</span>
+        <span id="nextLevelLabel">Level 13</span>
       </div>
       <div class="h-2 bg-[#0f172a] rounded-full overflow-hidden">
-        <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width:81%"></div>
+        <div id="levelProgressBar" class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full progress-bar" style="width:81%"></div>
       </div>
-      <p class="text-gray-500 text-[10px] mt-1 text-center">100 XP to next level</p>
+      <p id="xpToNext" class="text-gray-500 text-[10px] mt-1 text-center">100 XP to next level</p>
     </div>
   </div>
 </div>
@@ -118,7 +151,7 @@ body{background-color:#0f172a;color:#fff}
 <div class="mx-4 mt-5">
   <div class="flex items-center justify-between mb-3">
     <h3 class="font-bold text-white text-[15px]">This Week's Challenges</h3>
-    <span class="text-amber-400 text-xs font-semibold">Resets in 3 days</span>
+    <span class="text-amber-400 text-xs font-semibold" id="resetTimer">Resets in 7 days</span>
   </div>
   <div id="challengesList" class="space-y-3"></div>
 </div>
@@ -142,11 +175,15 @@ body{background-color:#0f172a;color:#fff}
   </div>
 </div>
 
-<!-- TABS -->
+<!-- MAIN TABS -->
 <div class="mx-4 mt-4 flex gap-2 overflow-x-auto pb-1 scrollbar-hide" id="mainTabs">
   <button onclick="setMainTab('challenges')" id="mtab-challenges" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-amber-500 text-white flex items-center gap-1.5">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
     Active
+  </button>
+  <button onclick="setMainTab('games')" id="mtab-games" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+    Games
   </button>
   <button onclick="setMainTab('badges')" id="mtab-badges" class="tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center gap-1.5">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
@@ -199,13 +236,19 @@ body{background-color:#0f172a;color:#fff}
         </div>
       </div>
       <p class="text-gray-300 text-sm leading-relaxed mb-4" id="challengeModalDesc">Description</p>
+
+      <div id="checkInSection" class="mb-4">
+        <p class="text-gray-400 text-xs font-semibold mb-2">Daily Check-ins</p>
+        <div id="checkInGrid" class="grid grid-cols-7 gap-2"></div>
+      </div>
+
       <div class="bg-[#0f172a] rounded-xl p-4 border border-white/6 mb-4">
         <div class="flex justify-between text-sm mb-2">
           <span class="text-gray-400">Progress</span>
-          <span class="text-white font-bold" id="challengeModalProgress">3/5</span>
+          <span class="text-white font-bold" id="challengeModalProgress">3/7</span>
         </div>
         <div class="h-3 bg-[#1e293b] rounded-full overflow-hidden border border-white/6">
-          <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" id="challengeModalBar" style="width:60%"></div>
+          <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full progress-bar" id="challengeModalBar" style="width:60%"></div>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-3 mb-4">
@@ -215,12 +258,174 @@ body{background-color:#0f172a;color:#fff}
         </div>
         <div class="bg-[#0f172a] rounded-xl p-3 border border-white/6 text-center">
           <p class="text-gray-500 text-[10px]">Time Left</p>
-          <p class="text-white font-bold text-lg" id="challengeModalTime">3 days</p>
+          <p class="text-white font-bold text-lg" id="challengeModalTime">7 days</p>
         </div>
       </div>
       <button onclick="claimChallenge()" id="claimBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-3.5 rounded-2xl text-sm transition action-btn">
         Mark as Complete
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- USER PROFILE MODAL -->
+<div id="userProfileModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeUserProfileModal()">
+  <div class="profile-modal bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 max-h-[90vh] overflow-y-auto">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6">
+      <div class="text-center mb-4">
+        <img id="profileAvatar" src="" class="w-20 h-20 rounded-full object-cover border-2 border-amber-500 mx-auto mb-3">
+        <h3 id="profileName" class="text-xl font-bold text-white">Name</h3>
+        <p id="profileTitle" class="text-amber-400 text-sm font-medium">Title</p>
+      </div>
+      <div class="grid grid-cols-3 gap-3 mb-4">
+        <div class="bg-[#0f172a] rounded-xl p-3 border border-white/6 text-center">
+          <p class="text-gray-500 text-[10px]">Level</p>
+          <p id="profileLevel" class="text-white font-bold text-lg">12</p>
+        </div>
+        <div class="bg-[#0f172a] rounded-xl p-3 border border-white/6 text-center">
+          <p class="text-gray-500 text-[10px]">XP</p>
+          <p id="profileXP" class="text-amber-400 font-bold text-lg">2,450</p>
+        </div>
+        <div class="bg-[#0f172a] rounded-xl p-3 border border-white/6 text-center">
+          <p class="text-gray-500 text-[10px]">Badges</p>
+          <p id="profileBadges" class="text-white font-bold text-lg">8</p>
+        </div>
+      </div>
+      <div class="bg-[#0f172a] rounded-xl p-3 border border-white/6 mb-4">
+        <p class="text-gray-500 text-[10px] mb-1">Weekly Streak</p>
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🔥</span>
+          <p id="profileStreak" class="text-white font-bold">5 weeks</p>
+        </div>
+      </div>
+      <div class="bg-[#0f172a] rounded-xl p-3 border border-white/6 mb-4">
+        <p class="text-gray-500 text-[10px] mb-2">Earned Badges</p>
+        <div id="profileBadgeGrid" class="grid grid-cols-4 gap-2"></div>
+      </div>
+      <button onclick="closeUserProfileModal()" class="w-full bg-white/5 hover:bg-white/10 text-white font-semibold py-3 rounded-2xl text-sm transition">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- LEVEL INFO MODAL -->
+<div id="levelInfoModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeLevelInfo()">
+  <div class="level-modal bg-[#1e293b] w-[90%] max-w-sm rounded-2xl border border-white/8 p-5">
+    <div class="text-center mb-4">
+      <div class="w-14 h-14 bg-amber-500/20 rounded-xl flex items-center justify-center border border-amber-500/30 mx-auto mb-3">
+        <span class="text-2xl">📈</span>
+      </div>
+      <h3 class="text-lg font-bold text-white">How Levels Work</h3>
+    </div>
+    <div class="space-y-3 text-sm text-gray-300">
+      <p>🎯 <strong class="text-white">Infinite Levels:</strong> There is no max level. Keep grinding forever.</p>
+      <p>⚡ <strong class="text-white">XP Needed:</strong> Each level needs <code class="bg-[#0f172a] px-1.5 py-0.5 rounded text-amber-400 text-xs">100 + (level × 50)</code> XP.</p>
+      <p>🏆 <strong class="text-white">Earn XP by:</strong> Completing challenges, earning badges, maintaining streaks, and playing mini-games.</p>
+      <p>🔄 <strong class="text-white">Weekly Reset:</strong> Every Monday at midnight, new challenges appear.</p>
+      <p>🔥 <strong class="text-white">Streak Bonus:</strong> Complete all weekly challenges to keep your streak alive (+50 XP bonus).</p>
+    </div>
+    <button onclick="closeLevelInfo()" class="w-full mt-4 bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-2xl text-sm transition">
+      Got it!
+    </button>
+  </div>
+</div>
+
+<!-- TRIVIA BLITZ MODAL -->
+<div id="triviaModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeTrivia()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up max-h-[85vh] overflow-y-auto">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">⚡ Trivia Blitz</h3>
+        <span class="text-amber-400 text-xs font-bold" id="triviaScoreLabel">Score: 0</span>
+      </div>
+      <div id="triviaBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOCUS TIMER MODAL -->
+<div id="focusModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeFocusTimer()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6 text-center">
+      <h3 class="text-lg font-bold text-white mb-1 flex items-center justify-center gap-2">⏱️ Focus Timer</h3>
+      <p id="focusModeLabel" class="text-amber-400 text-xs font-semibold mb-4">Focus Session</p>
+      <div class="w-48 h-48 mx-auto rounded-full border-4 border-amber-500/30 flex items-center justify-center mb-5 relative">
+        <span id="focusTimeLabel" class="text-4xl font-extrabold text-white">25:00</span>
+      </div>
+      <div class="flex justify-center gap-2 mb-4">
+        <button onclick="setFocusMode('focus')" id="focusModeBtn-focus" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 text-white transition">Focus 25m</button>
+        <button onclick="setFocusMode('break')" id="focusModeBtn-break" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#0f172a] text-gray-400 border border-white/8 transition">Break 5m</button>
+      </div>
+      <div class="flex gap-3">
+        <button onclick="toggleFocusTimer()" id="focusStartBtn" class="flex-1 bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-2xl text-sm transition action-btn">Start</button>
+        <button onclick="resetFocusTimer()" class="px-5 bg-[#0f172a] hover:bg-white/5 text-gray-300 font-semibold py-3 rounded-2xl text-sm transition border border-white/8">Reset</button>
+      </div>
+      <p class="text-gray-500 text-[11px] mt-3">Complete a full 25-minute focus session for +30 XP</p>
+    </div>
+  </div>
+</div>
+
+<!-- WORD SCRAMBLE MODAL -->
+<div id="scrambleModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeScramble()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6 text-center">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">🔤 Word Scramble</h3>
+        <span class="text-amber-400 text-xs font-bold" id="scrambleScoreLabel">Score: 0</span>
+      </div>
+      <p class="text-gray-400 text-xs mb-2">Unscramble this academic term:</p>
+      <p id="scrambleWord" class="text-3xl font-extrabold text-amber-400 tracking-widest mb-4">CHEMISTRY</p>
+      <input id="scrambleInput" type="text" placeholder="Type your answer..." class="w-full bg-[#0f172a] rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none transition text-center mb-3" onkeypress="if(event.key==='Enter')checkScramble()">
+      <p id="scrambleFeedback" class="text-sm h-5 mb-2"></p>
+      <div class="flex gap-3">
+        <button onclick="checkScramble()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-2xl text-sm transition action-btn">Check</button>
+        <button onclick="nextScramble()" class="px-5 bg-[#0f172a] hover:bg-white/5 text-gray-300 font-semibold py-3 rounded-2xl text-sm transition border border-white/8">Skip</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MEMORY MATCH MODAL -->
+<div id="memoryModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeMemoryMatch()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up max-h-[90vh] overflow-y-auto">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">🧠 Memory Match</h3>
+        <span class="text-amber-400 text-xs font-bold" id="memoryMovesLabel">Moves: 0</span>
+      </div>
+      <div id="memoryGrid" class="grid grid-cols-4 gap-2" style="perspective:1000px"></div>
+      <button onclick="startMemoryMatch()" class="w-full mt-4 bg-[#0f172a] hover:bg-white/5 text-gray-300 font-semibold py-2.5 rounded-2xl text-sm transition border border-white/8">Restart</button>
+    </div>
+  </div>
+</div>
+
+<!-- SPIN WHEEL MODAL -->
+<div id="spinModal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeSpinWheel()">
+  <div class="bg-[#1e293b] w-full max-w-md rounded-t-[28px] border-t border-white/8 animate-slide-up">
+    <div class="w-10 h-1 bg-white/15 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="px-5 pb-6 text-center">
+      <h3 class="text-lg font-bold text-white mb-4 flex items-center justify-center gap-2">🎡 Daily Spin Wheel</h3>
+      <div class="relative w-56 h-56 mx-auto mb-5 flex items-center justify-center">
+        <div id="spinWheelDial" class="w-56 h-56 rounded-full border-8 border-amber-500/40 grid grid-cols-2 grid-rows-4 overflow-hidden">
+          <div class="bg-amber-500/20 flex items-center justify-center text-xs font-bold text-amber-300">10 XP</div>
+          <div class="bg-orange-500/20 flex items-center justify-center text-xs font-bold text-orange-300">25 XP</div>
+          <div class="bg-amber-500/30 flex items-center justify-center text-xs font-bold text-amber-300">50 XP</div>
+          <div class="bg-orange-500/30 flex items-center justify-center text-xs font-bold text-orange-300">20 XP</div>
+          <div class="bg-amber-500/40 flex items-center justify-center text-xs font-bold text-white">100 XP</div>
+          <div class="bg-orange-500/40 flex items-center justify-center text-xs font-bold text-orange-200">15 XP</div>
+          <div class="bg-amber-500/50 flex items-center justify-center text-xs font-bold text-white">JACKPOT</div>
+          <div class="bg-orange-500/50 flex items-center justify-center text-xs font-bold text-white">30 XP</div>
+        </div>
+        <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[16px] border-t-red-500"></div>
+      </div>
+      <button onclick="spinTheWheel()" id="spinBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-3.5 rounded-2xl text-sm transition action-btn">Spin for Today!</button>
+      <p id="spinStatus" class="text-gray-500 text-[11px] mt-3"></p>
     </div>
   </div>
 </div>
@@ -240,133 +445,192 @@ const CATEGORIES = {
 };
 
 const TIERS = {
-  bronze:  { label: 'Bronze',  color: 'text-orange-400',  bg: 'bg-orange-500/20',  border: 'border-orange-500/30' },
-  silver:  { label: 'Silver',  color: 'text-gray-300',    bg: 'bg-gray-500/20',    border: 'border-gray-500/30' },
-  gold:    { label: 'Gold',    color: 'text-amber-400',   bg: 'bg-amber-500/20',   border: 'border-amber-500/30' },
-  platinum:{ label: 'Platinum',color: 'text-cyan-400',    bg: 'bg-cyan-500/20',    border: 'border-cyan-500/30' }
+  bronze:   { label: 'Bronze',   color: 'text-orange-400',  bg: 'bg-orange-500/20',  border: 'border-orange-500/30' },
+  silver:   { label: 'Silver',   color: 'text-gray-300',    bg: 'bg-gray-500/20',    border: 'border-gray-500/30' },
+  gold:     { label: 'Gold',     color: 'text-amber-400',   bg: 'bg-amber-500/20',   border: 'border-amber-500/30' },
+  platinum: { label: 'Platinum', color: 'text-cyan-400',    bg: 'bg-cyan-500/20',    border: 'border-cyan-500/30' }
 };
 
-let CHALLENGES = [
-  {
-    id: 1,
-    title: "Study Marathon",
-    desc: "Study for at least 2 hours every day for 5 days straight. No distractions, no excuses!",
-    category: "study",
-    progress: 3,
-    target: 5,
-    xp: 150,
-    timeLeft: "3 days",
-    icon: "📚"
-  },
-  {
-    id: 2,
-    title: "Early Bird",
-    desc: "Attend all your 8am lectures this week without being late. Set that alarm!",
-    category: "academic",
-    progress: 2,
-    target: 5,
-    xp: 100,
-    timeLeft: "3 days",
-    icon: "🌅"
-  },
-  {
-    id: 3,
-    title: "Hydration Hero",
-    desc: "Drink at least 2 liters of water every day for 7 days. Your brain needs it!",
-    category: "wellness",
-    progress: 5,
-    target: 7,
-    xp: 120,
-    timeLeft: "3 days",
-    icon: "💧"
-  },
-  {
-    id: 4,
-    title: "Study Buddy",
-    desc: "Form or join a study group and have at least 3 group study sessions this week.",
-    category: "social",
-    progress: 1,
-    target: 3,
-    xp: 200,
-    timeLeft: "3 days",
-    icon: "👥"
-  },
-  {
-    id: 5,
-    title: "Assignment Ace",
-    desc: "Submit all assignments due this week at least 24 hours before the deadline.",
-    category: "academic",
-    progress: 0,
-    target: 3,
-    xp: 180,
-    timeLeft: "3 days",
-    icon: "✅"
-  },
-  {
-    id: 6,
-    title: "Sleep Champion",
-    desc: "Get 7+ hours of sleep for 5 nights this week. Rest is part of the grind!",
-    category: "wellness",
-    progress: 4,
-    target: 5,
-    xp: 130,
-    timeLeft: "3 days",
-    icon: "😴"
-  },
-  {
-    id: 7,
-    title: "Library Regular",
-    desc: "Spend at least 10 hours in the library this week. Make it your second home.",
-    category: "study",
-    progress: 6,
-    target: 10,
-    xp: 160,
-    timeLeft: "3 days",
-    icon: "📖"
-  },
-  {
-    id: 8,
-    title: "Help a Friend",
-    desc: "Help at least 2 classmates with their coursework or explain a difficult topic.",
-    category: "social",
-    progress: 1,
-    target: 2,
-    xp: 140,
-    timeLeft: "3 days",
-    icon: "🤝"
+let USER = {
+  level: 12,
+  xp: 2450,
+  badges: 8,
+  streak: 5,
+  title: 'Gold Challenger',
+  avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=official'
+};
+
+function getXPForLevel(level) {
+  return 100 + (level * 50);
+}
+
+function getLevelFromXP(xp) {
+  let level = 1;
+  let remaining = xp;
+  while (remaining >= getXPForLevel(level)) {
+    remaining -= getXPForLevel(level);
+    level++;
   }
+  return { level, remaining, needed: getXPForLevel(level) };
+}
+
+let CHALLENGES = [
+  { id: 1, title: "Study Marathon",  desc: "Study for at least 2 hours every day, all 7 days this week. No distractions, no excuses!", category: "study",    progress: 3, target: 7, xp: 150, timeLeft: "7 days", icon: "📚", checkIns: [true, true, true, false, false, false, false] },
+  { id: 2, title: "Early Bird",      desc: "Attend all your 8am lectures every day this week — all 7 days. Set that alarm!",             category: "academic", progress: 2, target: 7, xp: 100, timeLeft: "7 days", icon: "🌅", checkIns: [true, true, false, false, false, false, false] },
+  { id: 3, title: "Hydration Hero",  desc: "Drink at least 2 liters of water every day for all 7 days this week. Your brain needs it!",  category: "wellness", progress: 5, target: 7, xp: 120, timeLeft: "7 days", icon: "💧", checkIns: [true, true, true, true, true, false, false] },
+  { id: 4, title: "Study Buddy",     desc: "Have a group study session every day this week — all 7 days — to build real consistency.",  category: "social",   progress: 1, target: 7, xp: 200, timeLeft: "7 days", icon: "👥", checkIns: [true, false, false, false, false, false, false] },
+  { id: 5, title: "Assignment Ace",  desc: "Make real progress on your assignments every day this week, all 7 days, staying ahead of deadlines.", category: "academic", progress: 0, target: 7, xp: 180, timeLeft: "7 days", icon: "✅", checkIns: [false, false, false, false, false, false, false] },
+  { id: 6, title: "Sleep Champion",  desc: "Get 7+ hours of sleep every night this week — all 7 nights. Rest is part of the grind!",     category: "wellness", progress: 4, target: 7, xp: 130, timeLeft: "7 days", icon: "😴", checkIns: [true, true, true, true, false, false, false] },
+  { id: 7, title: "Library Regular", desc: "Spend focused time in the library every day this week — all 7 days. Make it your second home.", category: "study",   progress: 6, target: 7, xp: 160, timeLeft: "7 days", icon: "📖", checkIns: [true, true, true, true, true, true, false] },
+  { id: 8, title: "Help a Friend",   desc: "Help a classmate with their coursework every day this week — all 7 days. Pay it forward!",   category: "social",   progress: 2, target: 7, xp: 140, timeLeft: "7 days", icon: "🤝", checkIns: [true, true, false, false, false, false, false] }
 ];
 
 let BADGES = [
-  { id: 1, name: "First Steps",      desc: "Complete your first challenge",           icon: "👣", tier: "bronze",   earned: "2026-06-15", xp: 50 },
-  { id: 2, name: "Study Grinder",    desc: "Complete 5 study challenges",           icon: "📚", tier: "silver",   earned: "2026-06-22", xp: 150 },
-  { id: 3, name: "Wellness Warrior", desc: "Complete 3 wellness challenges",          icon: "💪", tier: "bronze",   earned: "2026-06-28", xp: 75 },
-  { id: 4, name: "Social Butterfly", desc: "Complete 3 social challenges",          icon: "🦋", tier: "bronze",   earned: "2026-07-01", xp: 75 },
-  { id: 5, name: "Perfect Week",     desc: "Complete all challenges in one week",   icon: "⭐", tier: "gold",     earned: "2026-07-05", xp: 300 },
-  { id: 6, name: "Early Bird",       desc: "Never miss an 8am lecture for a month", icon: "🌅", tier: "silver",   earned: "2026-07-02", xp: 200 },
-  { id: 7, name: "Hydration Master", desc: "Drink 2L water daily for 30 days",       icon: "💧", tier: "gold",     earned: "2026-07-03", xp: 250 },
-  { id: 8, name: "LASU Legend",      desc: "Reach Level 20",                        icon: "👑", tier: "platinum", earned: null,       xp: 500 }
+  { id: 1, name: "First Steps",       desc: "Complete your first challenge",                  icon: "👣", tier: "bronze",    earned: "2026-06-15", xp: 50,  condition: "Complete 1 challenge" },
+  { id: 2, name: "Study Grinder",     desc: "Complete 5 study challenges",                    icon: "📚", tier: "silver",    earned: "2026-06-22", xp: 150, condition: "Complete 5 study challenges" },
+  { id: 3, name: "Wellness Warrior",  desc: "Complete 3 wellness challenges",               icon: "💪", tier: "bronze",    earned: "2026-06-28", xp: 75,  condition: "Complete 3 wellness challenges" },
+  { id: 4, name: "Social Butterfly",  desc: "Complete 3 social challenges",                 icon: "🦋", tier: "bronze",    earned: "2026-07-01", xp: 75,  condition: "Complete 3 social challenges" },
+  { id: 5, name: "Perfect Week",      desc: "Complete all challenges in one week",          icon: "⭐", tier: "gold",      earned: "2026-07-05", xp: 300, condition: "Complete all weekly challenges" },
+  { id: 6, name: "Early Bird",        desc: "Never miss an 8am lecture for a month",          icon: "🌅", tier: "silver",    earned: "2026-07-02", xp: 200, condition: "Attend all 8am lectures for 4 weeks" },
+  { id: 7, name: "Hydration Master",  desc: "Drink 2L water daily for 30 days",              icon: "💧", tier: "gold",      earned: "2026-07-03", xp: 250, condition: "Complete Hydration Hero 4 times" },
+  { id: 8, name: "LASU Legend",       desc: "Reach Level 20",                               icon: "👑", tier: "platinum",  earned: null,         xp: 500, condition: "Reach Level 20" }
 ];
 
 let LEADERBOARD = [
-  { rank: 1, name: "Chioma N.",    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=chioma",  level: 18, xp: 3850, badges: 15, streak: 12 },
-  { rank: 2, name: "Tunde B.",     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=tunde",   level: 16, xp: 3420, badges: 13, streak: 8 },
-  { rank: 3, name: "Fatima A.",    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=fatima",  level: 15, xp: 3100, badges: 12, streak: 10 },
-  { rank: 4, name: "You",          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=official", level: 12, xp: 2450, badges: 8,  streak: 5, isMe: true },
-  { rank: 5, name: "Emeka O.",     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=emeka",   level: 11, xp: 2280, badges: 7,  streak: 4 },
-  { rank: 6, name: "Amina K.",     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=amina",   level: 10, xp: 1950, badges: 6,  streak: 3 },
-  { rank: 7, name: "David E.",     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=david",   level: 9,  xp: 1720, badges: 5,  streak: 2 },
-  { rank: 8, name: "Blessing I.",  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=blessing",level: 8,  xp: 1500, badges: 5,  streak: 1 }
+  { rank: 1, name: "Chioma N.",    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=chioma",   level: 18, xp: 3850, badges: 15, streak: 12, title: "Diamond Scholar" },
+  { rank: 2, name: "Tunde B.",     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=tunde",    level: 16, xp: 3420, badges: 13, streak: 8,  title: "Platinum Grinder" },
+  { rank: 3, name: "Fatima A.",    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=fatima",   level: 15, xp: 3100, badges: 12, streak: 10, title: "Gold Challenger" },
+  { rank: 4, name: "You",          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=official", level: 12, xp: 2450, badges: 8,  streak: 5,  title: "Gold Challenger", isMe: true },
+  { rank: 5, name: "Emeka O.",     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=emeka",   level: 11, xp: 2280, badges: 7,  streak: 4,  title: "Silver Scholar" },
+  { rank: 6, name: "Amina K.",     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=amina",   level: 10, xp: 1950, badges: 6,  streak: 3,  title: "Rising Star" },
+  { rank: 7, name: "David E.",     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=david",   level: 9,  xp: 1720, badges: 5,  streak: 2,  title: "Bronze Warrior" },
+  { rank: 8, name: "Blessing I.",  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=blessing",level: 8,  xp: 1500, badges: 5,  streak: 1,  title: "Newcomer" }
+];
+
+let NOTIFICATIONS = [
+  { id: 1, title: "New Challenge Available!",    message: "This week's challenges are live. Go check them out!", time: "2h ago", read: false, link: "#challenges", type: "challenge" },
+  { id: 2, title: "Badge Unlocked! 🏅",            message: "You earned 'Perfect Week' for completing all challenges!", time: "1d ago", read: false, link: "#badges", type: "badge" },
+  { id: 3, title: "Chioma N. passed you!",         message: "You're now #4 on the leaderboard. Time to grind!", time: "2d ago", read: true, link: "#leaderboard", type: "leaderboard" },
+  { id: 4, title: "Study Marathon almost done!",   message: "2 more days to complete your Study Marathon challenge.", time: "3d ago", read: true, link: "#challenges", type: "challenge" },
+  { id: 5, title: "Weekly Reset Tomorrow",         message: "New challenges drop in 24 hours. Finish strong!", time: "4d ago", read: true, link: "#challenges", type: "challenge" }
 ];
 
 let currentCategory = 'all';
 let currentMainTab = 'challenges';
 let currentChallenge = null;
 let currentBadge = null;
+let currentProfileUser = null;
 
 function init() {
   renderChallengesList();
   renderContent();
+  updateUserStats();
+  updateResetTimer();
+  setInterval(updateResetTimer, 60000);
+}
+
+function updateUserStats() {
+  const levelInfo = getLevelFromXP(USER.xp);
+  document.getElementById('userLevelBadge').textContent = levelInfo.level;
+  document.getElementById('userXP').textContent = USER.xp.toLocaleString();
+  document.getElementById('userBadgeCount').textContent = USER.badges;
+
+  const nextLevelXP = getXPForLevel(levelInfo.level);
+  const progress = Math.round((levelInfo.remaining / nextLevelXP) * 100);
+  document.getElementById('nextLevelXP').textContent = (levelInfo.remaining + nextLevelXP).toLocaleString() + ' XP';
+  document.getElementById('currentLevelLabel').textContent = 'Level ' + levelInfo.level;
+  document.getElementById('nextLevelLabel').textContent = 'Level ' + (levelInfo.level + 1);
+  document.getElementById('levelProgressBar').style.width = progress + '%';
+  document.getElementById('xpToNext').textContent = (nextLevelXP - levelInfo.remaining) + ' XP to next level';
+}
+
+function updateResetTimer() {
+  const now = new Date();
+  const nextMonday = new Date(now);
+  nextMonday.setDate(now.getDate() + ((1 + 7 - now.getDay()) % 7 || 7));
+  nextMonday.setHours(0, 0, 0, 0);
+
+  const diff = nextMonday - now;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+  document.getElementById('resetTimer').textContent = 'Resets in ' + days + 'd ' + hours + 'h';
+}
+
+function goBack() {
+  window.location.href = 'lounge.html';
+}
+
+function toggleNotifications() {
+  const panel = document.getElementById('notificationPanel');
+  const overlay = document.getElementById('notificationOverlay');
+  const isOpen = panel.classList.contains('open');
+
+  if (isOpen) {
+    panel.classList.remove('open');
+    overlay.classList.add('hidden');
+  } else {
+    renderNotifications();
+    panel.classList.add('open');
+    overlay.classList.remove('hidden');
+  }
+}
+
+function renderNotifications() {
+  const container = document.getElementById('notificationsList');
+  const unreadCount = NOTIFICATIONS.filter(n => !n.read).length;
+
+  const badge = document.getElementById('notifBadge');
+  if (unreadCount > 0) {
+    badge.style.display = 'block';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  if (NOTIFICATIONS.length === 0) {
+    container.innerHTML = '<div class="p-8 text-center text-gray-500 text-sm">No notifications yet</div>';
+    return;
+  }
+
+  container.innerHTML = NOTIFICATIONS.map(n => {
+    const iconMap = {
+      challenge: '⚡',
+      badge: '🏅',
+      leaderboard: '📊',
+      social: '👥'
+    };
+    return '<div class="notification-item ' + (n.read ? '' : 'unread') + ' p-4 border-b border-white/6 cursor-pointer" onclick="handleNotificationClick(' + n.id + ')">' +
+      '<div class="flex items-start gap-3">' +
+        '<div class="w-9 h-9 bg-amber-500/20 rounded-xl flex items-center justify-center border border-amber-500/30 shrink-0">' +
+          '<span class="text-lg">' + (iconMap[n.type] || '🔔') + '</span>' +
+        '</div>' +
+        '<div class="flex-1 min-w-0">' +
+          '<p class="text-white text-sm font-semibold">' + n.title + '</p>' +
+          '<p class="text-gray-400 text-xs mt-0.5">' + n.message + '</p>' +
+          '<p class="text-gray-600 text-[10px] mt-1">' + n.time + '</p>' +
+        '</div>' +
+        (!n.read ? '<span class="w-2 h-2 bg-amber-500 rounded-full shrink-0 mt-1.5"></span>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function handleNotificationClick(id) {
+  const notif = NOTIFICATIONS.find(n => n.id === id);
+  if (!notif) return;
+
+  notif.read = true;
+  toggleNotifications();
+
+  if (notif.link === '#challenges') {
+    setMainTab('challenges');
+  } else if (notif.link === '#badges') {
+    setMainTab('badges');
+  } else if (notif.link === '#leaderboard') {
+    setMainTab('leaderboard');
+  }
+
+  showToast(notif.title, 'info');
 }
 
 function renderChallengesList() {
@@ -421,11 +685,12 @@ function setCategory(cat) {
     }
   });
   renderChallengesList();
+  if (currentMainTab === 'challenges') renderContent();
 }
 
 function setMainTab(tab) {
   currentMainTab = tab;
-  ['challenges','badges','leaderboard'].forEach(t => {
+  ['challenges','games','badges','leaderboard'].forEach(t => {
     const btn = document.getElementById('mtab-' + t);
     if (t === tab) {
       btn.className = 'tab-pill shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-amber-500 text-white flex items-center gap-1.5';
@@ -440,13 +705,73 @@ function renderContent() {
   const container = document.getElementById('contentArea');
 
   if (currentMainTab === 'challenges') {
-    renderChallengesList();
-    container.innerHTML = '';
+    let filtered = CHALLENGES;
+    if (currentCategory !== 'all') {
+      filtered = CHALLENGES.filter(c => c.category === currentCategory);
+    }
+
+    container.innerHTML = '<div class="space-y-3">' + filtered.map(c => {
+      const pct = Math.round((c.progress / c.target) * 100);
+      const cat = CATEGORIES[c.category];
+      const isComplete = c.progress >= c.target;
+      return '<div class="challenge-card bg-[#1e293b] rounded-2xl border border-white/6 p-4 ' + (isComplete ? 'border-amber-500/30' : '') + '">' +
+        '<div class="flex items-start gap-3">' +
+          '<div class="w-10 h-10 ' + cat.bg + ' rounded-xl flex items-center justify-center border ' + cat.border + ' shrink-0">' +
+            '<span class="text-lg">' + c.icon + '</span>' +
+          '</div>' +
+          '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center justify-between">' +
+              '<h4 class="font-bold text-white text-sm">' + c.title + '</h4>' +
+              (isComplete ? '<span class="text-amber-400 text-lg">🏆</span>' : '') +
+            '</div>' +
+            '<p class="text-gray-400 text-[11px] mt-0.5">' + cat.label + ' &bull; ' + c.timeLeft + ' left</p>' +
+            '<div class="mt-2">' +
+              '<div class="flex justify-between text-[10px] mb-1">' +
+                '<span class="text-gray-500">' + c.progress + '/' + c.target + '</span>' +
+                '<span class="text-amber-400 font-bold">+' + c.xp + ' XP</span>' +
+              '</div>' +
+              '<div class="h-2 bg-[#0f172a] rounded-full overflow-hidden border border-white/6">' +
+                '<div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full progress-bar" style="width:' + pct + '%"></div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<button onclick="openChallengeModal(' + c.id + ')" class="w-full mt-3 text-amber-400 text-xs font-semibold hover:text-amber-300 transition text-center">' +
+          (isComplete ? 'Claim Reward' : 'View Details') +
+        '</button>' +
+      '</div>';
+    }).join('') + '</div>';
+
+  } else if (currentMainTab === 'games') {
+    renderGames(container);
   } else if (currentMainTab === 'badges') {
     renderBadges(container);
   } else if (currentMainTab === 'leaderboard') {
     renderLeaderboard(container);
   }
+}
+
+function renderGames(container) {
+  const GAMES = [
+    { icon: '⚡', name: 'Trivia Blitz', desc: 'LASU & academic knowledge quiz. +10 XP per correct answer.', color: 'bg-blue-500/20 border-blue-500/30', action: 'openTrivia()' },
+    { icon: '⏱️', name: 'Focus Timer', desc: 'Pomodoro-style focus sessions. +30 XP per completed session.', color: 'bg-red-500/20 border-red-500/30', action: 'openFocusTimer()' },
+    { icon: '🔤', name: 'Word Scramble', desc: 'Unscramble academic words. +15 XP per correct answer.', color: 'bg-green-500/20 border-green-500/30', action: 'openScramble()' },
+    { icon: '🧠', name: 'Memory Match', desc: 'Match course-concept pairs. Up to +100 XP based on moves.', color: 'bg-purple-500/20 border-purple-500/30', action: 'openMemoryMatch()' },
+    { icon: '🎡', name: 'Daily Spin Wheel', desc: 'One free spin every day for bonus XP.', color: 'bg-amber-500/20 border-amber-500/30', action: 'openSpinWheel()' }
+  ];
+
+  container.innerHTML = '<div class="space-y-3">' + GAMES.map(g => {
+    return '<button onclick="' + g.action + '" class="game-card w-full text-left bg-[#1e293b] rounded-2xl border border-white/6 p-4 flex items-center gap-3">' +
+      '<div class="w-12 h-12 ' + g.color + ' rounded-xl flex items-center justify-center border shrink-0">' +
+        '<span class="text-2xl">' + g.icon + '</span>' +
+      '</div>' +
+      '<div class="flex-1 min-w-0">' +
+        '<h4 class="font-bold text-white text-sm">' + g.name + '</h4>' +
+        '<p class="text-gray-400 text-[11px] mt-0.5">' + g.desc + '</p>' +
+      '</div>' +
+      '<svg class="w-5 h-5 text-gray-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>' +
+    '</button>';
+  }).join('') + '</div>';
 }
 
 function renderBadges(container) {
@@ -479,6 +804,7 @@ function renderBadges(container) {
           '<span class="text-2xl grayscale">' + b.icon + '</span>' +
           '<span class="text-gray-500 text-[10px] font-semibold text-center leading-tight">' + b.name + '</span>' +
           '<span class="text-[9px] text-gray-600">' + tier.label + '</span>' +
+          '<span class="text-[8px] text-gray-600 text-center mt-0.5">' + b.condition + '</span>' +
         '</div>';
       }).join('') +
       '</div>' +
@@ -492,7 +818,6 @@ function renderBadges(container) {
 function renderLeaderboard(container) {
   let html = '<div class="bg-[#1e293b] rounded-2xl border border-white/6 overflow-hidden">';
 
-  // Top 3 podium
   const top3 = LEADERBOARD.slice(0, 3);
   html += '<div class="flex items-end justify-center gap-4 py-6 px-4 border-b border-white/6">' +
     '<div class="flex flex-col items-center">' +
@@ -521,11 +846,10 @@ function renderLeaderboard(container) {
     '</div>' +
   '</div>';
 
-  // Full list
   html += '<div class="divide-y divide-white/6">';
   LEADERBOARD.forEach(user => {
     const isMe = user.isMe;
-    html += '<div class="leaderboard-row flex items-center gap-3 px-4 py-3 ' + (isMe ? 'bg-amber-500/10' : '') + '">' +
+    html += '<div class="leaderboard-row flex items-center gap-3 px-4 py-3 ' + (isMe ? 'bg-amber-500/10' : '') + ' cursor-pointer" onclick="openUserProfile(' + user.rank + ')">' +
       '<span class="text-gray-500 text-sm font-bold w-5 text-center">' + user.rank + '</span>' +
       '<img src="' + user.avatar + '" class="w-9 h-9 rounded-full object-cover border ' + (isMe ? 'border-amber-500' : 'border-white/10') + '">' +
       '<div class="flex-1 min-w-0">' +
@@ -562,19 +886,48 @@ function openChallengeModal(id) {
   document.getElementById('challengeModalXP').textContent = currentChallenge.xp;
   document.getElementById('challengeModalTime').textContent = currentChallenge.timeLeft;
 
+  const checkInGrid = document.getElementById('checkInGrid');
+  checkInGrid.innerHTML = '';
+  for (let i = 0; i < currentChallenge.target; i++) {
+    const checked = currentChallenge.checkIns && currentChallenge.checkIns[i];
+    const dayLabel = ['M','T','W','T','F','S','S'][i % 7];
+    const btn = document.createElement('button');
+    btn.className = 'check-in-btn w-full aspect-square rounded-xl text-xs font-bold flex flex-col items-center justify-center gap-0.5 ' + 
+      (checked ? 'bg-green-500 text-white' : 'bg-[#0f172a] text-gray-500 border border-white/10');
+    btn.innerHTML = '<span class="text-[10px] opacity-60">' + dayLabel + '</span><span>' + (checked ? '✓' : (i+1)) + '</span>';
+    btn.onclick = function() { toggleCheckIn(id, i); };
+    checkInGrid.appendChild(btn);
+  }
+
   const claimBtn = document.getElementById('claimBtn');
   if (isComplete) {
     claimBtn.textContent = 'Claim ' + currentChallenge.xp + ' XP';
     claimBtn.className = 'w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-3.5 rounded-2xl text-sm transition action-btn';
     claimBtn.disabled = false;
   } else {
-    claimBtn.textContent = 'Keep Going!';
+    claimBtn.textContent = 'Keep Going! (' + currentChallenge.progress + '/' + currentChallenge.target + ')';
     claimBtn.className = 'w-full bg-white/5 text-gray-500 font-bold py-3.5 rounded-2xl text-sm transition cursor-not-allowed';
     claimBtn.disabled = true;
   }
 
   document.getElementById('challengeModal').classList.remove('hidden');
   document.getElementById('challengeModal').classList.add('flex');
+}
+
+function toggleCheckIn(challengeId, dayIndex) {
+  const challenge = CHALLENGES.find(c => c.id === challengeId);
+  if (!challenge || !challenge.checkIns) return;
+
+  challenge.checkIns[dayIndex] = !challenge.checkIns[dayIndex];
+  challenge.progress = challenge.checkIns.filter(Boolean).length;
+
+  openChallengeModal(challengeId);
+  renderChallengesList();
+  if (currentMainTab === 'challenges') renderContent();
+
+  if (challenge.checkIns[dayIndex]) {
+    showToast('Day ' + (dayIndex + 1) + ' checked in! ✅');
+  }
 }
 
 function closeChallengeModal() {
@@ -585,8 +938,35 @@ function closeChallengeModal() {
 
 function claimChallenge() {
   if (!currentChallenge || currentChallenge.progress < currentChallenge.target) return;
+
+  USER.xp += currentChallenge.xp;
+  updateUserStats();
+  checkBadgeUnlocks();
+
   closeChallengeModal();
   showToast('+' + currentChallenge.xp + ' XP earned! 🎉');
+
+  renderChallengesList();
+  renderContent();
+}
+
+function checkBadgeUnlocks() {
+  const levelInfo = getLevelFromXP(USER.xp);
+
+  const legendBadge = BADGES.find(b => b.id === 8);
+  if (!legendBadge.earned && levelInfo.level >= 20) {
+    legendBadge.earned = new Date().toISOString().split('T')[0];
+    USER.badges++;
+    showToast('🏆 LASU Legend badge unlocked!', 'info');
+  }
+
+  const allComplete = CHALLENGES.every(c => c.progress >= c.target);
+  const perfectBadge = BADGES.find(b => b.id === 5);
+  if (!perfectBadge.earned && allComplete) {
+    perfectBadge.earned = new Date().toISOString().split('T')[0];
+    USER.badges++;
+    showToast('⭐ Perfect Week badge unlocked!', 'info');
+  }
 }
 
 function openBadgeModal(id) {
@@ -613,6 +993,377 @@ function closeBadgeModal() {
   currentBadge = null;
 }
 
+function openUserProfile(rank) {
+  const user = LEADERBOARD.find(u => u.rank === rank);
+  if (!user) return;
+  currentProfileUser = user;
+
+  document.getElementById('profileAvatar').src = user.avatar;
+  document.getElementById('profileName').textContent = user.name + (user.isMe ? ' (You)' : '');
+  document.getElementById('profileTitle').textContent = user.title || 'Student';
+  document.getElementById('profileLevel').textContent = user.level;
+  document.getElementById('profileXP').textContent = user.xp.toLocaleString();
+  document.getElementById('profileBadges').textContent = user.badges;
+  document.getElementById('profileStreak').textContent = user.streak + ' weeks';
+
+  const userBadges = BADGES.filter(b => b.earned).slice(0, user.badges);
+  const badgeGrid = document.getElementById('profileBadgeGrid');
+  badgeGrid.innerHTML = userBadges.map(b => {
+    const tier = TIERS[b.tier];
+    return '<div class="flex flex-col items-center gap-1 p-2 ' + tier.bg + ' rounded-lg border ' + tier.border + '">' +
+      '<span class="text-lg">' + b.icon + '</span>' +
+      '<span class="text-white text-[9px] font-semibold text-center leading-tight">' + b.name + '</span>' +
+    '</div>';
+  }).join('');
+
+  const modal = document.getElementById('userProfileModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  setTimeout(() => {
+    modal.querySelector('.profile-modal').classList.add('open');
+  }, 10);
+}
+
+function openMyProfile() {
+  openUserProfile(4);
+}
+
+function closeUserProfileModal() {
+  const modal = document.getElementById('userProfileModal');
+  modal.querySelector('.profile-modal').classList.remove('open');
+  setTimeout(() => {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }, 300);
+  currentProfileUser = null;
+}
+
+function openLevelInfo() {
+  const modal = document.getElementById('levelInfoModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  setTimeout(() => {
+    modal.querySelector('.level-modal').classList.add('open');
+  }, 10);
+}
+
+function closeLevelInfo() {
+  const modal = document.getElementById('levelInfoModal');
+  modal.querySelector('.level-modal').classList.remove('open');
+  setTimeout(() => {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }, 250);
+}
+
+/* ===================== TRIVIA BLITZ ===================== */
+const TRIVIA_QUESTIONS = [
+  { q: "What does GPA stand for?", options: ["Grade Point Average", "General Point Assessment", "Grade Progress Analysis", "General Performance Award"], correct: 0 },
+  { q: "Which faculty is LASUCOM associated with?", options: ["Law", "Engineering", "Medicine", "Arts"], correct: 2 },
+  { q: "What is the chemical symbol for Sodium?", options: ["So", "Na", "S", "Nd"], correct: 1 },
+  { q: "In CGPA, what does the 'C' stand for?", options: ["Course", "Cumulative", "Credit", "Class"], correct: 1 },
+  { q: "Which of these is a Nigerian university abbreviation?", options: ["MIT", "LASU", "NASA", "UNESCO"], correct: 1 },
+  { q: "What is the SI unit of electric current?", options: ["Volt", "Watt", "Ampere", "Ohm"], correct: 2 },
+  { q: "Who wrote 'Things Fall Apart'?", options: ["Wole Soyinka", "Chinua Achebe", "Chimamanda Adichie", "Ben Okri"], correct: 1 },
+  { q: "What does 'HND' stand for in Nigerian education?", options: ["Higher National Diploma", "Head National Degree", "Higher Notable Degree", "Honors National Diploma"], correct: 0 }
+];
+let triviaIndex = 0;
+let triviaScore = 0;
+let triviaOrder = [];
+
+function openTrivia() {
+  triviaIndex = 0;
+  triviaScore = 0;
+  triviaOrder = TRIVIA_QUESTIONS.map((_, i) => i).sort(() => Math.random() - 0.5);
+  document.getElementById('triviaScoreLabel').textContent = 'Score: 0';
+  renderTriviaQuestion();
+  const modal = document.getElementById('triviaModal');
+  modal.classList.remove('hidden'); modal.classList.add('flex');
+}
+function closeTrivia() {
+  const modal = document.getElementById('triviaModal');
+  modal.classList.add('hidden'); modal.classList.remove('flex');
+}
+function renderTriviaQuestion() {
+  const body = document.getElementById('triviaBody');
+  if (triviaIndex >= triviaOrder.length) {
+    const xpEarned = triviaScore * 10;
+    body.innerHTML = '<div class="text-center py-6"><span class="text-4xl">🎉</span><h4 class="text-white font-bold text-lg mt-3">Quiz Complete!</h4><p class="text-gray-400 text-sm mt-1">You scored ' + triviaScore + '/' + TRIVIA_QUESTIONS.length + '</p><p class="text-amber-400 font-bold mt-2">+' + xpEarned + ' XP earned</p><button onclick="closeTrivia()" class="w-full mt-5 bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-2xl text-sm transition">Done</button></div>';
+    if (xpEarned > 0) {
+      USER.xp += xpEarned;
+      updateUserStats();
+      checkBadgeUnlocks();
+    }
+    return;
+  }
+  const q = TRIVIA_QUESTIONS[triviaOrder[triviaIndex]];
+  body.innerHTML = '<p class="text-white text-[15px] font-semibold mb-4">' + (triviaIndex+1) + '. ' + q.q + '</p>' +
+    '<div class="space-y-2" id="triviaOptions">' +
+    q.options.map((opt, i) => '<button onclick="answerTrivia(' + i + ')" class="trivia-option w-full text-left px-4 py-3 bg-[#0f172a] rounded-xl border border-white/8 text-sm text-gray-200 transition">' + opt + '</button>').join('') +
+    '</div>';
+}
+function answerTrivia(choiceIdx) {
+  const q = TRIVIA_QUESTIONS[triviaOrder[triviaIndex]];
+  const buttons = document.querySelectorAll('#triviaOptions button');
+  buttons.forEach(b => b.onclick = null);
+  buttons[q.correct].classList.add('correct');
+  if (choiceIdx !== q.correct) {
+    buttons[choiceIdx].classList.add('wrong');
+  } else {
+    triviaScore++;
+    document.getElementById('triviaScoreLabel').textContent = 'Score: ' + triviaScore;
+  }
+  setTimeout(() => { triviaIndex++; renderTriviaQuestion(); }, 900);
+}
+
+/* ===================== FOCUS TIMER ===================== */
+let focusMode = 'focus';
+let focusSeconds = 25 * 60;
+let focusInterval = null;
+let focusRunning = false;
+
+function setFocusMode(mode) {
+  if (focusRunning) { showToast('Pause the timer first', 'error'); return; }
+  focusMode = mode;
+  focusSeconds = mode === 'focus' ? 25 * 60 : 5 * 60;
+  document.getElementById('focusModeLabel').textContent = mode === 'focus' ? 'Focus Session' : 'Break Time';
+  document.getElementById('focusModeBtn-focus').className = mode === 'focus' ? 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 text-white transition' : 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#0f172a] text-gray-400 border border-white/8 transition';
+  document.getElementById('focusModeBtn-break').className = mode === 'break' ? 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 text-white transition' : 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#0f172a] text-gray-400 border border-white/8 transition';
+  updateFocusDisplay();
+}
+function updateFocusDisplay() {
+  const m = Math.floor(focusSeconds / 60).toString().padStart(2, '0');
+  const s = (focusSeconds % 60).toString().padStart(2, '0');
+  document.getElementById('focusTimeLabel').textContent = m + ':' + s;
+}
+function openFocusTimer() {
+  focusMode = 'focus';
+  focusSeconds = 25 * 60;
+  focusRunning = false;
+  clearInterval(focusInterval);
+  document.getElementById('focusStartBtn').textContent = 'Start';
+  setFocusMode('focus');
+  const modal = document.getElementById('focusModal');
+  modal.classList.remove('hidden'); modal.classList.add('flex');
+}
+function closeFocusTimer() {
+  const modal = document.getElementById('focusModal');
+  modal.classList.add('hidden'); modal.classList.remove('flex');
+}
+function toggleFocusTimer() {
+  if (focusRunning) {
+    clearInterval(focusInterval);
+    focusRunning = false;
+    document.getElementById('focusStartBtn').textContent = 'Start';
+    return;
+  }
+  focusRunning = true;
+  document.getElementById('focusStartBtn').textContent = 'Pause';
+  focusInterval = setInterval(() => {
+    focusSeconds--;
+    updateFocusDisplay();
+    if (focusSeconds <= 0) {
+      clearInterval(focusInterval);
+      focusRunning = false;
+      document.getElementById('focusStartBtn').textContent = 'Start';
+      if (focusMode === 'focus') {
+        USER.xp += 30;
+        updateUserStats();
+        checkBadgeUnlocks();
+        showToast('Focus session complete! +30 XP 🎉');
+      } else {
+        showToast('Break over — back to focus!', 'info');
+      }
+      setFocusMode(focusMode === 'focus' ? 'break' : 'focus');
+    }
+  }, 1000);
+}
+function resetFocusTimer() {
+  clearInterval(focusInterval);
+  focusRunning = false;
+  document.getElementById('focusStartBtn').textContent = 'Start';
+  setFocusMode(focusMode);
+}
+
+/* ===================== WORD SCRAMBLE ===================== */
+const SCRAMBLE_WORDS = ['CHEMISTRY','PHYSICS','ECONOMICS','SEMESTER','LECTURER','ASSIGNMENT','GRADUATE','LIBRARY','CURRICULUM','TRANSCRIPT'];
+let scrambleAnswer = '';
+let scrambleScore = 0;
+
+function scrambleLetters(word) {
+  let arr = word.split('');
+  let scrambled;
+  do {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    scrambled = arr.join('');
+  } while (scrambled === word);
+  return scrambled;
+}
+function openScramble() {
+  scrambleScore = 0;
+  document.getElementById('scrambleScoreLabel').textContent = 'Score: 0';
+  nextScramble();
+  const modal = document.getElementById('scrambleModal');
+  modal.classList.remove('hidden'); modal.classList.add('flex');
+}
+function closeScramble() {
+  const modal = document.getElementById('scrambleModal');
+  modal.classList.add('hidden'); modal.classList.remove('flex');
+}
+function nextScramble() {
+  scrambleAnswer = SCRAMBLE_WORDS[Math.floor(Math.random() * SCRAMBLE_WORDS.length)];
+  document.getElementById('scrambleWord').textContent = scrambleLetters(scrambleAnswer);
+  document.getElementById('scrambleInput').value = '';
+  document.getElementById('scrambleFeedback').textContent = '';
+}
+function checkScramble() {
+  const input = document.getElementById('scrambleInput').value.trim().toUpperCase();
+  const feedback = document.getElementById('scrambleFeedback');
+  if (input === scrambleAnswer) {
+    scrambleScore++;
+    document.getElementById('scrambleScoreLabel').textContent = 'Score: ' + scrambleScore;
+    feedback.textContent = 'Correct! +15 XP';
+    feedback.className = 'text-sm h-5 mb-2 text-green-400 font-semibold';
+    USER.xp += 15;
+    updateUserStats();
+    checkBadgeUnlocks();
+    setTimeout(nextScramble, 900);
+  } else {
+    feedback.textContent = 'Not quite — try again!';
+    feedback.className = 'text-sm h-5 mb-2 text-red-400 font-semibold';
+  }
+}
+
+/* ===================== MEMORY MATCH ===================== */
+const MEMORY_ICONS = ['📚','🧪','🔬','📐','💡','🎓'];
+let memoryCards = [];
+let memoryFlipped = [];
+let memoryMatched = [];
+let memoryMoves = 0;
+let memoryLock = false;
+
+function startMemoryMatch() {
+  const pairs = [...MEMORY_ICONS, ...MEMORY_ICONS];
+  for (let i = pairs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
+  }
+  memoryCards = pairs;
+  memoryFlipped = [];
+  memoryMatched = [];
+  memoryMoves = 0;
+  memoryLock = false;
+  document.getElementById('memoryMovesLabel').textContent = 'Moves: 0';
+  renderMemoryGrid();
+}
+function openMemoryMatch() {
+  startMemoryMatch();
+  const modal = document.getElementById('memoryModal');
+  modal.classList.remove('hidden'); modal.classList.add('flex');
+}
+function closeMemoryMatch() {
+  const modal = document.getElementById('memoryModal');
+  modal.classList.add('hidden'); modal.classList.remove('flex');
+}
+function renderMemoryGrid() {
+  const grid = document.getElementById('memoryGrid');
+  grid.innerHTML = memoryCards.map((icon, i) => {
+    const isFlipped = memoryFlipped.includes(i) || memoryMatched.includes(i);
+    return '<div class="aspect-square" style="perspective:600px">' +
+      '<div class="memory-card w-full h-full relative cursor-pointer ' + (isFlipped ? 'flipped' : '') + '" onclick="flipMemoryCard(' + i + ')">' +
+        '<div class="memory-card-face absolute inset-0 bg-[#0f172a] border border-white/10 rounded-xl flex items-center justify-center"><span class="text-gray-600 text-lg">?</span></div>' +
+        '<div class="memory-card-face memory-card-back absolute inset-0 bg-amber-500/20 border border-amber-500/40 rounded-xl flex items-center justify-center"><span class="text-2xl">' + icon + '</span></div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+function flipMemoryCard(i) {
+  if (memoryLock || memoryFlipped.includes(i) || memoryMatched.includes(i)) return;
+  memoryFlipped.push(i);
+  renderMemoryGrid();
+  if (memoryFlipped.length === 2) {
+    memoryMoves++;
+    document.getElementById('memoryMovesLabel').textContent = 'Moves: ' + memoryMoves;
+    memoryLock = true;
+    const [a, b] = memoryFlipped;
+    if (memoryCards[a] === memoryCards[b]) {
+      memoryMatched.push(a, b);
+      memoryFlipped = [];
+      memoryLock = false;
+      renderMemoryGrid();
+      if (memoryMatched.length === memoryCards.length) {
+        const xpEarned = Math.max(20, 100 - (memoryMoves - 6) * 2);
+        setTimeout(() => {
+          USER.xp += xpEarned;
+          updateUserStats();
+          checkBadgeUnlocks();
+          showToast('Memory Match complete! +' + xpEarned + ' XP 🎉');
+        }, 300);
+      }
+    } else {
+      setTimeout(() => {
+        memoryFlipped = [];
+        memoryLock = false;
+        renderMemoryGrid();
+      }, 800);
+    }
+  }
+}
+
+/* ===================== DAILY SPIN WHEEL ===================== */
+const SPIN_REWARDS = [10, 25, 50, 20, 100, 15, 150, 30];
+function openSpinWheel() {
+  const lastSpin = localStorage.getItem('lasu_lastSpin');
+  const today = new Date().toISOString().split('T')[0];
+  const spinBtn = document.getElementById('spinBtn');
+  const status = document.getElementById('spinStatus');
+  document.getElementById('spinWheelDial').style.transform = 'rotate(0deg)';
+  if (lastSpin === today) {
+    spinBtn.disabled = true;
+    spinBtn.className = 'w-full bg-white/5 text-gray-500 font-bold py-3.5 rounded-2xl text-sm cursor-not-allowed';
+    spinBtn.textContent = 'Come Back Tomorrow';
+    status.textContent = "You've already spun today. Come back after midnight!";
+  } else {
+    spinBtn.disabled = false;
+    spinBtn.className = 'w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-3.5 rounded-2xl text-sm transition action-btn';
+    spinBtn.textContent = 'Spin for Today!';
+    status.textContent = 'One free spin per day. Good luck!';
+  }
+  const modal = document.getElementById('spinModal');
+  modal.classList.remove('hidden'); modal.classList.add('flex');
+}
+function closeSpinWheel() {
+  const modal = document.getElementById('spinModal');
+  modal.classList.add('hidden'); modal.classList.remove('flex');
+}
+function spinTheWheel() {
+  const spinBtn = document.getElementById('spinBtn');
+  const dial = document.getElementById('spinWheelDial');
+  const status = document.getElementById('spinStatus');
+  spinBtn.disabled = true;
+  const rewardIdx = Math.floor(Math.random() * SPIN_REWARDS.length);
+  const reward = SPIN_REWARDS[rewardIdx];
+  const segmentAngle = 360 / SPIN_REWARDS.length;
+  const targetRotation = 1440 + (360 - (rewardIdx * segmentAngle)) - segmentAngle / 2;
+  dial.style.transition = 'transform 3.5s cubic-bezier(.17,.67,.12,.99)';
+  dial.style.transform = 'rotate(' + targetRotation + 'deg)';
+  status.textContent = 'Spinning...';
+  setTimeout(() => {
+    USER.xp += reward;
+    updateUserStats();
+    checkBadgeUnlocks();
+    const today = new Date().toISOString().split('T')[0];
+    localStorage.setItem('lasu_lastSpin', today);
+    status.textContent = 'You won ' + reward + ' XP! Come back tomorrow for another spin.';
+    spinBtn.textContent = 'Come Back Tomorrow';
+    spinBtn.className = 'w-full bg-white/5 text-gray-500 font-bold py-3.5 rounded-2xl text-sm cursor-not-allowed';
+    showToast('+' + reward + ' XP from the wheel! 🎡');
+  }, 3600);
+}
+
 function showToast(msg, type) {
   const toast = document.getElementById('toast');
   const icon = document.getElementById('toastIcon');
@@ -634,10 +1385,6 @@ function showToast(msg, type) {
     toast.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
     toast.classList.remove('opacity-100', 'translate-y-0');
   }, 2500);
-}
-
-function openProfile() {
-  showToast('Profile page coming soon', 'info');
 }
 
 init();
