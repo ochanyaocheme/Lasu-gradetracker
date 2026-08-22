@@ -379,12 +379,23 @@ body{background-color:#0f172a;color:#fff}
         <span class="text-amber-400 text-xs font-bold" id="scrambleScoreLabel">Score: 0</span>
       </div>
       <p class="text-gray-400 text-xs mb-2">Unscramble this academic term:</p>
-      <p id="scrambleWord" class="text-3xl font-extrabold text-amber-400 tracking-widest mb-4">CHEMISTRY</p>
+      <p id="scrambleWord" class="text-3xl font-extrabold text-amber-400 tracking-widest mb-2">CHEMISTRY</p>
+      <p id="scrambleHintDisplay" class="text-gray-500 text-sm tracking-[0.3em] mb-3 h-5"></p>
       <input id="scrambleInput" type="text" placeholder="Type your answer..." class="w-full bg-[#0f172a] rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 border border-white/8 focus:border-amber-500/50 focus:outline-none transition text-center mb-3" onkeypress="if(event.key==='Enter')checkScramble()">
       <p id="scrambleFeedback" class="text-sm h-5 mb-2"></p>
-      <div class="flex gap-3">
+      <div class="flex gap-2 mb-2">
         <button onclick="checkScramble()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-2xl text-sm transition action-btn">Check</button>
-        <button onclick="nextScramble()" class="px-5 bg-[#0f172a] hover:bg-white/5 text-gray-300 font-semibold py-3 rounded-2xl text-sm transition border border-white/8">Skip</button>
+        <button onclick="nextScramble()" class="px-4 bg-[#0f172a] hover:bg-white/5 text-gray-300 font-semibold py-3 rounded-2xl text-sm transition border border-white/8">Skip</button>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="shuffleScramble()" class="flex-1 bg-[#0f172a] hover:bg-white/5 text-gray-300 font-semibold py-2.5 rounded-2xl text-xs transition border border-white/8 flex items-center justify-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Shuffle (free)
+        </button>
+        <button onclick="useScrambleHint()" class="flex-1 bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 font-semibold py-2.5 rounded-2xl text-xs transition border border-purple-500/30 flex items-center justify-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          Hint (10 XP)
+        </button>
       </div>
     </div>
   </div>
@@ -475,14 +486,14 @@ function getLevelFromXP(xp) {
 }
 
 let CHALLENGES = [
-  { id: 1, title: "Study Marathon",  desc: "Study for at least 2 hours every day, all 7 days this week. No distractions, no excuses!", category: "study",    progress: 3, target: 7, xp: 150, timeLeft: "7 days", icon: "📚", checkIns: [true, true, true, false, false, false, false] },
-  { id: 2, title: "Early Bird",      desc: "Attend all your 8am lectures every day this week — all 7 days. Set that alarm!",             category: "academic", progress: 2, target: 7, xp: 100, timeLeft: "7 days", icon: "🌅", checkIns: [true, true, false, false, false, false, false] },
-  { id: 3, title: "Hydration Hero",  desc: "Drink at least 2 liters of water every day for all 7 days this week. Your brain needs it!",  category: "wellness", progress: 5, target: 7, xp: 120, timeLeft: "7 days", icon: "💧", checkIns: [true, true, true, true, true, false, false] },
-  { id: 4, title: "Study Buddy",     desc: "Have a group study session every day this week — all 7 days — to build real consistency.",  category: "social",   progress: 1, target: 7, xp: 200, timeLeft: "7 days", icon: "👥", checkIns: [true, false, false, false, false, false, false] },
-  { id: 5, title: "Assignment Ace",  desc: "Make real progress on your assignments every day this week, all 7 days, staying ahead of deadlines.", category: "academic", progress: 0, target: 7, xp: 180, timeLeft: "7 days", icon: "✅", checkIns: [false, false, false, false, false, false, false] },
-  { id: 6, title: "Sleep Champion",  desc: "Get 7+ hours of sleep every night this week — all 7 nights. Rest is part of the grind!",     category: "wellness", progress: 4, target: 7, xp: 130, timeLeft: "7 days", icon: "😴", checkIns: [true, true, true, true, false, false, false] },
-  { id: 7, title: "Library Regular", desc: "Spend focused time in the library every day this week — all 7 days. Make it your second home.", category: "study",   progress: 6, target: 7, xp: 160, timeLeft: "7 days", icon: "📖", checkIns: [true, true, true, true, true, true, false] },
-  { id: 8, title: "Help a Friend",   desc: "Help a classmate with their coursework every day this week — all 7 days. Pay it forward!",   category: "social",   progress: 2, target: 7, xp: 140, timeLeft: "7 days", icon: "🤝", checkIns: [true, true, false, false, false, false, false] }
+  { id: 1, title: "Study Marathon",  desc: "Study for at least 2 hours every day, all 7 days this week. No distractions, no excuses!", category: "study",    progress: 3, target: 7, xp: 150, timeLeft: "7 days", icon: "📚", checkIns: [true, true, true, false, false, false, false], claimed: false },
+  { id: 2, title: "Early Bird",      desc: "Attend all your 8am lectures every day this week — all 7 days. Set that alarm!",             category: "academic", progress: 2, target: 7, xp: 100, timeLeft: "7 days", icon: "🌅", checkIns: [true, true, false, false, false, false, false], claimed: false },
+  { id: 3, title: "Hydration Hero",  desc: "Drink at least 2 liters of water every day for all 7 days this week. Your brain needs it!",  category: "wellness", progress: 5, target: 7, xp: 120, timeLeft: "7 days", icon: "💧", checkIns: [true, true, true, true, true, false, false], claimed: false },
+  { id: 4, title: "Study Buddy",     desc: "Have a group study session every day this week — all 7 days — to build real consistency.",  category: "social",   progress: 1, target: 7, xp: 200, timeLeft: "7 days", icon: "👥", checkIns: [true, false, false, false, false, false, false], claimed: false },
+  { id: 5, title: "Assignment Ace",  desc: "Make real progress on your assignments every day this week, all 7 days, staying ahead of deadlines.", category: "academic", progress: 0, target: 7, xp: 180, timeLeft: "7 days", icon: "✅", checkIns: [false, false, false, false, false, false, false], claimed: false },
+  { id: 6, title: "Sleep Champion",  desc: "Get 7+ hours of sleep every night this week — all 7 nights. Rest is part of the grind!",     category: "wellness", progress: 4, target: 7, xp: 130, timeLeft: "7 days", icon: "😴", checkIns: [true, true, true, true, false, false, false], claimed: false },
+  { id: 7, title: "Library Regular", desc: "Spend focused time in the library every day this week — all 7 days. Make it your second home.", category: "study",   progress: 6, target: 7, xp: 160, timeLeft: "7 days", icon: "📖", checkIns: [true, true, true, true, true, true, false], claimed: false },
+  { id: 8, title: "Help a Friend",   desc: "Help a classmate with their coursework every day this week — all 7 days. Pay it forward!",   category: "social",   progress: 2, target: 7, xp: 140, timeLeft: "7 days", icon: "🤝", checkIns: [true, true, false, false, false, false, false], claimed: false }
 ];
 
 let BADGES = [
@@ -522,11 +533,21 @@ let currentBadge = null;
 let currentProfileUser = null;
 
 function init() {
+  maskFutureCheckIns();
   renderChallengesList();
   renderContent();
   updateUserStats();
   updateResetTimer();
   setInterval(updateResetTimer, 60000);
+}
+
+function maskFutureCheckIns() {
+  // Demo data safety net: a real day can never have a check-in for a day that hasn't happened yet.
+  const todayIndex = getTodayIndex();
+  CHALLENGES.forEach(c => {
+    for (let i = todayIndex + 1; i < c.checkIns.length; i++) c.checkIns[i] = false;
+    c.progress = c.checkIns.filter(Boolean).length;
+  });
 }
 
 function updateUserStats() {
@@ -643,7 +664,12 @@ function renderChallengesList() {
   container.innerHTML = filtered.map(c => {
     const pct = Math.round((c.progress / c.target) * 100);
     const cat = CATEGORIES[c.category];
-    const isComplete = c.progress >= c.target;
+    const missed = hasMissedDay(c);
+    const isComplete = c.progress >= c.target && !missed;
+    let btnLabel = 'View Details';
+    if (c.claimed) btnLabel = 'Claimed ✓';
+    else if (missed) btnLabel = 'Missed — View Details';
+    else if (isComplete) btnLabel = 'Claim Reward';
 
     return '<div class="challenge-card bg-[#1e293b] rounded-2xl border border-white/6 p-4 ' + (isComplete ? 'border-amber-500/30' : '') + '">' +
       '<div class="flex items-start gap-3">' +
@@ -653,7 +679,7 @@ function renderChallengesList() {
         '<div class="flex-1 min-w-0">' +
           '<div class="flex items-center justify-between">' +
             '<h4 class="font-bold text-white text-sm">' + c.title + '</h4>' +
-            (isComplete ? '<span class="text-amber-400 text-lg">🏆</span>' : '') +
+            (c.claimed ? '<span class="text-green-400 text-lg">✓</span>' : (isComplete ? '<span class="text-amber-400 text-lg">🏆</span>' : (missed ? '<span class="text-red-400 text-lg">✕</span>' : ''))) +
           '</div>' +
           '<p class="text-gray-400 text-[11px] mt-0.5">' + cat.label + ' &bull; ' + c.timeLeft + ' left</p>' +
           '<div class="mt-2">' +
@@ -668,7 +694,7 @@ function renderChallengesList() {
         '</div>' +
       '</div>' +
       '<button onclick="openChallengeModal(' + c.id + ')" class="w-full mt-3 text-amber-400 text-xs font-semibold hover:text-amber-300 transition text-center">' +
-        (isComplete ? 'Claim Reward' : 'View Details') +
+        btnLabel +
       '</button>' +
     '</div>';
   }).join('');
@@ -713,7 +739,12 @@ function renderContent() {
     container.innerHTML = '<div class="space-y-3">' + filtered.map(c => {
       const pct = Math.round((c.progress / c.target) * 100);
       const cat = CATEGORIES[c.category];
-      const isComplete = c.progress >= c.target;
+      const missed = hasMissedDay(c);
+      const isComplete = c.progress >= c.target && !missed;
+      let btnLabel = 'View Details';
+      if (c.claimed) btnLabel = 'Claimed ✓';
+      else if (missed) btnLabel = 'Missed — View Details';
+      else if (isComplete) btnLabel = 'Claim Reward';
       return '<div class="challenge-card bg-[#1e293b] rounded-2xl border border-white/6 p-4 ' + (isComplete ? 'border-amber-500/30' : '') + '">' +
         '<div class="flex items-start gap-3">' +
           '<div class="w-10 h-10 ' + cat.bg + ' rounded-xl flex items-center justify-center border ' + cat.border + ' shrink-0">' +
@@ -722,7 +753,7 @@ function renderContent() {
           '<div class="flex-1 min-w-0">' +
             '<div class="flex items-center justify-between">' +
               '<h4 class="font-bold text-white text-sm">' + c.title + '</h4>' +
-              (isComplete ? '<span class="text-amber-400 text-lg">🏆</span>' : '') +
+              (c.claimed ? '<span class="text-green-400 text-lg">✓</span>' : (isComplete ? '<span class="text-amber-400 text-lg">🏆</span>' : (missed ? '<span class="text-red-400 text-lg">✕</span>' : ''))) +
             '</div>' +
             '<p class="text-gray-400 text-[11px] mt-0.5">' + cat.label + ' &bull; ' + c.timeLeft + ' left</p>' +
             '<div class="mt-2">' +
@@ -737,7 +768,7 @@ function renderContent() {
           '</div>' +
         '</div>' +
         '<button onclick="openChallengeModal(' + c.id + ')" class="w-full mt-3 text-amber-400 text-xs font-semibold hover:text-amber-300 transition text-center">' +
-          (isComplete ? 'Claim Reward' : 'View Details') +
+          btnLabel +
         '</button>' +
       '</div>';
     }).join('') + '</div>';
@@ -867,13 +898,29 @@ function renderLeaderboard(container) {
   container.innerHTML = html;
 }
 
+function getTodayIndex() {
+  // Monday = 0 ... Sunday = 6, matching the M T W T F S S grid
+  const day = new Date().getDay(); // Sun=0..Sat=6
+  return (day + 6) % 7;
+}
+
+function hasMissedDay(challenge) {
+  const todayIndex = getTodayIndex();
+  for (let i = 0; i < todayIndex; i++) {
+    if (!challenge.checkIns[i]) return true;
+  }
+  return false;
+}
+
 function openChallengeModal(id) {
   currentChallenge = CHALLENGES.find(c => c.id === id);
   if (!currentChallenge) return;
 
   const cat = CATEGORIES[currentChallenge.category];
   const pct = Math.round((currentChallenge.progress / currentChallenge.target) * 100);
-  const isComplete = currentChallenge.progress >= currentChallenge.target;
+  const todayIndex = getTodayIndex();
+  const missed = hasMissedDay(currentChallenge);
+  const isComplete = currentChallenge.progress >= currentChallenge.target && !missed;
 
   document.getElementById('challengeModalIcon').innerHTML = '<span class="text-2xl">' + currentChallenge.icon + '</span>';
   document.getElementById('challengeModalIcon').className = 'w-12 h-12 ' + cat.bg + ' rounded-xl flex items-center justify-center border ' + cat.border;
@@ -890,22 +937,52 @@ function openChallengeModal(id) {
   checkInGrid.innerHTML = '';
   for (let i = 0; i < currentChallenge.target; i++) {
     const checked = currentChallenge.checkIns && currentChallenge.checkIns[i];
-    const dayLabel = ['M','T','W','T','F','S','S'][i % 7];
+    const dayLabel = ['M','T','W','T','F','S','S'][i];
     const btn = document.createElement('button');
-    btn.className = 'check-in-btn w-full aspect-square rounded-xl text-xs font-bold flex flex-col items-center justify-center gap-0.5 ' + 
-      (checked ? 'bg-green-500 text-white' : 'bg-[#0f172a] text-gray-500 border border-white/10');
-    btn.innerHTML = '<span class="text-[10px] opacity-60">' + dayLabel + '</span><span>' + (checked ? '✓' : (i+1)) + '</span>';
-    btn.onclick = function() { toggleCheckIn(id, i); };
+    let cls, content, clickable = false;
+    if (i < todayIndex) {
+      if (checked) { cls = 'bg-green-500 text-white'; content = '✓'; }
+      else { cls = 'bg-red-500/15 text-red-400 border border-red-500/30'; content = '✕'; }
+    } else if (i === todayIndex) {
+      if (checked) { cls = 'bg-green-500 text-white'; content = '✓'; }
+      else { cls = 'bg-amber-500 hover:bg-amber-400 text-white animate-pulse-soft cursor-pointer'; content = '+'; clickable = true; }
+    } else {
+      cls = 'bg-[#0f172a] text-gray-600 border border-white/6 opacity-50';
+      content = '🔒';
+    }
+    btn.className = 'check-in-btn w-full aspect-square rounded-xl text-xs font-bold flex flex-col items-center justify-center gap-0.5 ' + cls;
+    btn.innerHTML = '<span class="text-[10px] opacity-70">' + dayLabel + '</span><span>' + content + '</span>';
+    if (clickable) btn.onclick = function() { toggleCheckIn(id, i); };
     checkInGrid.appendChild(btn);
   }
 
+  let ruleNote = document.getElementById('checkInRuleNote');
+  if (!ruleNote) {
+    ruleNote = document.createElement('p');
+    ruleNote.id = 'checkInRuleNote';
+    ruleNote.className = 'text-gray-500 text-[10.5px] mt-2 leading-relaxed';
+    checkInGrid.parentElement.appendChild(ruleNote);
+  }
+  ruleNote.textContent = missed
+    ? "⚠️ A day was missed, so this week's reward for this challenge is gone. Complete all 7 days next week to earn XP."
+    : "You can only check in for today — past days can't be recovered and future days aren't open yet. Complete all 7 days to unlock your XP.";
+  ruleNote.className = 'text-[10.5px] mt-2 leading-relaxed ' + (missed ? 'text-red-400' : 'text-gray-500');
+
   const claimBtn = document.getElementById('claimBtn');
-  if (isComplete) {
+  if (currentChallenge.claimed) {
+    claimBtn.textContent = 'Reward Claimed ✓';
+    claimBtn.className = 'w-full bg-green-500/15 text-green-400 font-bold py-3.5 rounded-2xl text-sm border border-green-500/30 cursor-not-allowed';
+    claimBtn.disabled = true;
+  } else if (missed) {
+    claimBtn.textContent = 'Reward Forfeited — Day Missed';
+    claimBtn.className = 'w-full bg-red-500/10 text-red-400 font-bold py-3.5 rounded-2xl text-sm border border-red-500/20 cursor-not-allowed';
+    claimBtn.disabled = true;
+  } else if (isComplete) {
     claimBtn.textContent = 'Claim ' + currentChallenge.xp + ' XP';
     claimBtn.className = 'w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-3.5 rounded-2xl text-sm transition action-btn';
     claimBtn.disabled = false;
   } else {
-    claimBtn.textContent = 'Keep Going! (' + currentChallenge.progress + '/' + currentChallenge.target + ')';
+    claimBtn.textContent = 'Complete All 7 Days to Unlock (' + currentChallenge.progress + '/' + currentChallenge.target + ')';
     claimBtn.className = 'w-full bg-white/5 text-gray-500 font-bold py-3.5 rounded-2xl text-sm transition cursor-not-allowed';
     claimBtn.disabled = true;
   }
@@ -918,16 +995,18 @@ function toggleCheckIn(challengeId, dayIndex) {
   const challenge = CHALLENGES.find(c => c.id === challengeId);
   if (!challenge || !challenge.checkIns) return;
 
-  challenge.checkIns[dayIndex] = !challenge.checkIns[dayIndex];
+  const todayIndex = getTodayIndex();
+  if (dayIndex > todayIndex) { showToast("You can't check in for a day that hasn't arrived yet", 'error'); return; }
+  if (dayIndex < todayIndex) { showToast("That day has passed — missed check-ins can't be recovered", 'error'); return; }
+  if (challenge.checkIns[dayIndex]) { showToast("You've already checked in for today", 'info'); return; }
+
+  challenge.checkIns[dayIndex] = true;
   challenge.progress = challenge.checkIns.filter(Boolean).length;
 
   openChallengeModal(challengeId);
   renderChallengesList();
   if (currentMainTab === 'challenges') renderContent();
-
-  if (challenge.checkIns[dayIndex]) {
-    showToast('Day ' + (dayIndex + 1) + ' checked in! ✅');
-  }
+  showToast('Checked in for today! ✅');
 }
 
 function closeChallengeModal() {
@@ -937,8 +1016,11 @@ function closeChallengeModal() {
 }
 
 function claimChallenge() {
-  if (!currentChallenge || currentChallenge.progress < currentChallenge.target) return;
+  if (!currentChallenge || currentChallenge.claimed) return;
+  if (hasMissedDay(currentChallenge)) return;
+  if (currentChallenge.progress < currentChallenge.target) return;
 
+  currentChallenge.claimed = true;
   USER.xp += currentChallenge.xp;
   updateUserStats();
   checkBadgeUnlocks();
@@ -960,7 +1042,7 @@ function checkBadgeUnlocks() {
     showToast('🏆 LASU Legend badge unlocked!', 'info');
   }
 
-  const allComplete = CHALLENGES.every(c => c.progress >= c.target);
+  const allComplete = CHALLENGES.every(c => c.progress >= c.target && !hasMissedDay(c));
   const perfectBadge = BADGES.find(b => b.id === 5);
   if (!perfectBadge.earned && allComplete) {
     perfectBadge.earned = new Date().toISOString().split('T')[0];
@@ -1065,16 +1147,35 @@ const TRIVIA_QUESTIONS = [
   { q: "Which of these is a Nigerian university abbreviation?", options: ["MIT", "LASU", "NASA", "UNESCO"], correct: 1 },
   { q: "What is the SI unit of electric current?", options: ["Volt", "Watt", "Ampere", "Ohm"], correct: 2 },
   { q: "Who wrote 'Things Fall Apart'?", options: ["Wole Soyinka", "Chinua Achebe", "Chimamanda Adichie", "Ben Okri"], correct: 1 },
-  { q: "What does 'HND' stand for in Nigerian education?", options: ["Higher National Diploma", "Head National Degree", "Higher Notable Degree", "Honors National Diploma"], correct: 0 }
+  { q: "What does 'HND' stand for in Nigerian education?", options: ["Higher National Diploma", "Head National Degree", "Higher Notable Degree", "Honors National Diploma"], correct: 0 },
+  { q: "What is the powerhouse of the cell?", options: ["Nucleus", "Ribosome", "Mitochondria", "Golgi Body"], correct: 2 },
+  { q: "In economics, what does 'GDP' stand for?", options: ["Gross Domestic Product", "General Domestic Price", "Gross Development Plan", "General Debt Payment"], correct: 0 },
+  { q: "What is the boiling point of water in Celsius?", options: ["90°C", "100°C", "110°C", "212°C"], correct: 1 },
+  { q: "Who is regarded as the father of Nigerian literature in English?", options: ["Wole Soyinka", "Amos Tutuola", "Chinua Achebe", "Cyprian Ekwensi"], correct: 2 },
+  { q: "What does 'JAMB' stand for?", options: ["Joint Admissions and Matriculation Board", "Junior Academic Merit Board", "Joint Academic Management Body", "Junior Admission and Merit Board"], correct: 0 },
+  { q: "Which organ in the body produces insulin?", options: ["Liver", "Kidney", "Pancreas", "Spleen"], correct: 2 },
+  { q: "What is the SI unit of force?", options: ["Joule", "Newton", "Pascal", "Watt"], correct: 1 },
+  { q: "What does 'CGPA' typically use as its maximum scale in Nigerian universities?", options: ["4.0 or 5.0", "10.0", "100", "20.0"], correct: 0 }
 ];
+
 let triviaIndex = 0;
 let triviaScore = 0;
 let triviaOrder = [];
+let triviaAnswered = JSON.parse(localStorage.getItem('lasu_triviaAnswered') || '[]');
 
 function openTrivia() {
   triviaIndex = 0;
   triviaScore = 0;
-  triviaOrder = TRIVIA_QUESTIONS.map((_, i) => i).sort(() => Math.random() - 0.5);
+
+  let available = TRIVIA_QUESTIONS.map((_, i) => i).filter(i => !triviaAnswered.includes(i));
+  if (available.length === 0) {
+    triviaAnswered = [];
+    localStorage.setItem('lasu_triviaAnswered', '[]');
+    available = TRIVIA_QUESTIONS.map((_, i) => i);
+    showToast("You've answered every question — starting a fresh round!", 'info');
+  }
+  triviaOrder = available.sort(() => Math.random() - 0.5);
+
   document.getElementById('triviaScoreLabel').textContent = 'Score: 0';
   renderTriviaQuestion();
   const modal = document.getElementById('triviaModal');
@@ -1088,7 +1189,7 @@ function renderTriviaQuestion() {
   const body = document.getElementById('triviaBody');
   if (triviaIndex >= triviaOrder.length) {
     const xpEarned = triviaScore * 10;
-    body.innerHTML = '<div class="text-center py-6"><span class="text-4xl">🎉</span><h4 class="text-white font-bold text-lg mt-3">Quiz Complete!</h4><p class="text-gray-400 text-sm mt-1">You scored ' + triviaScore + '/' + TRIVIA_QUESTIONS.length + '</p><p class="text-amber-400 font-bold mt-2">+' + xpEarned + ' XP earned</p><button onclick="closeTrivia()" class="w-full mt-5 bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-2xl text-sm transition">Done</button></div>';
+    body.innerHTML = '<div class="text-center py-6"><span class="text-4xl">🎉</span><h4 class="text-white font-bold text-lg mt-3">Quiz Complete!</h4><p class="text-gray-400 text-sm mt-1">You scored ' + triviaScore + '/' + triviaOrder.length + '</p><p class="text-amber-400 font-bold mt-2">+' + xpEarned + ' XP earned</p><p class="text-gray-500 text-[11px] mt-2">' + triviaAnswered.length + '/' + TRIVIA_QUESTIONS.length + ' questions seen so far — new ones next round until you run through them all.</p><button onclick="closeTrivia()" class="w-full mt-5 bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-2xl text-sm transition">Done</button></div>';
     if (xpEarned > 0) {
       USER.xp += xpEarned;
       updateUserStats();
@@ -1103,7 +1204,8 @@ function renderTriviaQuestion() {
     '</div>';
 }
 function answerTrivia(choiceIdx) {
-  const q = TRIVIA_QUESTIONS[triviaOrder[triviaIndex]];
+  const questionIdx = triviaOrder[triviaIndex];
+  const q = TRIVIA_QUESTIONS[questionIdx];
   const buttons = document.querySelectorAll('#triviaOptions button');
   buttons.forEach(b => b.onclick = null);
   buttons[q.correct].classList.add('correct');
@@ -1113,6 +1215,12 @@ function answerTrivia(choiceIdx) {
     triviaScore++;
     document.getElementById('triviaScoreLabel').textContent = 'Score: ' + triviaScore;
   }
+
+  if (!triviaAnswered.includes(questionIdx)) {
+    triviaAnswered.push(questionIdx);
+    localStorage.setItem('lasu_triviaAnswered', JSON.stringify(triviaAnswered));
+  }
+
   setTimeout(() => { triviaIndex++; renderTriviaQuestion(); }, 900);
 }
 
@@ -1186,9 +1294,11 @@ function resetFocusTimer() {
 }
 
 /* ===================== WORD SCRAMBLE ===================== */
-const SCRAMBLE_WORDS = ['CHEMISTRY','PHYSICS','ECONOMICS','SEMESTER','LECTURER','ASSIGNMENT','GRADUATE','LIBRARY','CURRICULUM','TRANSCRIPT'];
+const SCRAMBLE_WORDS = ['CHEMISTRY','PHYSICS','ECONOMICS','SEMESTER','LECTURER','ASSIGNMENT','GRADUATE','LIBRARY','CURRICULUM','TRANSCRIPT','LABORATORY','FACULTY','DISSERTATION','MATRICULATION','SCHOLARSHIP','ACCOMMODATION'];
 let scrambleAnswer = '';
 let scrambleScore = 0;
+let scrambleRevealed = 0;
+let scrambleWordPool = [];
 
 function scrambleLetters(word) {
   let arr = word.split('');
@@ -1214,10 +1324,32 @@ function closeScramble() {
   modal.classList.add('hidden'); modal.classList.remove('flex');
 }
 function nextScramble() {
-  scrambleAnswer = SCRAMBLE_WORDS[Math.floor(Math.random() * SCRAMBLE_WORDS.length)];
+  if (scrambleWordPool.length === 0) {
+    scrambleWordPool = [...SCRAMBLE_WORDS].sort(() => Math.random() - 0.5);
+  }
+  scrambleAnswer = scrambleWordPool.pop();
+  scrambleRevealed = 0;
   document.getElementById('scrambleWord').textContent = scrambleLetters(scrambleAnswer);
   document.getElementById('scrambleInput').value = '';
   document.getElementById('scrambleFeedback').textContent = '';
+  updateScrambleHintDisplay();
+}
+function shuffleScramble() {
+  document.getElementById('scrambleWord').textContent = scrambleLetters(scrambleAnswer);
+}
+function updateScrambleHintDisplay() {
+  const display = document.getElementById('scrambleHintDisplay');
+  if (scrambleRevealed === 0) { display.textContent = ''; return; }
+  display.textContent = scrambleAnswer.split('').map((ch, i) => i < scrambleRevealed ? ch : '_').join(' ');
+}
+function useScrambleHint() {
+  if (scrambleRevealed >= scrambleAnswer.length - 1) { showToast('No more letters to reveal for this word', 'info'); return; }
+  if (USER.xp < 10) { showToast("You don't have enough XP for a hint", 'error'); return; }
+  USER.xp -= 10;
+  scrambleRevealed++;
+  updateUserStats();
+  updateScrambleHintDisplay();
+  showToast('Hint unlocked for 10 XP', 'info');
 }
 function checkScramble() {
   const input = document.getElementById('scrambleInput').value.trim().toUpperCase();
@@ -1235,10 +1367,11 @@ function checkScramble() {
     feedback.textContent = 'Not quite — try again!';
     feedback.className = 'text-sm h-5 mb-2 text-red-400 font-semibold';
   }
+
 }
 
 /* ===================== MEMORY MATCH ===================== */
-const MEMORY_ICONS = ['📚','🧪','🔬','📐','💡','🎓'];
+const MEMORY_ICON_POOL = ['📚','🧪','🔬','📐','💡','🎓','🧮','🌍','⚗️','🧬','📊','🖥️','⚛️','🩺','📏','🗺️'];
 let memoryCards = [];
 let memoryFlipped = [];
 let memoryMatched = [];
@@ -1246,7 +1379,8 @@ let memoryMoves = 0;
 let memoryLock = false;
 
 function startMemoryMatch() {
-  const pairs = [...MEMORY_ICONS, ...MEMORY_ICONS];
+  const chosenIcons = [...MEMORY_ICON_POOL].sort(() => Math.random() - 0.5).slice(0, 6);
+  const pairs = [...chosenIcons, ...chosenIcons];
   for (let i = pairs.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
@@ -1256,7 +1390,7 @@ function startMemoryMatch() {
   memoryMatched = [];
   memoryMoves = 0;
   memoryLock = false;
-  document.getElementById('memoryMovesLabel').textContent = 'Moves: 0';
+  document.getElementById('memoryMovesLabel').textContent = 'Moves: 0 (fewer moves = more XP)';
   renderMemoryGrid();
 }
 function openMemoryMatch() {
